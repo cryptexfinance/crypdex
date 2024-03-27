@@ -1,0 +1,16 @@
+.DS_Store
+
+
+.idea
+.vscode
+
+**/.env
+
+node_modules/
+cache_hardhat/
+forge-cache/
+out/
+typechain/
+typechain-types/
+artifacts/
+broadcast/
