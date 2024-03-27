@@ -5,6 +5,7 @@
 .vscode
 
 **/.env
+.todo
 
 node_modules/
 cache_hardhat/
