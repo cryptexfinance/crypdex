@@ -11,25 +11,22 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 
-    SPDX-License-Identifier: Apache License, Version 2.0
+    SPDX-License-Identifier: Apache-2.0
 */
 
-pragma solidity 0.8.25;
+pragma solidity ^0.8.25;
 
 import { Address } from "@openzeppelin/contracts/utils/Address.sol";
 import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import { SafeCast } from "@openzeppelin/contracts/utils/SafeCast.sol";
-import { SafeMath } from "@openzeppelin/contracts/math/SafeMath.sol";
-import { SignedSafeMath } from "@openzeppelin/contracts/math/SignedSafeMath.sol";
 
 import { IController } from "../interfaces/IController.sol";
 import { IModule } from "../interfaces/IModule.sol";
 import { ISetToken } from "../interfaces/ISetToken.sol";
-import { Position } from "./lib/Position.sol";
+import { Position } from "../lib/Position.sol";
 import { PreciseUnitMath } from "../lib/PreciseUnitMath.sol";
 import { AddressArrayUtils } from "../lib/AddressArrayUtils.sol";
 
-
+import "forge-std/console.sol";
 /**
  * @title SetToken
  * @author Set Protocol
@@ -38,10 +35,6 @@ import { AddressArrayUtils } from "../lib/AddressArrayUtils.sol";
  * from the SetToken.
  */
 contract SetToken is ERC20 {
-    using SafeMath for uint256;
-    using SafeCast for int256;
-    using SafeCast for uint256;
-    using SignedSafeMath for int256;
     using PreciseUnitMath for int256;
     using Address for address;
     using AddressArrayUtils for address[];
@@ -160,10 +153,7 @@ contract SetToken is ERC20 {
         address _manager,
         string memory _name,
         string memory _symbol
-    )
-        public
-        ERC20(_name, _symbol)
-    {
+    ) ERC20(_name, _symbol) {
         controller = _controller;
         manager = _manager;
         positionMultiplier = PreciseUnitMath.preciseUnitInt();
@@ -523,7 +513,7 @@ contract SetToken is ERC20 {
         address[] memory externalModules = _externalPositionModules(_component);
         for (uint256 i = 0; i < externalModules.length; i++) {
             // We will perform the summation no matter what, as an external position virtual unit can be negative
-            totalUnits = totalUnits.add(getExternalPositionRealUnit(_component, externalModules[i]));
+            totalUnits = totalUnits + getExternalPositionRealUnit(_component, externalModules[i]);
         }
 
         return totalUnits;
@@ -596,13 +586,13 @@ contract SetToken is ERC20 {
      */
     function _getPositionsAbsMinimumVirtualUnit() internal view returns(int256) {
         // Additional assignment happens in the loop below
-        uint256 minimumUnit = uint256(-1);
+        uint256 minimumUnit = type(uint256).max;
 
         for (uint256 i = 0; i < components.length; i++) {
             address component = components[i];
 
             // A default position exists if the default virtual unit is > 0
-            uint256 defaultUnit = _defaultPositionVirtualUnit(component).toUint256();
+            uint256 defaultUnit = uint256(_defaultPositionVirtualUnit(component));
             if (defaultUnit > 0 && defaultUnit < minimumUnit) {
                 minimumUnit = defaultUnit;
             }
@@ -620,7 +610,7 @@ contract SetToken is ERC20 {
             }
         }
 
-        return minimumUnit.toInt256();
+        return int256(minimumUnit);
     }
 
     /**
@@ -641,7 +631,7 @@ contract SetToken is ERC20 {
             // Increment the position count by each external position module
             address[] memory externalModules = _externalPositionModules(component);
             if (externalModules.length > 0) {
-                positionCount = positionCount.add(externalModules.length);
+                positionCount = positionCount + externalModules.length;
             }
         }
 
@@ -654,7 +644,7 @@ contract SetToken is ERC20 {
      * @return Returns the absolute value in uint256
      */
     function _absoluteValue(int256 _a) internal pure returns(uint256) {
-        return _a >= 0 ? _a.toUint256() : (-_a).toUint256();
+        return _a >= 0 ? uint256(_a) : uint256(-1 *_a);
     }
 
     /**
