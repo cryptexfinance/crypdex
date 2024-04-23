@@ -239,13 +239,50 @@ contract TestBasicIssuance is DeployerMixin {
     function testIssueQuantity() external {
         setupWETHWBTCSetToken();
         setUpBalance(user1);
-        console.log(weth.balanceOf(user1));
-        console.log(wbtc.balanceOf(user1));
         vm.prank(user1);
         basicIssuanceModule.issue(wETHWBTCSetToken, 2 ether, user1);
-        console.log(weth.balanceOf(user1));
-        console.log(wbtc.balanceOf(user1));
 
         assertEq(wETHWBTCSetToken.balanceOf(user1), 2 ether);
+    }
+
+    function testIssueComponentsDeposited() external {
+        setupWETHWBTCSetToken();
+        setUpBalance(user1);
+        uint256 issueQuantity = 2 ether;
+        vm.prank(user1);
+        basicIssuanceModule.issue(wETHWBTCSetToken, issueQuantity, user1);
+
+        uint256 depositedBTCBalance = wbtc.balanceOf(address(wETHWBTCSetToken));
+        uint256 expectedBalance = (issueQuantity * uint256(toWBTCUnits(2))) / uint256(toWETHUnits(1));
+        assertEq(depositedBTCBalance, expectedBalance);
+    }
+
+    function testRedeemQuantity() external {
+        setupWETHWBTCSetToken();
+        setUpBalance(user1);
+        uint256 issueQuantity = 2 ether;
+        vm.startPrank(user1);
+        basicIssuanceModule.issue(wETHWBTCSetToken, issueQuantity, user1);
+
+        assertEq(wETHWBTCSetToken.balanceOf(user1), issueQuantity);
+        basicIssuanceModule.redeem(wETHWBTCSetToken, issueQuantity, user1);
+        assertEq(wETHWBTCSetToken.balanceOf(user1), 0);
+        vm.stopPrank();
+    }
+
+    function testRedeemComponents() external {
+        setupWETHWBTCSetToken();
+        setUpBalance(user1);
+        uint256 issueQuantity = 2 ether;
+        uint256 beforeIssueBalance = wbtc.balanceOf(user1);
+        vm.startPrank(user1);
+        basicIssuanceModule.issue(wETHWBTCSetToken, issueQuantity, user1);
+
+        uint256 beforeRedeemBalance = wbtc.balanceOf(user1);
+        basicIssuanceModule.redeem(wETHWBTCSetToken, issueQuantity, user1);
+        uint256 afterRedeemBalance = wbtc.balanceOf(user1);
+        assertTrue(afterRedeemBalance > beforeRedeemBalance);
+        assertEq(beforeIssueBalance, afterRedeemBalance);
+        vm.stopPrank();
     }
 }
