@@ -33,8 +33,7 @@ contract TestAuctionRebalance is AuctionFixture {
         newComponents[0] = address(usdc);
         AuctionRebalanceModuleV1.AuctionExecutionParams[] memory newComponentsAuctionParams = new AuctionRebalanceModuleV1.AuctionExecutionParams[](1);
         newComponentsAuctionParams[0] = indexUsdcAuctionExecutionParams;
-        vm.prank(owner);
-        auctionRebalanceModuleV1.startRebalance(
+        startRebalance(
           setToken,
           defaultQuoteAsset,
           newComponents,
@@ -52,5 +51,32 @@ contract TestAuctionRebalance is AuctionFixture {
 
         address[] memory _newComponents = setToken.getComponents();
         assertTrue(_newComponents.contains(address(usdc)));
+    }
+
+    function testUnlockEarly() external {
+        startRebalance(
+          setToken,
+          defaultQuoteAsset,
+          defaultNewComponents,
+          defaultNewComponentsAuctionParams,
+          defaultOldComponentsAuctionParams,
+          true,
+          defaultDuration,
+          uint256(defaultPositionMultiplier)
+        );
+        fundBidder(address(weth), uint256(toWETHUnits(45))/100);
+        fundBidder(address(wbtc), uint256(toWBTCUnits(1))/10);
+
+
+        assertFalse(auctionRebalanceModuleV1.canUnlockEarly(setToken));
+        placeBid(setToken, dai, IERC20(address(weth)), uint256(toDAIUnits(900)), uint256(toWETHUnits(45))/100, true);
+        placeBid(setToken, wbtc, IERC20(address(weth)), uint256(toWBTCUnits(1))/10, uint256(toWETHUnits(145))/100, false);
+        assertTrue(auctionRebalanceModuleV1.canUnlockEarly(setToken));
+
+        assertTrue(setToken.isLocked());
+        vm.expectEmit(true, true, true, true, address(auctionRebalanceModuleV1));
+        emit AuctionRebalanceModuleV1.LockedRebalanceEndedEarly(setToken);
+        auctionRebalanceModuleV1.unlock(setToken);
+        assertFalse(setToken.isLocked());
     }
 }

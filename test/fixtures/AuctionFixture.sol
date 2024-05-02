@@ -78,7 +78,7 @@ contract AuctionFixture is SystemFixture {
     function initDefaultRebalanceData() internal {
         wbtcPerWethDecimalFactor = uint256(toWETHUnits(1) / toWBTCUnits(1));
         defaultDaiPrice = 5 ether/ 10000;
-        defaultWbtcPrice = (145 * wbtcPerWethDecimalFactor) / 10;
+        defaultWbtcPrice = (145 ether * wbtcPerWethDecimalFactor) / 10;
         defaultWethPrice = 1 ether;
 
         defaultDaiData = constantPriceAdapter.getEncodedData(defaultDaiPrice);
@@ -181,5 +181,28 @@ contract AuctionFixture is SystemFixture {
         statuses[0] = true;
         auctionRebalanceModuleV1.setBidderStatus(setToken, bidders, statuses);
         vm.stopPrank();
+    }
+
+    function startRebalance(
+        ISetToken _setToken,
+        IERC20 _quoteAsset,
+        address[] memory _newComponents,
+        AuctionRebalanceModuleV1.AuctionExecutionParams[] memory _newComponentsAuctionParams,
+        AuctionRebalanceModuleV1.AuctionExecutionParams[] memory _oldComponentsAuctionParams,
+        bool _shouldLockSetToken,
+        uint256 _rebalanceDuration,
+        uint256 _initialPositionMultiplier
+    ) internal {
+        vm.prank(owner);
+        auctionRebalanceModuleV1.startRebalance(
+          _setToken,
+          _quoteAsset,
+          _newComponents,
+          _newComponentsAuctionParams,
+          _oldComponentsAuctionParams,
+          _shouldLockSetToken,
+          _rebalanceDuration,
+          _initialPositionMultiplier
+        );
     }
 }
