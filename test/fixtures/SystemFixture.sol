@@ -65,9 +65,9 @@ contract SystemFixture is Test {
 
     function setUpTokensAndOracles() internal {
         weth = new WETH9();
-        wbtc = new MockERC20(deployer, 10000 ether, "Wrapped BTC", "WBTC", 8);
-        usdc = new MockERC20(deployer, 10000 ether, "USDC", "USDC", 6);
-        dai = new MockERC20(deployer, 10000 ether, "DAI", "DAI", 18);
+        wbtc = new MockERC20(deployer, 10000000 ether, "Wrapped BTC", "WBTC", 8);
+        usdc = new MockERC20(deployer, 10000000 ether, "USDC", "USDC", 6);
+        dai = new MockERC20(deployer,  10000000 ether, "DAI", "DAI", 18);
 
         ETH_USD_Oracle = IOracle(address(new MockOracle(230 ether)));
         BTC_USD_Oracle = IOracle(address(new MockOracle(9000 ether)));
@@ -135,12 +135,22 @@ contract SystemFixture is Test {
         return ISetToken(setToken);
     }
 
+    function approveAndIssueSetToken(ISetToken _setToken, uint256 quantity, address to) internal {
+        ISetToken.Position[] memory positions = _setToken.getPositions();
+        for(uint256 i=0; i < positions.length; i ++) {
+            address component = positions[i].component;
+            MockERC20(component).approve(address(basicIssuanceModule), type(uint256).max);
+        }
+        vm.prank(owner);
+        basicIssuanceModule.issue(_setToken, quantity, to);
+    }
+
     function setUpBalance(address user) internal {
         deal(user, 5000 ether);
         vm.startPrank(deployer);
-        wbtc.transfer(user, 100 ether);
-        usdc.transfer(user, 100 ether);
-        dai.transfer(user, 100 ether);
+        wbtc.transfer(user, 10000 ether);
+        usdc.transfer(user, 10000 ether);
+        dai.transfer(user, 10000 ether);
         vm.stopPrank();
 
         vm.startPrank(user);
@@ -150,6 +160,14 @@ contract SystemFixture is Test {
         usdc.approve(address(basicIssuanceModule), 10000 ether);
         dai.approve(address(basicIssuanceModule), 10000 ether);
         vm.stopPrank();
+    }
+
+    function toDAIUnits(uint256 amount) internal pure returns(int256) {
+        return int256(amount * 10 ** 18);
+    }
+
+    function toUSDCUnits(uint256 amount) internal pure returns(int256) {
+        return int256(amount * 10 ** 6);
     }
 
     function toWBTCUnits(uint256 amount) internal pure returns(int256) {
