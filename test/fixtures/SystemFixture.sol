@@ -50,6 +50,8 @@ contract SystemFixture is Test {
     IOracle internal BTC_USD_Oracle;
     IOracle internal DAI_USD_Oracle;
 
+    uint256 ONE_YEAR_IN_SECONDS = 365.25 days;
+
     function setUpSystem() internal {
         vm.startPrank(deployer);
         controller = IController(address(new Controller(feeRecipient)));
