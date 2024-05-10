@@ -51,6 +51,7 @@ contract SystemFixture is Test {
     IOracle internal DAI_USD_Oracle;
 
     uint256 ONE_YEAR_IN_SECONDS = 365.25 days;
+    uint256 PRECISE_UNIT = 10 ** 18;
 
     function setUpSystem() internal {
         vm.startPrank(deployer);

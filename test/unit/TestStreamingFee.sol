@@ -6,6 +6,7 @@ import "forge-std/console.sol";
 import {StreamingFeeModule} from "contracts/modules/StreamingFeeModule.sol";
 import { IManagerIssuanceHook } from "contracts/interfaces/IManagerIssuanceHook.sol";
 import {Controller} from "contracts/protocol/Controller.sol";
+import {PreciseUnitMath} from "contracts/lib/PreciseUnitMath.sol";
 
 import "../fixtures/SystemFixture.sol";
 
@@ -66,6 +67,17 @@ contract TestStreamingFee is SystemFixture {
 
     function getStreamingFeeInflationAmount(uint256 inflationPercent, uint256 totalSupply) internal pure returns (uint256) {
         return (inflationPercent * totalSupply) / (1 ether - inflationPercent);
+    }
+
+    function getPostFeePositionUnits(int256[] memory preFeeUnits, uint256 inflationPercent) internal view returns(int256[] memory newUnits){
+        newUnits = new int256[](preFeeUnits.length);
+        for (uint256 i = 0; i < preFeeUnits.length; i++) {
+            if (preFeeUnits[i] >=0) {
+              newUnits[i] = (PreciseUnitMath.preciseMul(preFeeUnits[i], int256(PRECISE_UNIT- inflationPercent)));
+            } else {
+              newUnits[i] = int256(PreciseUnitMath.preciseMulCeil(uint256(preFeeUnits[i]), PRECISE_UNIT - inflationPercent));
+            }
+          }
     }
 
     function testAccrueFeeMintsCorrectAmount() external{
@@ -141,4 +153,19 @@ contract TestStreamingFee is SystemFixture {
         assertEq(newMultiplier, expectedNewMultiplier);
     }
 
+    function testUpdatesPositionCorrectly() external {
+        setupIndexToken();
+        issueTokenAndSetupFee();
+        (,,,uint256 previousAccrueTimestamp) = streamingFeeModule.feeStates(setToken);
+        ISetToken.Position[] memory oldPositions = setToken.getPositions();
+        uint256 recentAccrueTimestamp = block.timestamp + ONE_YEAR_IN_SECONDS;
+        uint256 expectedFeeInflation = getStreamingFee(previousAccrueTimestamp, recentAccrueTimestamp, 0);
+        vm.warp(recentAccrueTimestamp);
+        streamingFeeModule.accrueFee(setToken);
+        int256[] memory preFeeUnits = new int256[](1);
+        preFeeUnits[0] = oldPositions[0].unit;
+        int256[] memory expectedNewUnits = getPostFeePositionUnits(preFeeUnits, expectedFeeInflation);
+        ISetToken.Position[] memory newPositions = setToken.getPositions();
+        assertEq(newPositions[0].unit, expectedNewUnits[0]);
+    }
 }
