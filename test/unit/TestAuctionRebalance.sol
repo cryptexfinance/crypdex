@@ -20,6 +20,62 @@ contract TestAuctionRebalance is AuctionFixture {
         initAuctionModule();
     }
 
+    function testSetsAuctionParamsCorrectly() external {
+        startRebalance(
+          setToken,
+          defaultQuoteAsset,
+          defaultNewComponents,
+          defaultNewComponentsAuctionParams,
+          defaultOldComponentsAuctionParams,
+          defaultShouldLockSetToken,
+          defaultDuration,
+          uint256(defaultPositionMultiplier)
+        );
+        address[] memory aggregateComponents = setToken.getComponents();
+        for(uint256 i=0; i < defaultOldComponentsAuctionParams.length; i++) {
+            (
+                uint256 targetUnit,
+                string memory priceAdapterName,
+                bytes memory priceAdapterConfigData
+            ) = auctionRebalanceModuleV1.executionInfo(setToken, IERC20(aggregateComponents[i]));
+            assertEq(targetUnit, defaultOldComponentsAuctionParams[i].targetUnit);
+            assertEq(priceAdapterName, defaultOldComponentsAuctionParams[i].priceAdapterName);
+            assertEq(priceAdapterConfigData, defaultOldComponentsAuctionParams[i].priceAdapterConfigData);
+        }
+    }
+
+    function testAuctionRebalanceInfo() external {
+        uint256 executionTimeStamp = block.timestamp + 1000;
+        vm.warp(executionTimeStamp);
+        startRebalance(
+          setToken,
+          defaultQuoteAsset,
+          defaultNewComponents,
+          defaultNewComponentsAuctionParams,
+          defaultOldComponentsAuctionParams,
+          defaultShouldLockSetToken,
+          defaultDuration,
+          uint256(defaultPositionMultiplier)
+        );
+        (
+            IERC20 quoteAsset,
+            uint256 rebalanceStartTime,
+            uint256 rebalanceDuration,
+            uint256 positionMultiplier,
+            uint256 raiseTargetPercentage
+        ) = auctionRebalanceModuleV1.rebalanceInfo(setToken);
+
+        assertEq(address(quoteAsset), address(defaultQuoteAsset));
+        assertEq(rebalanceStartTime, executionTimeStamp);
+        assertEq(rebalanceDuration, defaultDuration);
+        assertEq(positionMultiplier, uint256(defaultPositionMultiplier));
+        assertEq(raiseTargetPercentage, 0);
+    }
+
+    function testEmitsCorrectEvent() external {
+
+    }
+
     function testNewComponentAdded() external {
         uint256 usdcPerWethDecimalFactor = uint256(toWETHUnits(1) / toUSDCUnits(1));
         uint256 usdcPerWethPrice = (5 ether * usdcPerWethDecimalFactor) / 10000;

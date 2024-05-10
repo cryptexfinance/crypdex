@@ -19,6 +19,8 @@ contract TestStreamingFee is SystemFixture {
 
     function setUp() external {
         setUpSystem();
+        setupIndexToken();
+        issueTokenAndSetupFee();
     }
 
     function setupIndexToken() internal {
@@ -81,8 +83,6 @@ contract TestStreamingFee is SystemFixture {
     }
 
     function testAccrueFeeMintsCorrectAmount() external{
-        setupIndexToken();
-        issueTokenAndSetupFee();
         uint256 previousAccrueTimestamp = block.timestamp;
         uint256 recentAccrueTimestamp = block.timestamp + ONE_YEAR_IN_SECONDS;
         uint256 totalSupply = setToken.totalSupply();
@@ -99,8 +99,6 @@ contract TestStreamingFee is SystemFixture {
     }
 
     function testAccrueFeeEmitsCorrectEvent() external{
-        setupIndexToken();
-        issueTokenAndSetupFee();
         uint256 previousAccrueTimestamp = block.timestamp;
         uint256 recentAccrueTimestamp = block.timestamp + ONE_YEAR_IN_SECONDS;
         uint256 totalSupply = setToken.totalSupply();
@@ -115,8 +113,6 @@ contract TestStreamingFee is SystemFixture {
     }
 
     function testAccrueFeeAdjustsTotalSupplyCorrectly() external {
-        setupIndexToken();
-        issueTokenAndSetupFee();
         uint256 previousAccrueTimestamp = block.timestamp;
         uint256 recentAccrueTimestamp = block.timestamp + ONE_YEAR_IN_SECONDS;
         uint256 previousTotalSupply = setToken.totalSupply();
@@ -130,8 +126,6 @@ contract TestStreamingFee is SystemFixture {
     }
 
     function testLastStreamingFeeTimestampSetCorrectly() external {
-        setupIndexToken();
-        issueTokenAndSetupFee();
         uint256 executionTimestamp = block.timestamp + 10000;
         vm.warp(executionTimestamp);
         streamingFeeModule.accrueFee(setToken);
@@ -140,8 +134,6 @@ contract TestStreamingFee is SystemFixture {
     }
 
     function testUpdatesPositionMultiplierCorrectly() external {
-        setupIndexToken();
-        issueTokenAndSetupFee();
         (,,,uint256 previousAccrueTimestamp) = streamingFeeModule.feeStates(setToken);
         uint256 recentAccrueTimestamp = block.timestamp + ONE_YEAR_IN_SECONDS;
         uint256 expectedFeeInflation = getStreamingFee(previousAccrueTimestamp, recentAccrueTimestamp, 0);
@@ -154,8 +146,6 @@ contract TestStreamingFee is SystemFixture {
     }
 
     function testUpdatesPositionCorrectly() external {
-        setupIndexToken();
-        issueTokenAndSetupFee();
         (,,,uint256 previousAccrueTimestamp) = streamingFeeModule.feeStates(setToken);
         ISetToken.Position[] memory oldPositions = setToken.getPositions();
         uint256 recentAccrueTimestamp = block.timestamp + ONE_YEAR_IN_SECONDS;
@@ -170,19 +160,15 @@ contract TestStreamingFee is SystemFixture {
     }
 
     function testProtocolFeeZeroMintsNoSets() external {
-        setupIndexToken();
-        issueTokenAndSetupFee();
         vm.prank(deployer);
         Controller(address(controller)).editFee(address(streamingFeeModule), 0, 0);
 
         vm.warp(block.timestamp + ONE_YEAR_IN_SECONDS);
         streamingFeeModule.accrueFee(setToken);
-        assertEq(setToken.balanceOf(protocolFeeRecepient), 0);
+        assertEq(setToken.balanceOf(protocolFeeRecipient), 0);
     }
 
     function testProtocolFeeZeroMintsCorrectly() external {
-        setupIndexToken();
-        issueTokenAndSetupFee();
         vm.prank(deployer);
         Controller(address(controller)).editFee(address(streamingFeeModule), 0, 0);
         (,,,uint256 previousAccrueTimestamp) = streamingFeeModule.feeStates(setToken);
@@ -197,8 +183,6 @@ contract TestStreamingFee is SystemFixture {
     }
 
     function testStreamingFeeZero() external {
-        setupIndexToken();
-        issueTokenAndSetupFee();
         vm.prank(owner);
         streamingFeeModule.updateStreamingFee(setToken, 0);
         vm.warp(block.timestamp + ONE_YEAR_IN_SECONDS);
@@ -207,8 +191,6 @@ contract TestStreamingFee is SystemFixture {
     }
 
     function testStreamingFeeZeroSetsLastTimeStamp() external {
-        setupIndexToken();
-        issueTokenAndSetupFee();
         vm.prank(owner);
         streamingFeeModule.updateStreamingFee(setToken, 0);
         uint256 txnTimestamp = block.timestamp + ONE_YEAR_IN_SECONDS;
@@ -220,8 +202,6 @@ contract TestStreamingFee is SystemFixture {
     }
 
     function testUpdateFeeRecipient()  external {
-        setupIndexToken();
-        issueTokenAndSetupFee();
         address newFeeRecipient = address(0x82);
         assertTrue(newFeeRecipient != streamingFeeRecepient);
         (address feeRecipient,,,) = streamingFeeModule.feeStates(setToken);
@@ -234,8 +214,6 @@ contract TestStreamingFee is SystemFixture {
     }
 
     function testUpdateStreamingFee() external {
-        setupIndexToken();
-        issueTokenAndSetupFee();
         uint256 newFee = 3 ether/100;
         vm.prank(owner);
         streamingFeeModule.updateStreamingFee(setToken, newFee);
