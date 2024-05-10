@@ -13,7 +13,7 @@ import "../fixtures/SystemFixture.sol";
 contract TestStreamingFee is SystemFixture {
     ISetToken setToken;
 
-    address feeRecepient = address(0x81);
+    address streamingFeeRecepient = address(0x81);
 
     uint256 protocolFee = 15 ether/100;
 
@@ -23,7 +23,7 @@ contract TestStreamingFee is SystemFixture {
 
     function setupIndexToken() internal {
         StreamingFeeModule.FeeState memory feeSettings = StreamingFeeModule.FeeState({
-          feeRecipient: feeRecepient,
+          feeRecipient: streamingFeeRecepient,
           maxStreamingFeePercentage: 1 ether/10,
           streamingFeePercentage: 2 ether/ 100,
           lastStreamingFeeTimestamp: 0
@@ -87,15 +87,15 @@ contract TestStreamingFee is SystemFixture {
         uint256 recentAccrueTimestamp = block.timestamp + ONE_YEAR_IN_SECONDS;
         uint256 totalSupply = setToken.totalSupply();
 
-        assertEq(setToken.balanceOf(feeRecepient), 0);
+        assertEq(setToken.balanceOf(streamingFeeRecepient), 0);
         vm.warp(recentAccrueTimestamp);
         streamingFeeModule.accrueFee(setToken);
-        assertTrue(setToken.balanceOf(feeRecepient) > 0);
+        assertTrue(setToken.balanceOf(streamingFeeRecepient) > 0);
 
         uint256 expectedFeeInflation = getStreamingFee(previousAccrueTimestamp, recentAccrueTimestamp, 0);
         uint256 feeInflation = getStreamingFeeInflationAmount(expectedFeeInflation, totalSupply);
         uint256 protocolFeeAmount = (feeInflation * protocolFee) / 1 ether;
-        assertEq(setToken.balanceOf(feeRecepient), feeInflation - protocolFeeAmount);
+        assertEq(setToken.balanceOf(streamingFeeRecepient), feeInflation - protocolFeeAmount);
     }
 
     function testAccrueFeeEmitsCorrectEvent() external{
@@ -167,5 +167,79 @@ contract TestStreamingFee is SystemFixture {
         int256[] memory expectedNewUnits = getPostFeePositionUnits(preFeeUnits, expectedFeeInflation);
         ISetToken.Position[] memory newPositions = setToken.getPositions();
         assertEq(newPositions[0].unit, expectedNewUnits[0]);
+    }
+
+    function testProtocolFeeZeroMintsNoSets() external {
+        setupIndexToken();
+        issueTokenAndSetupFee();
+        vm.prank(deployer);
+        Controller(address(controller)).editFee(address(streamingFeeModule), 0, 0);
+
+        vm.warp(block.timestamp + ONE_YEAR_IN_SECONDS);
+        streamingFeeModule.accrueFee(setToken);
+        assertEq(setToken.balanceOf(protocolFeeRecepient), 0);
+    }
+
+    function testProtocolFeeZeroMintsCorrectly() external {
+        setupIndexToken();
+        issueTokenAndSetupFee();
+        vm.prank(deployer);
+        Controller(address(controller)).editFee(address(streamingFeeModule), 0, 0);
+        (,,,uint256 previousAccrueTimestamp) = streamingFeeModule.feeStates(setToken);
+        uint256 recentAccrueTimestamp = block.timestamp + ONE_YEAR_IN_SECONDS;
+        uint256 previousTotalSupply = setToken.totalSupply();
+        uint256 expectedFeeInflation = getStreamingFee(previousAccrueTimestamp, recentAccrueTimestamp, 0);
+        uint256 feeInflation = getStreamingFeeInflationAmount(expectedFeeInflation, previousTotalSupply);
+
+        vm.warp(recentAccrueTimestamp);
+        streamingFeeModule.accrueFee(setToken);
+        assertEq(setToken.balanceOf(streamingFeeRecepient), feeInflation);
+    }
+
+    function testStreamingFeeZero() external {
+        setupIndexToken();
+        issueTokenAndSetupFee();
+        vm.prank(owner);
+        streamingFeeModule.updateStreamingFee(setToken, 0);
+        vm.warp(block.timestamp + ONE_YEAR_IN_SECONDS);
+        streamingFeeModule.accrueFee(setToken);
+        assertEq(setToken.balanceOf(streamingFeeRecepient), 0);
+    }
+
+    function testStreamingFeeZeroSetsLastTimeStamp() external {
+        setupIndexToken();
+        issueTokenAndSetupFee();
+        vm.prank(owner);
+        streamingFeeModule.updateStreamingFee(setToken, 0);
+        uint256 txnTimestamp = block.timestamp + ONE_YEAR_IN_SECONDS;
+        vm.warp(txnTimestamp);
+        streamingFeeModule.accrueFee(setToken);
+
+        (,,,uint256 lastStreamingFeeTimestamp) = streamingFeeModule.feeStates(setToken);
+        assertEq(lastStreamingFeeTimestamp, txnTimestamp);
+    }
+
+    function testUpdateFeeRecipient()  external {
+        setupIndexToken();
+        issueTokenAndSetupFee();
+        address newFeeRecipient = address(0x82);
+        assertTrue(newFeeRecipient != streamingFeeRecepient);
+        (address feeRecipient,,,) = streamingFeeModule.feeStates(setToken);
+        assertEq(feeRecipient, streamingFeeRecepient);
+
+        vm.prank(owner);
+        streamingFeeModule.updateFeeRecipient(setToken, newFeeRecipient);
+        (feeRecipient,,,) = streamingFeeModule.feeStates(setToken);
+        assertEq(feeRecipient, newFeeRecipient);
+    }
+
+    function testUpdateStreamingFee() external {
+        setupIndexToken();
+        issueTokenAndSetupFee();
+        uint256 newFee = 3 ether/100;
+        vm.prank(owner);
+        streamingFeeModule.updateStreamingFee(setToken, newFee);
+        (,,uint256 streamingFeePercentage,) = streamingFeeModule.feeStates(setToken);
+        assertEq(streamingFeePercentage, newFee);
     }
 }

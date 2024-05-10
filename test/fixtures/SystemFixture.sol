@@ -28,7 +28,7 @@ import {MockOracle} from "../mocks/MockOracle.sol";
 contract SystemFixture is Test {
     address internal deployer = address(0x51);
     address internal owner = address(0x52);
-    address internal feeRecipient = address(0x53);
+    address internal protocolFeeRecepient = address(0x53);
     address internal user1 = address(0x61);
     address internal randomAddress = address(0x8F);
 
@@ -55,7 +55,7 @@ contract SystemFixture is Test {
 
     function setUpSystem() internal {
         vm.startPrank(deployer);
-        controller = IController(address(new Controller(feeRecipient)));
+        controller = IController(address(new Controller(protocolFeeRecepient)));
         basicIssuanceModule = new BasicIssuanceModule(controller);
         integrationRegistry = new IntegrationRegistry(controller);
         setTokenCreator = new SetTokenCreator(controller);
