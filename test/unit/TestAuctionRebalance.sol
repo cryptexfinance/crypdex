@@ -290,6 +290,73 @@ contract TestAuctionRebalance is AuctionFixture {
         assertEq(bidInfo.setTotalSupply, 1 ether);
     }
 
+    function testSetRaiseTargetPercentage() external {
+        uint256 raiseTargetPercentage = 1 ether/1000;
+        vm.prank(owner);
+        vm.expectEmit(true, true, true, true, address(auctionRebalanceModuleV1));
+        emit AuctionRebalanceModuleV1.RaiseTargetPercentageUpdated(setToken, raiseTargetPercentage);
+        auctionRebalanceModuleV1.setRaiseTargetPercentage(setToken, raiseTargetPercentage);
+        (,,,,uint256 newRaiseTargetPercentage) = auctionRebalanceModuleV1.rebalanceInfo(setToken);
+        assertEq(newRaiseTargetPercentage, raiseTargetPercentage);
+    }
+
+    function testRaiseAssetTargets() external {
+        AuctionRebalanceModuleV1.AuctionExecutionParams[] memory oldComponentsAuctionParams = new AuctionRebalanceModuleV1.AuctionExecutionParams[](3);
+        oldComponentsAuctionParams[0] = AuctionRebalanceModuleV1.AuctionExecutionParams({
+          targetUnit: uint256(toDAIUnits(9100)),
+          priceAdapterName: CONSTANT_PRICE_ADAPTER,
+          priceAdapterConfigData: defaultDaiData
+        });
+        oldComponentsAuctionParams[1] = AuctionRebalanceModuleV1.AuctionExecutionParams({
+          targetUnit: uint256(toWBTCUnits(54)/int256(100)),
+          priceAdapterName: CONSTANT_PRICE_ADAPTER,
+          priceAdapterConfigData: defaultWbtcData
+        });
+        oldComponentsAuctionParams[2] = AuctionRebalanceModuleV1.AuctionExecutionParams({
+          targetUnit: uint256(toWETHUnits(4)),
+          priceAdapterName: CONSTANT_PRICE_ADAPTER,
+          priceAdapterConfigData: defaultWethData
+        });
+        startRebalance(
+          setToken,
+          defaultQuoteAsset,
+          defaultNewComponents,
+          defaultNewComponentsAuctionParams,
+          oldComponentsAuctionParams,
+          defaultShouldLockSetToken,
+          defaultDuration,
+          uint256(defaultPositionMultiplier)
+        );
+        uint256 raiseTargetPercentage = 25 ether/10000;
+        vm.prank(owner);
+        auctionRebalanceModuleV1.setRaiseTargetPercentage(setToken, raiseTargetPercentage);
+        fundBidder(address(weth), uint256(toWETHUnits(45))/100);
+        fundBidder(address(wbtc), uint256(toWBTCUnits(4))/100);
+        placeBid(setToken, dai, IERC20(address(weth)), uint256(toDAIUnits(900)), uint256(toWETHUnits(45))/100, true);
+        placeBid(setToken, wbtc, IERC20(address(weth)), uint256(toWBTCUnits(4))/100, uint256(toWETHUnits(58))/100, false);
+
+        (,,,uint256 prePositionMultiplier,) = auctionRebalanceModuleV1.rebalanceInfo(setToken);
+        vm.expectRevert("Target already met");
+        auctionRebalanceModuleV1.getAuctionSizeAndDirection(setToken, IERC20(address(dai)));
+        vm.expectRevert("Target already met");
+        auctionRebalanceModuleV1.getAuctionSizeAndDirection(setToken, IERC20(address(wbtc)));
+        uint256 expectedPositionMultiplier = PreciseUnitMath.preciseDiv(prePositionMultiplier, PRECISE_UNIT + raiseTargetPercentage);
+
+        vm.prank(bidder);
+        vm.expectEmit(true, true, true, true, address(auctionRebalanceModuleV1));
+        emit AuctionRebalanceModuleV1.AssetTargetsRaised(setToken, expectedPositionMultiplier);
+        auctionRebalanceModuleV1.raiseAssetTargets(setToken);
+
+        (,,,uint256 positionMultiplier,) = auctionRebalanceModuleV1.rebalanceInfo(setToken);
+        assertEq(positionMultiplier, expectedPositionMultiplier);
+        (bool daiDirection, uint256 daiSize) = auctionRebalanceModuleV1.getAuctionSizeAndDirection(setToken, IERC20(address(dai)));
+        (bool wbtcDirection, uint256 wbtcSize) = auctionRebalanceModuleV1.getAuctionSizeAndDirection(setToken, IERC20(address(wbtc)));
+        assertGt(daiSize, 225 ether/100);
+        assertFalse(daiDirection);
+        assertGt(wbtcSize, uint256(toWBTCUnits(1))/10000);
+        assertFalse(wbtcDirection);
+    }
+
     function testCannotRaiseAssetTargets() external {
         AuctionRebalanceModuleV1.AuctionExecutionParams[] memory oldComponentsAuctionParams = new AuctionRebalanceModuleV1.AuctionExecutionParams[](3);
         oldComponentsAuctionParams[0] = AuctionRebalanceModuleV1.AuctionExecutionParams({
@@ -536,5 +603,69 @@ contract TestAuctionRebalance is AuctionFixture {
         auctionRebalanceModuleV1.unlock(setToken);
         assertFalse(setToken.isLocked());
     }
+
+    function testUnlockWhenDurationElapsed() external {
+         startRebalance(
+          setToken,
+          defaultQuoteAsset,
+          defaultNewComponents,
+          defaultNewComponentsAuctionParams,
+          defaultOldComponentsAuctionParams,
+          true,
+          defaultDuration,
+          uint256(defaultPositionMultiplier)
+        );
+        vm.prank(owner);
+        auctionRebalanceModuleV1.setRaiseTargetPercentage(setToken, 1 ether/1000);
+
+        (,,,,uint256 raiseTargetPercentageBefore) = auctionRebalanceModuleV1.rebalanceInfo(setToken);
+        assertTrue(raiseTargetPercentageBefore > 0);
+        assertTrue(setToken.isLocked());
+        vm.warp(defaultDuration + 1);
+        auctionRebalanceModuleV1.unlock(setToken);
+        assertFalse(setToken.isLocked());
+        (,,,,uint256 raiseTargetPercentageAfter) = auctionRebalanceModuleV1.rebalanceInfo(setToken);
+        assertEq(raiseTargetPercentageAfter, 0);
+    }
+
+    function testProtocolFeeCharged() external {
+        startRebalance(
+          setToken,
+          defaultQuoteAsset,
+          defaultNewComponents,
+          defaultNewComponentsAuctionParams,
+          defaultOldComponentsAuctionParams,
+          defaultShouldLockSetToken,
+          defaultDuration,
+          uint256(defaultPositionMultiplier)
+        );
+        uint256 componentAmount = uint256(toWBTCUnits(1))/10;
+        uint256 quoteAssetLimit = uint256(toWETHUnits(145))/100;
+        uint256 feePercentage = 5 ether/1000;
+        fundBidder(address(wbtc), quoteAssetLimit);
+        vm.prank(deployer);
+        Controller(address(controller)).addFee(
+          address(auctionRebalanceModuleV1),
+          0, // Fee type on bid function denoted as 0
+          feePercentage // Set fee to 5 bps
+        );
+        uint256 preBidderWbtc = wbtc.balanceOf(bidder);
+        uint256 preBidderWeth = weth.balanceOf(bidder);
+        uint256 preSetTokenWbtc = wbtc.balanceOf(address(setToken));
+        uint256 preSetTokenWeth = weth.balanceOf(address(setToken));
+        placeBid(setToken, wbtc, IERC20(address(weth)), componentAmount, quoteAssetLimit, false);
+
+        uint256 protocolFee = (componentAmount * feePercentage) / 1 ether;
+
+        uint256 postBidderWbtc = wbtc.balanceOf(bidder);
+        uint256 postBidderWeth = weth.balanceOf(bidder);
+        uint256 postSetTokenWbtc = wbtc.balanceOf(address(setToken));
+        uint256 postSetTokenWeth = weth.balanceOf(address(setToken));
+        assertEq(postBidderWbtc, preBidderWbtc - componentAmount);
+        assertEq(postBidderWeth, preBidderWeth + quoteAssetLimit);
+        assertEq(postSetTokenWbtc, preSetTokenWbtc + componentAmount - protocolFee);
+        assertEq(postSetTokenWeth, preSetTokenWeth - quoteAssetLimit);
+    }
+
 
 }
