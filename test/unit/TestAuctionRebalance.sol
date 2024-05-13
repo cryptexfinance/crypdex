@@ -290,6 +290,193 @@ contract TestAuctionRebalance is AuctionFixture {
         assertEq(bidInfo.setTotalSupply, 1 ether);
     }
 
+    function testCannotRaiseAssetTargets() external {
+        AuctionRebalanceModuleV1.AuctionExecutionParams[] memory oldComponentsAuctionParams = new AuctionRebalanceModuleV1.AuctionExecutionParams[](3);
+        oldComponentsAuctionParams[0] = AuctionRebalanceModuleV1.AuctionExecutionParams({
+          targetUnit: uint256(toDAIUnits(9100)),
+          priceAdapterName: CONSTANT_PRICE_ADAPTER,
+          priceAdapterConfigData: defaultDaiData
+        });
+        oldComponentsAuctionParams[1] = AuctionRebalanceModuleV1.AuctionExecutionParams({
+          targetUnit: uint256(toWBTCUnits(54)/int256(100)),
+          priceAdapterName: CONSTANT_PRICE_ADAPTER,
+          priceAdapterConfigData: defaultWbtcData
+        });
+        oldComponentsAuctionParams[2] = AuctionRebalanceModuleV1.AuctionExecutionParams({
+          targetUnit: uint256(toWETHUnits(4)),
+          priceAdapterName: CONSTANT_PRICE_ADAPTER,
+          priceAdapterConfigData: defaultWethData
+        });
+        startRebalance(
+          setToken,
+          defaultQuoteAsset,
+          defaultNewComponents,
+          defaultNewComponentsAuctionParams,
+          oldComponentsAuctionParams,
+          defaultShouldLockSetToken,
+          defaultDuration,
+          uint256(defaultPositionMultiplier)
+        );
+        vm.prank(owner);
+        auctionRebalanceModuleV1.setRaiseTargetPercentage(setToken, 25 ether/1000);
+        fundBidder(address(weth), 45 ether/100);
+        placeBid(setToken, dai, IERC20(address(weth)), uint256(toDAIUnits(900)), uint256(toWETHUnits(45) / 100), true);
+        assertFalse(auctionRebalanceModuleV1.canRaiseAssetTargets(setToken));
+    }
+
+    function testAllTargetsNotMet() external {
+        startRebalance(
+          setToken,
+          defaultQuoteAsset,
+          defaultNewComponents,
+          defaultNewComponentsAuctionParams,
+          defaultOldComponentsAuctionParams,
+          true,
+          defaultDuration,
+          uint256(defaultPositionMultiplier)
+        );
+        fundBidder(address(weth), uint256(toWETHUnits(45))/100);
+        placeBid(setToken, dai, IERC20(address(weth)), uint256(toDAIUnits(900)), uint256(toWETHUnits(45))/100, true);
+        assertFalse(auctionRebalanceModuleV1.allTargetsMet(setToken));
+    }
+
+    function testAllTargetsMet() external {
+        startRebalance(
+          setToken,
+          defaultQuoteAsset,
+          defaultNewComponents,
+          defaultNewComponentsAuctionParams,
+          defaultOldComponentsAuctionParams,
+          true,
+          defaultDuration,
+          uint256(defaultPositionMultiplier)
+        );
+        fundBidder(address(weth), uint256(toWETHUnits(45))/100);
+        fundBidder(address(wbtc), uint256(toWBTCUnits(1))/10);
+        placeBid(setToken, dai, IERC20(address(weth)), uint256(toDAIUnits(900)), uint256(toWETHUnits(45))/100, true);
+        placeBid(setToken, wbtc, IERC20(address(weth)), uint256(toWBTCUnits(1))/10, uint256(toWETHUnits(145))/100, false);
+        assertTrue(auctionRebalanceModuleV1.allTargetsMet(setToken));
+    }
+
+    function testIsQuoteAssetExcessOrAtTarget() external {
+        startRebalance(
+          setToken,
+          defaultQuoteAsset,
+          defaultNewComponents,
+          defaultNewComponentsAuctionParams,
+          defaultOldComponentsAuctionParams,
+          true,
+          defaultDuration,
+          uint256(defaultPositionMultiplier)
+        );
+        assertTrue(auctionRebalanceModuleV1.isQuoteAssetExcessOrAtTarget(setToken));
+    }
+
+    function testIsQuoteAssetExcessOrAtTargetWhenQuoteAtTarget() external {
+        startRebalance(
+          setToken,
+          defaultQuoteAsset,
+          defaultNewComponents,
+          defaultNewComponentsAuctionParams,
+          defaultOldComponentsAuctionParams,
+          true,
+          defaultDuration,
+          uint256(defaultPositionMultiplier)
+        );
+        fundBidder(address(weth), uint256(toWETHUnits(45))/100);
+        fundBidder(address(wbtc), uint256(toWBTCUnits(1))/10);
+        placeBid(setToken, dai, IERC20(address(weth)), uint256(toDAIUnits(900)), uint256(toWETHUnits(45))/100, true);
+        placeBid(setToken, wbtc, IERC20(address(weth)), uint256(toWBTCUnits(1))/10, uint256(toWETHUnits(145))/100, false);
+        assertTrue(auctionRebalanceModuleV1.isQuoteAssetExcessOrAtTarget(setToken));
+    }
+
+    function testIsQuoteAssetExcessOrAtTargetWhenQuoteBelowTarget() external {
+        startRebalance(
+          setToken,
+          defaultQuoteAsset,
+          defaultNewComponents,
+          defaultNewComponentsAuctionParams,
+          defaultOldComponentsAuctionParams,
+          true,
+          defaultDuration,
+          uint256(defaultPositionMultiplier)
+        );
+        fundBidder(address(wbtc), uint256(toWBTCUnits(1))/10);
+        placeBid(setToken, wbtc, IERC20(address(weth)), uint256(toWBTCUnits(1))/10, uint256(toWETHUnits(145))/100, false);
+        assertFalse(auctionRebalanceModuleV1.isQuoteAssetExcessOrAtTarget(setToken));
+    }
+
+    function testIsAllowedBidder() external {
+        address newBidder = address(0x72);
+        address[] memory bidders = new address[](1);
+        bool[] memory bidderStatuses = new bool[](1);
+        bidders[0] = newBidder;
+        bidderStatuses[0] = true;
+        vm.prank(owner);
+        auctionRebalanceModuleV1.setBidderStatus(setToken, bidders, bidderStatuses);
+        assertTrue(auctionRebalanceModuleV1.isAllowedBidder(setToken, newBidder));
+    }
+
+    function testNotAllowedBidder() external {
+        address newBidder = address(0x72);
+        address[] memory bidders = new address[](1);
+        bool[] memory bidderStatuses = new bool[](1);
+        bidders[0] = newBidder;
+        bidderStatuses[0] = false;
+        vm.prank(owner);
+        auctionRebalanceModuleV1.setBidderStatus(setToken, bidders, bidderStatuses);
+        assertFalse(auctionRebalanceModuleV1.isAllowedBidder(setToken, newBidder));
+    }
+
+    function testGetAllowedBidders() external {
+        address[] memory bidders = new address[](1);
+        bidders[0] = bidder;
+        assertEq(auctionRebalanceModuleV1.getAllowedBidders(setToken), bidders);
+    }
+
+    function testSetBidderStatus() external {
+        address bidder2 = address(0x72);
+        address bidder3 = address(0x73);
+        address[] memory bidders = new address[](3);
+        bool[] memory bidderStatuses = new bool[](3);
+        bidders[0] = bidder;
+        bidders[1] = bidder2;
+        bidders[2] = bidder3;
+        bidderStatuses[0] = true;
+        bidderStatuses[1] = true;
+        bidderStatuses[2] = true;
+        vm.prank(owner);
+        auctionRebalanceModuleV1.setBidderStatus(setToken, bidders, bidderStatuses);
+
+        assertTrue(auctionRebalanceModuleV1.isAllowedBidder(setToken, bidder));
+        assertTrue(auctionRebalanceModuleV1.isAllowedBidder(setToken, bidder2));
+        assertTrue(auctionRebalanceModuleV1.isAllowedBidder(setToken, bidder3));
+    }
+
+    function testSetBidderStatusEvent() external {
+        address newBidder = address(0x72);
+        address[] memory bidders = new address[](1);
+        bool[] memory bidderStatuses = new bool[](1);
+        bidders[0] = newBidder;
+        bidderStatuses[0] = true;
+        vm.prank(owner);
+        vm.expectEmit(true, true, true, true, address(auctionRebalanceModuleV1));
+        emit AuctionRebalanceModuleV1.BidderStatusUpdated(
+            setToken,
+            newBidder,
+            true
+        );
+        auctionRebalanceModuleV1.setBidderStatus(setToken, bidders, bidderStatuses);
+    }
+
+    function testSetAnyoneBid() external {
+        vm.prank(owner);
+        vm.expectEmit(true, true, true, true, address(auctionRebalanceModuleV1));
+        emit AuctionRebalanceModuleV1.AnyoneBidUpdated(setToken, true);
+        auctionRebalanceModuleV1.setAnyoneBid(setToken, true);
+        assertTrue(auctionRebalanceModuleV1.permissionInfo(setToken));
+    }
+
     function testNewComponentAdded() external {
         uint256 usdcPerWethDecimalFactor = uint256(toWETHUnits(1) / toUSDCUnits(1));
         uint256 usdcPerWethPrice = (5 ether * usdcPerWethDecimalFactor) / 10000;
@@ -349,4 +536,5 @@ contract TestAuctionRebalance is AuctionFixture {
         auctionRebalanceModuleV1.unlock(setToken);
         assertFalse(setToken.isLocked());
     }
+
 }
