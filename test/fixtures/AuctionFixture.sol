@@ -45,6 +45,7 @@ contract AuctionFixture is SystemFixture {
     bool internal defaultShouldLockSetToken;
     uint256 internal defaultDuration;
     ISetToken internal setToken;
+    ISetToken internal setTokenWithoutQuote;
     int256 internal defaultPositionMultiplier;
 
     uint256 constant internal ONE_DAY_IN_SECONDS = 24 * 60 * 60;
@@ -172,15 +173,42 @@ contract AuctionFixture is SystemFixture {
         approveAndIssueSetToken(setToken, 1 ether, owner);
     }
 
-    function initAuctionModule() internal {
+    function initAuctionModule(ISetToken _setToken) internal {
         vm.startPrank(owner);
-        auctionRebalanceModuleV1.initialize(setToken);
+        auctionRebalanceModuleV1.initialize(_setToken);
         address[] memory bidders = new address[](1);
         bool[] memory statuses = new bool[](1);
         bidders[0] = bidder;
         statuses[0] = true;
-        auctionRebalanceModuleV1.setBidderStatus(setToken, bidders, statuses);
+        auctionRebalanceModuleV1.setBidderStatus(_setToken, bidders, statuses);
         vm.stopPrank();
+    }
+
+    function setupIndexTokenWithoutQuoteAsset() internal {
+        StreamingFeeModule.FeeState memory feeSettings = StreamingFeeModule.FeeState({
+          feeRecipient: owner,
+          maxStreamingFeePercentage: 1 ether/10,
+          streamingFeePercentage: 1 ether/ 100,
+          lastStreamingFeeTimestamp: 0
+        });
+        address[] memory _components = new address[](2);
+        int256[] memory _units = new int256[](2);
+        address[] memory _modules = new address[](3);
+        _components[0] = address(dai);
+        _components[1] = address(wbtc);
+        _units[0] = toDAIUnits(10000);
+        _units[1] = toWBTCUnits(5)/10;
+        _modules[0] = address(basicIssuanceModule);
+        _modules[1] = address(streamingFeeModule);
+        _modules[2] = address(auctionRebalanceModuleV1);
+        vm.startPrank(owner);
+        setTokenWithoutQuote = createSetToken(_components, _units, _modules);
+        streamingFeeModule.initialize(setTokenWithoutQuote, feeSettings);
+        basicIssuanceModule.initialize(setTokenWithoutQuote, IManagerIssuanceHook(address(0)));
+        setUpBalance(owner);
+        vm.stopPrank();
+        approveAndIssueSetToken(setTokenWithoutQuote, 1 ether, owner);
+        initAuctionModule(setTokenWithoutQuote);
     }
 
     function startRebalance(

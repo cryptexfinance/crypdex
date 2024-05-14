@@ -21,7 +21,7 @@ contract TestAuctionRebalance is AuctionFixture {
         setUpAuctionContracts();
         setupIndexToken();
         initDefaultRebalanceData();
-        initAuctionModule();
+        initAuctionModule(setToken);
     }
 
     function testSetsAuctionParamsCorrectly() external {
@@ -891,6 +891,59 @@ contract TestAuctionRebalance is AuctionFixture {
         assertEq(postBidderWeth, preBidderWeth - quoteAssetLimit);
         assertEq(postSetTokenDai, preSetTokenDai - componentAmount);
         assertEq(postSetTokenWeth, preSetTokenWeth + quoteAssetLimit);
+    }
+
+    function testIndexWithoutQuoteAsset() external {
+        setupIndexTokenWithoutQuoteAsset();
+        AuctionRebalanceModuleV1.AuctionExecutionParams[] memory oldComponentsAuctionParams = new AuctionRebalanceModuleV1.AuctionExecutionParams[](2);
+        oldComponentsAuctionParams[0] = AuctionRebalanceModuleV1.AuctionExecutionParams({
+          targetUnit: uint256(toDAIUnits(9100)),
+          priceAdapterName: CONSTANT_PRICE_ADAPTER,
+          priceAdapterConfigData: defaultDaiData
+        });
+        oldComponentsAuctionParams[1] = AuctionRebalanceModuleV1.AuctionExecutionParams({
+          targetUnit: uint256(toWBTCUnits(6)/int256(10)),
+          priceAdapterName: CONSTANT_PRICE_ADAPTER,
+          priceAdapterConfigData: defaultWbtcData
+        });
+        startRebalance(
+          setTokenWithoutQuote,
+          defaultQuoteAsset,
+          defaultNewComponents,
+          defaultNewComponentsAuctionParams,
+          oldComponentsAuctionParams,
+          defaultShouldLockSetToken,
+          defaultDuration,
+          uint256(defaultPositionMultiplier)
+        );
+        uint256 componentAmount = 290 ether;
+        uint256 acquiredCapital = 0.145 ether;
+        fundBidder(address(weth), acquiredCapital);
+        fundBidder(address(wbtc), uint256(toWBTCUnits(1))/100);
+        uint256 preBidderDai = dai.balanceOf(bidder);
+        uint256 preBidderWeth = weth.balanceOf(bidder);
+        uint256 preBidderWbtc = wbtc.balanceOf(bidder);
+        uint256 preSetTokenDai = dai.balanceOf(address(setTokenWithoutQuote));
+        uint256 preSetTokenWeth = weth.balanceOf(address(setTokenWithoutQuote));
+        uint256 preSetTokenWbtc = wbtc.balanceOf(address(setTokenWithoutQuote));
+
+        placeBid(setTokenWithoutQuote, dai, IERC20(address(weth)), 290 ether, acquiredCapital, true);
+        placeBid(setTokenWithoutQuote, wbtc, IERC20(address(weth)), uint256(toWBTCUnits(1))/100, acquiredCapital, false);
+
+        uint256 postBidderDai = dai.balanceOf(bidder);
+        uint256 postBidderWeth = weth.balanceOf(bidder);
+        uint256 postBidderWbtc = wbtc.balanceOf(bidder);
+        uint256 postSetTokenDai = dai.balanceOf(address(setTokenWithoutQuote));
+        uint256 postSetTokenWeth = weth.balanceOf(address(setTokenWithoutQuote));
+        uint256 postSetTokenWbtc = wbtc.balanceOf(address(setTokenWithoutQuote));
+
+        assertEq(postBidderDai, preBidderDai + componentAmount);
+        assertEq(postBidderWeth, preBidderWeth);
+        assertEq(postBidderWbtc, preBidderWbtc - uint256(toWBTCUnits(1))/100);
+        assertEq(postSetTokenDai, preSetTokenDai - componentAmount);
+        assertEq(postSetTokenWeth, preSetTokenWeth);
+        assertEq(postSetTokenWeth, 0);
+        assertEq(postSetTokenWbtc,  preSetTokenWbtc + uint256(toWBTCUnits(1))/100);
     }
 
 }
