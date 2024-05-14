@@ -667,5 +667,230 @@ contract TestAuctionRebalance is AuctionFixture {
         assertEq(postSetTokenWeth, preSetTokenWeth - quoteAssetLimit);
     }
 
+    function testBidWithBoundedStepwiseLinearPriceAdapter() external {
+        bytes memory daiLinearCurveParams = boundedStepwiseLinearPriceAdapter.getEncodedData(
+            55 ether/100000,
+            1 ether/100000,
+            1 hours,
+            true,
+            55 ether/100000,
+            49 ether/100000
+          );
+        uint256 wbtcPerWethDecimalFactor = 1 ether/uint256(toWBTCUnits(1));
+        bytes memory wbtcLinearCurveParams = boundedStepwiseLinearPriceAdapter.getEncodedData(
+            14 ether * wbtcPerWethDecimalFactor,
+            (1 ether/10) * wbtcPerWethDecimalFactor,
+            1 hours,
+            false,
+            15 ether * wbtcPerWethDecimalFactor,
+            14 ether * wbtcPerWethDecimalFactor
+        );
+        bytes memory wethLinearCurveParams = boundedStepwiseLinearPriceAdapter.getEncodedData(
+            1 ether,
+            0,
+            1 hours,
+            false,
+            1 ether,
+            1 ether
+        );
+        AuctionRebalanceModuleV1.AuctionExecutionParams[] memory oldComponentsAuctionParams = new AuctionRebalanceModuleV1.AuctionExecutionParams[](3);
+        oldComponentsAuctionParams[0] = AuctionRebalanceModuleV1.AuctionExecutionParams({
+          targetUnit: uint256(toDAIUnits(9100)),
+          priceAdapterName: BOUNDED_STEPWISE_LINEAR_PRICE_ADAPTER,
+          priceAdapterConfigData: daiLinearCurveParams
+        });
+        oldComponentsAuctionParams[1] = AuctionRebalanceModuleV1.AuctionExecutionParams({
+          targetUnit: uint256(toWBTCUnits(6)/int256(10)),
+          priceAdapterName: BOUNDED_STEPWISE_LINEAR_PRICE_ADAPTER,
+          priceAdapterConfigData: wbtcLinearCurveParams
+        });
+        oldComponentsAuctionParams[2] = AuctionRebalanceModuleV1.AuctionExecutionParams({
+          targetUnit: uint256(toWETHUnits(4)),
+          priceAdapterName: CONSTANT_PRICE_ADAPTER,
+          priceAdapterConfigData: wethLinearCurveParams
+        });
+        startRebalance(
+          setToken,
+          defaultQuoteAsset,
+          defaultNewComponents,
+          defaultNewComponentsAuctionParams,
+          oldComponentsAuctionParams,
+          defaultShouldLockSetToken,
+          defaultDuration,
+          uint256(defaultPositionMultiplier)
+        );
+        uint256 componentAmount = uint256(toDAIUnits(900));
+        uint256 quoteAssetLimit = uint256(toWETHUnits(45))/100;
+        fundBidder(address(weth), quoteAssetLimit);
+        uint256 preBidderDai = dai.balanceOf(bidder);
+        uint256 preBidderWeth = weth.balanceOf(bidder);
+        uint256 preSetTokenDai = dai.balanceOf(address(setToken));
+        uint256 preSetTokenWeth = weth.balanceOf(address(setToken));
+
+        vm.warp(block.timestamp + 5 hours);
+        placeBid(setToken, dai, IERC20(address(weth)), componentAmount, quoteAssetLimit, true);
+
+        uint256 postBidderDai = dai.balanceOf(bidder);
+        uint256 postBidderWeth = weth.balanceOf(bidder);
+        uint256 postSetTokenDai = dai.balanceOf(address(setToken));
+        uint256 postSetTokenWeth = weth.balanceOf(address(setToken));
+
+        assertEq(postBidderDai, preBidderDai + componentAmount);
+        assertEq(postBidderWeth, preBidderWeth - quoteAssetLimit);
+        assertEq(postSetTokenDai, preSetTokenDai - componentAmount);
+        assertEq(postSetTokenWeth, preSetTokenWeth + quoteAssetLimit);
+    }
+
+    function testBidWithBoundedStepwiseExponentialPriceAdapter() external {
+        bytes memory daiExponentialCurveParams = boundedStepwiseExponentialPriceAdapter.getEncodedData(
+            5 ether/10000,
+            1 ether,
+            1 ether/100000,
+            1 hours,
+            true,
+            55 ether/100000,
+            49 ether/100000
+          );
+        uint256 wbtcPerWethDecimalFactor = 1 ether/uint256(toWBTCUnits(1));
+        bytes memory wbtcExponentialCurveParams = boundedStepwiseExponentialPriceAdapter.getEncodedData(
+            14.5 ether * wbtcPerWethDecimalFactor,
+            1 ether,
+            (1 ether/10) * wbtcPerWethDecimalFactor,
+            1 hours,
+            false,
+            15 ether * wbtcPerWethDecimalFactor,
+            14 ether * wbtcPerWethDecimalFactor
+        );
+        bytes memory wethExponentialCurveParams = boundedStepwiseExponentialPriceAdapter.getEncodedData(
+            1 ether,
+            1 ether,
+            1 ether/10,
+            1 hours,
+            false,
+            1 ether,
+            1 ether
+        );
+        AuctionRebalanceModuleV1.AuctionExecutionParams[] memory oldComponentsAuctionParams = new AuctionRebalanceModuleV1.AuctionExecutionParams[](3);
+        oldComponentsAuctionParams[0] = AuctionRebalanceModuleV1.AuctionExecutionParams({
+          targetUnit: uint256(toDAIUnits(9100)),
+          priceAdapterName: BOUNDED_STEPWISE_EXPONENTIAL_PRICE_ADAPTER,
+          priceAdapterConfigData: daiExponentialCurveParams
+        });
+        oldComponentsAuctionParams[1] = AuctionRebalanceModuleV1.AuctionExecutionParams({
+          targetUnit: uint256(toWBTCUnits(6)/int256(10)),
+          priceAdapterName: BOUNDED_STEPWISE_EXPONENTIAL_PRICE_ADAPTER,
+          priceAdapterConfigData: wbtcExponentialCurveParams
+        });
+        oldComponentsAuctionParams[2] = AuctionRebalanceModuleV1.AuctionExecutionParams({
+          targetUnit: uint256(toWETHUnits(4)),
+          priceAdapterName: BOUNDED_STEPWISE_EXPONENTIAL_PRICE_ADAPTER,
+          priceAdapterConfigData: wethExponentialCurveParams
+        });
+        startRebalance(
+          setToken,
+          defaultQuoteAsset,
+          defaultNewComponents,
+          defaultNewComponentsAuctionParams,
+          oldComponentsAuctionParams,
+          defaultShouldLockSetToken,
+          defaultDuration,
+          uint256(defaultPositionMultiplier)
+        );
+        uint256 componentAmount = uint256(toDAIUnits(900));
+        uint256 quoteAssetLimit = uint256(toWETHUnits(45))/100;
+        fundBidder(address(weth), quoteAssetLimit);
+        uint256 preBidderDai = dai.balanceOf(bidder);
+        uint256 preBidderWeth = weth.balanceOf(bidder);
+        uint256 preSetTokenDai = dai.balanceOf(address(setToken));
+        uint256 preSetTokenWeth = weth.balanceOf(address(setToken));
+
+        placeBid(setToken, dai, IERC20(address(weth)), componentAmount, quoteAssetLimit, true);
+
+        uint256 postBidderDai = dai.balanceOf(bidder);
+        uint256 postBidderWeth = weth.balanceOf(bidder);
+        uint256 postSetTokenDai = dai.balanceOf(address(setToken));
+        uint256 postSetTokenWeth = weth.balanceOf(address(setToken));
+
+        assertEq(postBidderDai, preBidderDai + componentAmount);
+        assertEq(postBidderWeth, preBidderWeth - quoteAssetLimit);
+        assertEq(postSetTokenDai, preSetTokenDai - componentAmount);
+        assertEq(postSetTokenWeth, preSetTokenWeth + quoteAssetLimit);
+    }
+
+    function testBidWithBoundedStepwiseLogarithmicPriceAdapter() external {
+        bytes memory daiLogarithmicCurveParams = boundedStepwiseLogarithmicPriceAdapter.getEncodedData(
+            5 ether/10000,
+            1 ether,
+            1 ether/100000,
+            1 hours,
+            true,
+            55 ether/100000,
+            49 ether/100000
+          );
+        uint256 wbtcPerWethDecimalFactor = 1 ether/uint256(toWBTCUnits(1));
+        bytes memory wbtcLogarithmicCurveParams = boundedStepwiseLogarithmicPriceAdapter.getEncodedData(
+            14.5 ether * wbtcPerWethDecimalFactor,
+            1 ether,
+            (1 ether/10) * wbtcPerWethDecimalFactor,
+            1 hours,
+            false,
+            15 ether * wbtcPerWethDecimalFactor,
+            14 ether * wbtcPerWethDecimalFactor
+        );
+        bytes memory wethLogarithmicCurveParams = boundedStepwiseLogarithmicPriceAdapter.getEncodedData(
+            1 ether,
+            1 ether,
+            1 ether/10,
+            1 hours,
+            false,
+            1 ether,
+            1 ether
+        );
+        AuctionRebalanceModuleV1.AuctionExecutionParams[] memory oldComponentsAuctionParams = new AuctionRebalanceModuleV1.AuctionExecutionParams[](3);
+        oldComponentsAuctionParams[0] = AuctionRebalanceModuleV1.AuctionExecutionParams({
+          targetUnit: uint256(toDAIUnits(9100)),
+          priceAdapterName: BOUNDED_STEPWISE_LOGARITHMIC_PRICE_ADAPTER,
+          priceAdapterConfigData: daiLogarithmicCurveParams
+        });
+        oldComponentsAuctionParams[1] = AuctionRebalanceModuleV1.AuctionExecutionParams({
+          targetUnit: uint256(toWBTCUnits(6)/int256(10)),
+          priceAdapterName: BOUNDED_STEPWISE_LOGARITHMIC_PRICE_ADAPTER,
+          priceAdapterConfigData: wbtcLogarithmicCurveParams
+        });
+        oldComponentsAuctionParams[2] = AuctionRebalanceModuleV1.AuctionExecutionParams({
+          targetUnit: uint256(toWETHUnits(4)),
+          priceAdapterName: BOUNDED_STEPWISE_LOGARITHMIC_PRICE_ADAPTER,
+          priceAdapterConfigData: wethLogarithmicCurveParams
+        });
+        startRebalance(
+          setToken,
+          defaultQuoteAsset,
+          defaultNewComponents,
+          defaultNewComponentsAuctionParams,
+          oldComponentsAuctionParams,
+          defaultShouldLockSetToken,
+          defaultDuration,
+          uint256(defaultPositionMultiplier)
+        );
+        uint256 componentAmount = uint256(toDAIUnits(900));
+        uint256 quoteAssetLimit = uint256(toWETHUnits(45))/100;
+        fundBidder(address(weth), quoteAssetLimit);
+        uint256 preBidderDai = dai.balanceOf(bidder);
+        uint256 preBidderWeth = weth.balanceOf(bidder);
+        uint256 preSetTokenDai = dai.balanceOf(address(setToken));
+        uint256 preSetTokenWeth = weth.balanceOf(address(setToken));
+
+        placeBid(setToken, dai, IERC20(address(weth)), componentAmount, quoteAssetLimit, true);
+
+        uint256 postBidderDai = dai.balanceOf(bidder);
+        uint256 postBidderWeth = weth.balanceOf(bidder);
+        uint256 postSetTokenDai = dai.balanceOf(address(setToken));
+        uint256 postSetTokenWeth = weth.balanceOf(address(setToken));
+
+        assertEq(postBidderDai, preBidderDai + componentAmount);
+        assertEq(postBidderWeth, preBidderWeth - quoteAssetLimit);
+        assertEq(postSetTokenDai, preSetTokenDai - componentAmount);
+        assertEq(postSetTokenWeth, preSetTokenWeth + quoteAssetLimit);
+    }
 
 }
