@@ -32,6 +32,9 @@ contract SystemFixture is Test {
     address internal user1 = address(0x61);
     address internal randomAddress = address(0x8F);
 
+    string internal defaultName = "SetToken";
+    string internal defaultSymbol = "SET";
+
     IController internal controller;
     IntegrationRegistry internal integrationRegistry;
     BasicIssuanceModule internal basicIssuanceModule;
@@ -133,7 +136,7 @@ contract SystemFixture is Test {
         address[] memory _modules
     ) internal returns(ISetToken) {
         address setToken = setTokenCreator.create(
-            _components, _units, _modules, owner, "SetToken", "SET"
+            _components, _units, _modules, owner, defaultName, defaultSymbol
         );
         return ISetToken(setToken);
     }
