@@ -34,19 +34,6 @@ contract TestController is Test {
         address[] memory _resources,
         uint256[] memory _resourceIds
     ) internal {
-//        address[] memory _factories = new address[](1);
-//        address[] memory _modules = new address[](2);
-//        address[] memory _resources = new address[](3);
-//        uint256[] memory _resourceIds = new uint256[](3);
-//        _factories[0] = address(setTokenCreator);
-//        _modules[0] = address(basicIssuanceModule);
-//        _modules[1] = address(streamingFeeModule);
-//        _resources[0] = address(integrationRegistry);
-//        _resources[1] = address(priceOracle);
-//        _resources[2] = address(setValuer);
-//        _resourceIds[0] = 0;
-//        _resourceIds[1] = 1;
-//        _resourceIds[2] = 2;
         vm.prank(deployer);
         controller.initialize(_factories, _modules, _resources, _resourceIds);
     }
@@ -221,5 +208,291 @@ contract TestController is Test {
         vm.prank(deployer);
         vm.expectRevert("Set does not exist");
         controller.removeSet(mockSetToken);
+    }
+
+    function testAddFactory() external {
+        address[] memory _factories = new address[](0);
+        initializeController(_factories, defaultModules, defaultResources, defaultResourceIds);
+        vm.prank(deployer);
+        controller.addFactory(mockSetTokenFactory);
+        address[] memory factories = controller.getFactories();
+        assertEq(factories.length, 1);
+    }
+
+    function testAddedFactoryIsValid() external {
+        address[] memory _factories = new address[](0);
+        initializeController(_factories, defaultModules, defaultResources, defaultResourceIds);
+        vm.prank(deployer);
+        controller.addFactory(mockSetTokenFactory);
+        assertTrue(controller.isFactory(mockSetTokenFactory));
+    }
+
+    function testAddedFactoryValidSystemContract() external {
+        address[] memory _factories = new address[](0);
+        initializeController(_factories, defaultModules, defaultResources, defaultResourceIds);
+        vm.prank(deployer);
+        controller.addFactory(mockSetTokenFactory);
+        assertTrue(controller.isSystemContract(mockSetTokenFactory));
+    }
+
+    function testFactoryAddedEvent() external {
+        address[] memory _factories = new address[](0);
+        initializeController(_factories, defaultModules, defaultResources, defaultResourceIds);
+        vm.prank(deployer);
+        vm.expectEmit(true, false, false, true, address(controller));
+        emit Controller.FactoryAdded(mockSetTokenFactory);
+        controller.addFactory(mockSetTokenFactory);
+    }
+
+    function testFactoryAlreadyExists() external {
+        initializeController(defaultFactories, defaultModules, defaultResources, defaultResourceIds);
+        vm.prank(deployer);
+        vm.expectRevert("Factory already exists");
+        controller.addFactory(mockSetTokenFactory);
+    }
+
+    function testRemoveFactory() external {
+        initializeController(defaultFactories, defaultModules, defaultResources, defaultResourceIds);
+        vm.prank(deployer);
+        controller.removeFactory(mockSetTokenFactory);
+        address[] memory factories = controller.getFactories();
+        assertEq(factories.length, 0);
+    }
+
+    function testRemoveFactoryIsValid() external {
+        initializeController(defaultFactories, defaultModules, defaultResources, defaultResourceIds);
+        vm.prank(deployer);
+        controller.removeFactory(mockSetTokenFactory);
+        assertFalse(controller.isFactory(mockSetTokenFactory));
+    }
+
+    function testRemoveFactoryEvent() external {
+        initializeController(defaultFactories, defaultModules, defaultResources, defaultResourceIds);
+        vm.prank(deployer);
+        vm.expectEmit(true, false, false, true, address(controller));
+        emit Controller.FactoryRemoved(mockSetTokenFactory);
+        controller.removeFactory(mockSetTokenFactory);
+    }
+
+    function testFactoryDoesNotExist() external {
+        address[] memory _factories = new address[](0);
+        initializeController(_factories, defaultModules, defaultResources, defaultResourceIds);
+        vm.prank(deployer);
+        vm.expectRevert("Factory does not exist");
+        controller.removeFactory(mockSetTokenFactory);
+    }
+
+    function testAddModule() external {
+        address[] memory _modules = new address[](0);
+        initializeController(defaultFactories, _modules, defaultResources, defaultResourceIds);
+        vm.prank(deployer);
+        controller.addModule(mockBasicIssuanceModule);
+        address[] memory modules = controller.getModules();
+        assertEq(modules.length, 1);
+    }
+
+    function testAddModuleIsValid() external {
+        address[] memory _modules = new address[](0);
+        initializeController(defaultFactories, _modules, defaultResources, defaultResourceIds);
+        vm.prank(deployer);
+        controller.addModule(mockBasicIssuanceModule);
+        assertTrue(controller.isModule(mockBasicIssuanceModule));
+    }
+
+    function testAddModuleIsSystemContract() external {
+        address[] memory _modules = new address[](0);
+        initializeController(defaultFactories, _modules, defaultResources, defaultResourceIds);
+        vm.prank(deployer);
+        controller.addModule(mockBasicIssuanceModule);
+        assertTrue(controller.isSystemContract(mockBasicIssuanceModule));
+    }
+
+    function testAddModuleEvent() external {
+        address[] memory _modules = new address[](0);
+        initializeController(defaultFactories, _modules, defaultResources, defaultResourceIds);
+        vm.prank(deployer);
+        vm.expectEmit(true, false, false, true, address(controller));
+        emit Controller.ModuleAdded(mockBasicIssuanceModule);
+        controller.addModule(mockBasicIssuanceModule);
+    }
+
+    function testAddModuleAlreadyExists() external {
+        initializeController(defaultFactories, defaultModules, defaultResources, defaultResourceIds);
+        vm.prank(deployer);
+        vm.expectRevert("Module already exists");
+        controller.addModule(mockBasicIssuanceModule);
+    }
+
+    function testRemoveModule() external {
+        initializeController(defaultFactories, defaultModules, defaultResources, defaultResourceIds);
+        address[] memory modules = controller.getModules();
+        assertEq(modules.length, 1);
+        vm.prank(deployer);
+        controller.removeModule(mockBasicIssuanceModule);
+        modules = controller.getModules();
+        assertEq(modules.length, 0);
+    }
+
+    function testRemoveModuleIsModule() external {
+        initializeController(defaultFactories, defaultModules, defaultResources, defaultResourceIds);
+        assertTrue(controller.isModule(mockBasicIssuanceModule));
+        vm.prank(deployer);
+        controller.removeModule(mockBasicIssuanceModule);
+        assertFalse(controller.isModule(mockBasicIssuanceModule));
+    }
+
+    function testRemoveModuleIsSystemContract() external {
+        initializeController(defaultFactories, defaultModules, defaultResources, defaultResourceIds);
+        assertTrue(controller.isSystemContract(mockBasicIssuanceModule));
+        vm.prank(deployer);
+        controller.removeModule(mockBasicIssuanceModule);
+        assertFalse(controller.isSystemContract(mockBasicIssuanceModule));
+    }
+
+    function testRemoveModuleEvent() external {
+        initializeController(defaultFactories, defaultModules, defaultResources, defaultResourceIds);
+        vm.prank(deployer);
+        vm.expectEmit(true, false, false, true, address(controller));
+        emit Controller.ModuleRemoved(mockBasicIssuanceModule);
+        controller.removeModule(mockBasicIssuanceModule);
+    }
+
+    function testRemoveModuleDoesNotExists() external {
+        address[] memory _modules = new address[](0);
+        initializeController(defaultFactories, _modules, defaultResources, defaultResourceIds);
+        vm.prank(deployer);
+        vm.expectRevert("Module does not exist");
+        controller.removeModule(mockBasicIssuanceModule);
+    }
+
+    function testAddResource() external {
+        address[] memory _resources = new address[](0);
+        uint256[] memory _resourceIds = new uint256[](0);
+        initializeController(defaultFactories, defaultModules, _resources, _resourceIds);
+        address[] memory resources = controller.getResources();
+        assertEq(resources.length, 0);
+        vm.prank(deployer);
+        controller.addResource(mockPriceOracle, 0);
+        resources = controller.getResources();
+        assertEq(resources.length, 1);
+    }
+
+    function testAddResourceIsResource() external {
+        address[] memory _resources = new address[](0);
+        uint256[] memory _resourceIds = new uint256[](0);
+        initializeController(defaultFactories, defaultModules, _resources, _resourceIds);
+        assertFalse(controller.isResource(mockPriceOracle));
+        vm.prank(deployer);
+        controller.addResource(mockPriceOracle, 0);
+        assertTrue(controller.isResource(mockPriceOracle));
+    }
+
+    function testAddResourceIsSystemContract() external {
+        address[] memory _resources = new address[](0);
+        uint256[] memory _resourceIds = new uint256[](0);
+        initializeController(defaultFactories, defaultModules, _resources, _resourceIds);
+        assertFalse(controller.isSystemContract(mockPriceOracle));
+        vm.prank(deployer);
+        controller.addResource(mockPriceOracle, 0);
+        assertTrue(controller.isSystemContract(mockPriceOracle));
+    }
+
+    function testAddResourceUpdatesResourceId() external {
+        address[] memory _resources = new address[](0);
+        uint256[] memory _resourceIds = new uint256[](0);
+        initializeController(defaultFactories, defaultModules, _resources, _resourceIds);
+        assertEq(controller.resourceId(0), address(0));
+        vm.prank(deployer);
+        controller.addResource(mockPriceOracle, 0);
+        assertEq(controller.resourceId(0), mockPriceOracle);
+    }
+
+    function testAddResourceEvent() external {
+        address[] memory _resources = new address[](0);
+        uint256[] memory _resourceIds = new uint256[](0);
+        initializeController(defaultFactories, defaultModules, _resources, _resourceIds);
+        vm.prank(deployer);
+        vm.expectEmit(true, false, false, true, address(controller));
+        emit Controller.ResourceAdded(mockPriceOracle, 0);
+        controller.addResource(mockPriceOracle, 0);
+    }
+
+    function testAddResourceAlreadyExists() external {
+        initializeController(defaultFactories, defaultModules, defaultResources, defaultResourceIds);
+        vm.prank(deployer);
+        vm.expectRevert("Resource already exists");
+        controller.addResource(mockPriceOracle, 0);
+    }
+
+    function testRemoveResource() external {
+        initializeController(defaultFactories, defaultModules, defaultResources, defaultResourceIds);
+        address[] memory resources = controller.getResources();
+        assertEq(resources.length, 1);
+        vm.prank(deployer);
+        controller.removeResource(0);
+        resources = controller.getResources();
+        assertEq(resources.length, 0);
+    }
+
+    function testRemoveResourceIsValid() external {
+        initializeController(defaultFactories, defaultModules, defaultResources, defaultResourceIds);
+        assertTrue(controller.isResource(mockPriceOracle));
+        vm.prank(deployer);
+        controller.removeResource(0);
+        assertFalse(controller.isResource(mockPriceOracle));
+    }
+
+    function testRemoveResourceIsSystemContract() external {
+        initializeController(defaultFactories, defaultModules, defaultResources, defaultResourceIds);
+        assertTrue(controller.isSystemContract(mockPriceOracle));
+        vm.prank(deployer);
+        controller.removeResource(0);
+        assertFalse(controller.isSystemContract(mockPriceOracle));
+    }
+
+    function testRemoveResourceUpdatesResourceId() external {
+        initializeController(defaultFactories, defaultModules, defaultResources, defaultResourceIds);
+        assertEq(controller.resourceId(0), mockPriceOracle);
+        vm.prank(deployer);
+        controller.removeResource(0);
+        assertEq(controller.resourceId(0), address(0));
+    }
+
+    function testRemoveResourceEvent() external {
+        initializeController(defaultFactories, defaultModules, defaultResources, defaultResourceIds);
+        vm.prank(deployer);
+        vm.expectEmit(true, false, false, true, address(controller));
+        emit Controller.ResourceRemoved(mockPriceOracle, 0);
+        controller.removeResource(0);
+    }
+
+    function testRemoveResourceDoesNotExist() external {
+        address[] memory _resources = new address[](0);
+        uint256[] memory _resourceIds = new uint256[](0);
+        initializeController(defaultFactories, defaultModules, _resources, _resourceIds);
+        vm.prank(deployer);
+        vm.expectRevert("Resource does not exist");
+        controller.removeResource(0);
+    }
+
+    function testAddFee() external {
+        initializeController(defaultFactories, defaultModules, defaultResources, defaultResourceIds);
+        vm.prank(deployer);
+        vm.expectEmit(true, false, false, true, address(controller));
+        emit Controller.FeeEdited(mockBasicIssuanceModule, 0, 5);
+        controller.addFee(mockBasicIssuanceModule, 0, 5);
+        assertEq(controller.getModuleFee(mockBasicIssuanceModule, 0), 5);
+    }
+
+    function testEditFee() external {
+        initializeController(defaultFactories, defaultModules, defaultResources, defaultResourceIds);
+        vm.prank(deployer);
+        controller.addFee(mockBasicIssuanceModule, 0, 5);
+        assertEq(controller.getModuleFee(mockBasicIssuanceModule, 0), 5);
+        vm.prank(deployer);
+        vm.expectEmit(true, false, false, true, address(controller));
+        emit Controller.FeeEdited(mockBasicIssuanceModule, 0, 0);
+        controller.editFee(mockBasicIssuanceModule, 0, 0);
+        assertEq(controller.getModuleFee(mockBasicIssuanceModule, 0), 0);
     }
 }
