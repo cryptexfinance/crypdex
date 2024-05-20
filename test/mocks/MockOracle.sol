@@ -17,23 +17,23 @@
 pragma solidity ^0.8.25;
 
 contract MockOracle {
-    uint256 public price;
+  uint256 public price;
 
-    constructor(uint256 _startingPrice) {
-        price = _startingPrice;
-    }
+  constructor(uint256 _startingPrice) {
+    price = _startingPrice;
+  }
 
-    /* ============ External Functions ============ */
-    function updatePrice(uint256 _newPrice) external {
-        price = _newPrice;
-    }
+  /* ============ External Functions ============ */
+  function updatePrice(uint256 _newPrice) external {
+    price = _newPrice;
+  }
 
-    /**
-     * Returns the queried data from an oracle returning uint256
-     *
-     * @return  Current price of asset represented in uint256
-     */
-    function read() external view returns (uint256) {
-        return price;
-    }
+  /**
+   * Returns the queried data from an oracle returning uint256
+   *
+   * @return  Current price of asset represented in uint256
+   */
+  function read() external view returns (uint256) {
+    return price;
+  }
 }
