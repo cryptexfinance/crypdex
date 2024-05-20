@@ -14,7 +14,7 @@ import {ISetToken} from "contracts/interfaces/ISetToken.sol";
 import {IManagerIssuanceHook} from "contracts/interfaces/IManagerIssuanceHook.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-import {MockERC20} from "../mocks/MockERC20.sol";
+import {MockERC20} from "contracts/mocks/MockERC20.sol";
 import {SystemFixture} from "./SystemFixture.sol";
 
 contract AuctionFixture is SystemFixture {

@@ -1,6 +1,17 @@
 {
   "dependencies": {
+    "@nomicfoundation/hardhat-verify": "^2.0.7",
+    "@nomiclabs/hardhat-ethers": "^2.2.3",
+    "@openzeppelin/contracts": "./lib/openzeppelin-contracts/contracts",
+    "@typechain/ethers-v6": "^0.5.1",
+    "@typechain/hardhat": "^9.1.0",
+    "dotenv": "^16.4.5",
+    "hardhat": "^2.22.4",
+    "hardhat-deploy": "^0.12.4",
     "prettier": "^3.2.5",
-    "prettier-plugin-solidity": "^1.3.1"
+    "prettier-plugin-solidity": "^1.3.1",
+    "ts-node": "^10.9.2",
+    "typechain": "^8.3.2",
+    "typescript": "^5.4.5"
   }
 }

@@ -26,7 +26,6 @@ import { Position } from "../lib/Position.sol";
 import { PreciseUnitMath } from "../lib/PreciseUnitMath.sol";
 import { AddressArrayUtils } from "../lib/AddressArrayUtils.sol";
 
-import "forge-std/console.sol";
 /**
  * @title SetToken
  * @author Set Protocol

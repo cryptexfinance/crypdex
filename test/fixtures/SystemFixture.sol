@@ -19,9 +19,9 @@ import {IOracle} from "contracts/interfaces/IOracle.sol";
 import {ISetToken} from "contracts/interfaces/ISetToken.sol";
 import {IManagerIssuanceHook} from "contracts/interfaces/IManagerIssuanceHook.sol";
 
-import {WETH9} from "../mocks/WETH9.sol";
-import {MockERC20} from "../mocks/MockERC20.sol";
-import {MockOracle} from "../mocks/MockOracle.sol";
+import {WETH9} from "contracts/mocks/WETH9.sol";
+import {MockERC20} from "contracts/mocks/MockERC20.sol";
+import {MockOracle} from "contracts/mocks/MockOracle.sol";
 
 contract SystemFixture is Test {
     address internal deployer = address(0x51);

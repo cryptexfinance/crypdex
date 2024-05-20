@@ -10,8 +10,8 @@ import {SetTokenCreator} from "contracts/protocol/SetTokenCreator.sol";
 import {IController} from "contracts/interfaces/IController.sol";
 import {ISetToken} from "contracts/interfaces/ISetToken.sol";
 
-import {MockERC20} from "../mocks/MockERC20.sol";
-import {WETH9} from "../mocks/WETH9.sol";
+import {MockERC20} from "contracts/mocks/MockERC20.sol";
+import {WETH9} from "contracts/mocks/WETH9.sol";
 
 contract TestSetTokenCreator is Test {
     address internal deployer = address(0x51);
