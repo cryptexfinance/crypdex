@@ -1,14 +1,9 @@
-import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
-import { hardhatArguments, ethers } from "hardhat";
+import hre, { hardhatArguments, ethers } from "hardhat";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import {Controller__factory,} from "../../typechain-types";
+import {Controller__factory,} from "../typechain-types";
 
-const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
-  if (hardhatArguments.network !== "baseSepolia") {
-    return;
-  }
-
+async function main() {
   const { deployments, getNamedAccounts } = hre;
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
@@ -38,6 +33,10 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
 };
 
-export default func;
 
-func.tags = ["initController"];
+main()
+	.then(() => process.exit(0))
+	.catch((error) => {
+		console.error(error);
+		process.exit(1);
+	});

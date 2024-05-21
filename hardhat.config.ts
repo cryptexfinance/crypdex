@@ -5,13 +5,17 @@ import "@typechain/hardhat";
 import "@nomiclabs/hardhat-ethers";
 import "hardhat-deploy";
 
-const TEST_PRIVATE_KEY = process.env.TEST_PRIVATE_KEY as string;
+const DEPLOYER_PRIVATE_KEY = process.env.DEPLOYER_PRIVATE_KEY as string;
+const MANAGER_PRIVATE_KEY = process.env.MANAGER_PRIVATE_KEY as string;
 
 const config: HardhatUserConfig = {
   namedAccounts: {
     deployer: {
       default: 0, // here this will by default take the first account as deployer
     },
+    manager: {
+      default: 1,
+    }
   },
   solidity: {
     version: "0.8.25",
@@ -30,7 +34,7 @@ const config: HardhatUserConfig = {
     baseSepolia: {
       chainId: 84532,
       url: process.env.BASE_SEPOLIA_URL,
-      accounts: [TEST_PRIVATE_KEY],
+      accounts: [DEPLOYER_PRIVATE_KEY, MANAGER_PRIVATE_KEY],
     },
   },
   etherscan: {
