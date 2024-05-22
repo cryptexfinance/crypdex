@@ -1,0 +1,186 @@
+{
+  "address": "0xA0a704F54118cfe6284e25ABE9bfF3B5f27c02AA",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "bytes",
+          "name": "_data",
+          "type": "bytes"
+        }
+      ],
+      "name": "getDecodedData",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_price",
+          "type": "uint256"
+        }
+      ],
+      "name": "getEncodedData",
+      "outputs": [
+        {
+          "internalType": "bytes",
+          "name": "",
+          "type": "bytes"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bytes",
+          "name": "_priceAdapterConfigData",
+          "type": "bytes"
+        }
+      ],
+      "name": "getPrice",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "price",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes",
+          "name": "_priceAdapterConfigData",
+          "type": "bytes"
+        }
+      ],
+      "name": "isPriceAdapterConfigDataValid",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "isValid",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0x4c6bb12b7d329f4b9c9bb22a5a10d70d1897a8c5e9af33edc7cde365d67152ba",
+  "receipt": {
+    "to": null,
+    "from": "0x570f581D23a2AB09FD1990279D9DB6f5DcE18F4A",
+    "contractAddress": "0xA0a704F54118cfe6284e25ABE9bfF3B5f27c02AA",
+    "transactionIndex": 5,
+    "gasUsed": "266546",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0x5af6fdd67a8043f6aa937833cdf38198373e6513a06f3e29ffec42286d2024f5",
+    "transactionHash": "0x4c6bb12b7d329f4b9c9bb22a5a10d70d1897a8c5e9af33edc7cde365d67152ba",
+    "logs": [],
+    "blockNumber": 10256206,
+    "cumulativeGasUsed": "1031778",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [],
+  "numDeployments": 1,
+  "solcInputHash": "7fe3b69caaa6e1ae3cb624acb9fde77a",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.25+commit.b61c2a91\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"_data\",\"type\":\"bytes\"}],\"name\":\"getDecodedData\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_price\",\"type\":\"uint256\"}],\"name\":\"getEncodedData\",\"outputs\":[{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"_priceAdapterConfigData\",\"type\":\"bytes\"}],\"name\":\"getPrice\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"price\",\"type\":\"uint256\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"_priceAdapterConfigData\",\"type\":\"bytes\"}],\"name\":\"isPriceAdapterConfigDataValid\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"isValid\",\"type\":\"bool\"}],\"stateMutability\":\"pure\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"getDecodedData(bytes)\":{\"details\":\"Decodes the constant price from the provided bytes.\",\"params\":{\"_data\":\"Encoded bytes representing the constant price.\"},\"returns\":{\"_0\":\"The constant price decoded from bytes in base units.\"}},\"getEncodedData(uint256)\":{\"params\":{\"_price\":\"The constant price in base units.\"},\"returns\":{\"_0\":\"Encoded bytes representing the constant price.\"}},\"getPrice(address,address,uint256,uint256,uint256,bytes)\":{\"details\":\"Calculates and returns the constant price.\",\"params\":{\"_priceAdapterConfigData\":\"Encoded bytes representing the constant price.\"},\"returns\":{\"price\":\"                   The constant price decoded from _priceAdapterConfigData.\"}},\"isPriceAdapterConfigDataValid(bytes)\":{\"params\":{\"_priceAdapterConfigData\":\"Encoded bytes representing the constant price.\"},\"returns\":{\"isValid\":\"                 True if the constant price is greater than 0, False otherwise.\"}}},\"title\":\"ConstantPriceAdapter\",\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"getEncodedData(uint256)\":{\"notice\":\"Encodes the constant price into bytes.\"},\"isPriceAdapterConfigDataValid(bytes)\":{\"notice\":\"Returns true if the price adapter configuration data is valid.\"}},\"notice\":\"Price adapter contract for AuctionRebalanceModuleV1 that returns a constant price. The rate of change is zero. Price formula: price = initialPrice\",\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/auction-pricing/ConstantPriceAdapter.sol\":\"ConstantPriceAdapter\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"contracts/auction-pricing/ConstantPriceAdapter.sol\":{\"content\":\"// SPDX-License-Identifier: Apache-2.0\\npragma solidity ^0.8.25;\\n\\n/**\\n * @title ConstantPriceAdapter\\n * @notice Price adapter contract for AuctionRebalanceModuleV1 that returns a constant price.\\n * The rate of change is zero.\\n * Price formula: price = initialPrice\\n */\\ncontract ConstantPriceAdapter {\\n    /**\\n     * @dev Calculates and returns the constant price.\\n     *\\n     * @param _priceAdapterConfigData   Encoded bytes representing the constant price.\\n     *\\n     * @return price                    The constant price decoded from _priceAdapterConfigData.\\n     */\\n    function getPrice(\\n        address /* _setToken */,\\n        address /* _component */,\\n        uint256 /* _componentQuantity */,\\n        uint256 /* _timeElapsed */,\\n        uint256 /* _duration */,\\n        bytes memory _priceAdapterConfigData\\n    )\\n        external\\n        pure\\n        returns (uint256 price)\\n    {\\n        price = getDecodedData(_priceAdapterConfigData);\\n        require(price > 0, \\\"ConstantPriceAdapter: Price must be greater than 0\\\");\\n    }\\n\\n    /**\\n     * @notice Returns true if the price adapter configuration data is valid.\\n     *\\n     * @param _priceAdapterConfigData   Encoded bytes representing the constant price.\\n     *\\n     * @return isValid                  True if the constant price is greater than 0, False otherwise.\\n     */\\n    function isPriceAdapterConfigDataValid(\\n        bytes memory _priceAdapterConfigData\\n    )\\n        external\\n        pure\\n        returns (bool isValid)\\n    {\\n        uint256 price = getDecodedData(_priceAdapterConfigData);\\n        isValid = price > 0;\\n    }\\n\\n    /**\\n     * @notice Encodes the constant price into bytes.\\n     *\\n     * @param _price  The constant price in base units.\\n     *\\n     * @return        Encoded bytes representing the constant price.\\n     */\\n    function getEncodedData(uint256 _price) external pure returns (bytes memory) {\\n        return abi.encode(_price);\\n    }\\n\\n    /**\\n     * @dev Decodes the constant price from the provided bytes.\\n     *\\n     * @param _data  Encoded bytes representing the constant price.\\n     *\\n     * @return       The constant price decoded from bytes in base units.\\n     */\\n    function getDecodedData(bytes memory _data) public pure returns (uint256) {\\n        return abi.decode(_data, (uint256));\\n    }\\n}\\n\",\"keccak256\":\"0x9b46a2e9d1ca0aaad2e52c554c40de419c650be08e49f8c8988fce40ace41656\",\"license\":\"Apache-2.0\"}},\"version\":1}",
+  "bytecode": "0x6080604052348015600f57600080fd5b506103dc8061001f6000396000f3fe608060405234801561001057600080fd5b506004361061004c5760003560e01c8063079f6bf414610051578063104b9b6414610079578063d3516db61461009a578063fa5ab044146100ad575b600080fd5b61006461005f366004610252565b6100cd565b60405190151581526020015b60405180910390f35b61008c6100873660046102ab565b6100e2565b604051908152602001610070565b61008c6100a8366004610252565b610168565b6100c06100bb366004610325565b610184565b604051610070919061033e565b6000806100d983610168565b15159392505050565b60006100ed82610168565b90506000811161015e5760405162461bcd60e51b815260206004820152603260248201527f436f6e7374616e745072696365416461707465723a205072696365206d75737460448201527102062652067726561746572207468616e20360741b606482015260840160405180910390fd5b9695505050505050565b60008180602001905181019061017e919061038d565b92915050565b60608160405160200161019991815260200190565b6040516020818303038152906040529050919050565b634e487b7160e01b600052604160045260246000fd5b600082601f8301126101d657600080fd5b813567ffffffffffffffff808211156101f1576101f16101af565b604051601f8301601f19908116603f01168101908282118183101715610219576102196101af565b8160405283815286602085880101111561023257600080fd5b836020870160208301376000602085830101528094505050505092915050565b60006020828403121561026457600080fd5b813567ffffffffffffffff81111561027b57600080fd5b610287848285016101c5565b949350505050565b80356001600160a01b03811681146102a657600080fd5b919050565b60008060008060008060c087890312156102c457600080fd5b6102cd8761028f565b95506102db6020880161028f565b945060408701359350606087013592506080870135915060a087013567ffffffffffffffff81111561030c57600080fd5b61031889828a016101c5565b9150509295509295509295565b60006020828403121561033757600080fd5b5035919050565b60006020808352835180602085015260005b8181101561036c57858101830151858201604001528201610350565b506000604082860101526040601f19601f8301168501019250505092915050565b60006020828403121561039f57600080fd5b505191905056fea26469706673582212208ad7faaf98e839b1cccfaa55a19b9236aa689b26e0161152a64bed0fc9d43f2f64736f6c63430008190033",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b506004361061004c5760003560e01c8063079f6bf414610051578063104b9b6414610079578063d3516db61461009a578063fa5ab044146100ad575b600080fd5b61006461005f366004610252565b6100cd565b60405190151581526020015b60405180910390f35b61008c6100873660046102ab565b6100e2565b604051908152602001610070565b61008c6100a8366004610252565b610168565b6100c06100bb366004610325565b610184565b604051610070919061033e565b6000806100d983610168565b15159392505050565b60006100ed82610168565b90506000811161015e5760405162461bcd60e51b815260206004820152603260248201527f436f6e7374616e745072696365416461707465723a205072696365206d75737460448201527102062652067726561746572207468616e20360741b606482015260840160405180910390fd5b9695505050505050565b60008180602001905181019061017e919061038d565b92915050565b60608160405160200161019991815260200190565b6040516020818303038152906040529050919050565b634e487b7160e01b600052604160045260246000fd5b600082601f8301126101d657600080fd5b813567ffffffffffffffff808211156101f1576101f16101af565b604051601f8301601f19908116603f01168101908282118183101715610219576102196101af565b8160405283815286602085880101111561023257600080fd5b836020870160208301376000602085830101528094505050505092915050565b60006020828403121561026457600080fd5b813567ffffffffffffffff81111561027b57600080fd5b610287848285016101c5565b949350505050565b80356001600160a01b03811681146102a657600080fd5b919050565b60008060008060008060c087890312156102c457600080fd5b6102cd8761028f565b95506102db6020880161028f565b945060408701359350606087013592506080870135915060a087013567ffffffffffffffff81111561030c57600080fd5b61031889828a016101c5565b9150509295509295509295565b60006020828403121561033757600080fd5b5035919050565b60006020808352835180602085015260005b8181101561036c57858101830151858201604001528201610350565b506000604082860101526040601f19601f8301168501019250505092915050565b60006020828403121561039f57600080fd5b505191905056fea26469706673582212208ad7faaf98e839b1cccfaa55a19b9236aa689b26e0161152a64bed0fc9d43f2f64736f6c63430008190033",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {
+      "getDecodedData(bytes)": {
+        "details": "Decodes the constant price from the provided bytes.",
+        "params": {
+          "_data": "Encoded bytes representing the constant price."
+        },
+        "returns": {
+          "_0": "The constant price decoded from bytes in base units."
+        }
+      },
+      "getEncodedData(uint256)": {
+        "params": {
+          "_price": "The constant price in base units."
+        },
+        "returns": {
+          "_0": "Encoded bytes representing the constant price."
+        }
+      },
+      "getPrice(address,address,uint256,uint256,uint256,bytes)": {
+        "details": "Calculates and returns the constant price.",
+        "params": {
+          "_priceAdapterConfigData": "Encoded bytes representing the constant price."
+        },
+        "returns": {
+          "price": "                   The constant price decoded from _priceAdapterConfigData."
+        }
+      },
+      "isPriceAdapterConfigDataValid(bytes)": {
+        "params": {
+          "_priceAdapterConfigData": "Encoded bytes representing the constant price."
+        },
+        "returns": {
+          "isValid": "                 True if the constant price is greater than 0, False otherwise."
+        }
+      }
+    },
+    "title": "ConstantPriceAdapter",
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {
+      "getEncodedData(uint256)": {
+        "notice": "Encodes the constant price into bytes."
+      },
+      "isPriceAdapterConfigDataValid(bytes)": {
+        "notice": "Returns true if the price adapter configuration data is valid."
+      }
+    },
+    "notice": "Price adapter contract for AuctionRebalanceModuleV1 that returns a constant price. The rate of change is zero. Price formula: price = initialPrice",
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [],
+    "types": null
+  }
+}
