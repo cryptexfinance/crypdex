@@ -1,4 +1,6 @@
 /*
+    Copyright 2020 Set Labs Inc.
+
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -11,10 +13,11 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 
-    SPDX-License-Identifier: Apache-2.0
+    SPDX-License-Identifier: Apache License, Version 2.0
 */
 
-pragma solidity ^0.8.25;
+pragma solidity 0.6.10;
+pragma experimental "ABIEncoderV2";
 
 import { IController } from "../interfaces/IController.sol";
 import { SetToken } from "./SetToken.sol";
@@ -22,6 +25,7 @@ import { AddressArrayUtils } from "../lib/AddressArrayUtils.sol";
 
 /**
  * @title SetTokenCreator
+ * @author Set Protocol
  *
  * SetTokenCreator is a smart contract used to deploy new SetToken contracts. The SetTokenCreator
  * is a Factory contract that is enabled by the controller to create and register new SetTokens.
@@ -43,7 +47,7 @@ contract SetTokenCreator {
     /**
      * @param _controller          Instance of the controller
      */
-    constructor(IController _controller) {
+    constructor(IController _controller) public {
         controller = _controller;
     }
 

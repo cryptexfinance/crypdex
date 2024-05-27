@@ -1,4 +1,6 @@
 /*
+    Copyright 2023 Index Coop
+
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -11,15 +13,17 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 
-    SPDX-License-Identifier: Apache-2.0
+    SPDX-License-Identifier: Apache License, Version 2.0
 */
 
-pragma solidity ^0.8.25;
-
+pragma solidity 0.6.10;
+pragma experimental "ABIEncoderV2";
 
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import { Math } from "@openzeppelin/contracts/utils/math/Math.sol";
+import { Math } from "@openzeppelin/contracts/math/Math.sol";
 import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import { SafeCast } from "@openzeppelin/contracts/utils/SafeCast.sol";
+import { SafeMath } from "@openzeppelin/contracts/math/SafeMath.sol";
 
 import { AddressArrayUtils } from "../lib/AddressArrayUtils.sol";
 import { IAuctionPriceAdapterV1 } from "../interfaces/IAuctionPriceAdapterV1.sol";
@@ -32,6 +36,7 @@ import { PreciseUnitMath } from "../lib/PreciseUnitMath.sol";
 
 /**
  * @title AuctionRebalanceModuleV1
+ * @author Index Coop
  * @notice Facilitates rebalances for index sets via single-asset auctions. Managers initiate
  * rebalances specifying target allocations in precise units (scaled by 10^18), quote asset
  * (e.g., WETH, USDC), auction parameters per component, and rebalance duration through
@@ -50,8 +55,10 @@ import { PreciseUnitMath } from "../lib/PreciseUnitMath.sol";
  * Ensure you understand these characteristics when interacting with the contract on different EVM chains.
  */
 contract AuctionRebalanceModuleV1 is ModuleBase, ReentrancyGuard {
+    using SafeCast for int256;
+    using SafeCast for uint256;
+    using SafeMath for uint256;
     using Position for uint256;
-    using PreciseUnitMath for uint256;
     using Math for uint256;
     using Position for ISetToken;
     using Invoke for ISetToken;
@@ -217,7 +224,7 @@ contract AuctionRebalanceModuleV1 is ModuleBase, ReentrancyGuard {
 
     /* ============ Constructor ============ */
 
-    constructor(IController _controller) ModuleBase(_controller) {}
+    constructor(IController _controller) public ModuleBase(_controller) {}
 
     /* ============ External Functions ============ */
 
@@ -377,7 +384,7 @@ contract AuctionRebalanceModuleV1 is ModuleBase, ReentrancyGuard {
 
         // Calculate the new positionMultiplier
         uint256 newPositionMultiplier = rebalanceInfo[_setToken].positionMultiplier.preciseDiv(
-            PreciseUnitMath.preciseUnit() + rebalanceInfo[_setToken].raiseTargetPercentage
+            PreciseUnitMath.preciseUnit().add(rebalanceInfo[_setToken].raiseTargetPercentage)
         );
 
         // Update the positionMultiplier in the RebalanceInfo struct
@@ -395,14 +402,14 @@ contract AuctionRebalanceModuleV1 is ModuleBase, ReentrancyGuard {
      * @param _setToken The SetToken to be unlocked.
      */
     function unlock(ISetToken _setToken) external {
-        bool isRebalanceDurationElapsed_ = _isRebalanceDurationElapsed(_setToken);
-        bool canUnlockEarly_ = _canUnlockEarly(_setToken);
+        bool isRebalanceDurationElapsed = _isRebalanceDurationElapsed(_setToken);
+        bool canUnlockEarly = _canUnlockEarly(_setToken);
 
         // Ensure that either the rebalance duration has elapsed or the conditions for early unlock are met
-        require(isRebalanceDurationElapsed_ || canUnlockEarly_, "Cannot unlock early unless all targets are met and raiseTargetPercentage is zero");
+        require(isRebalanceDurationElapsed || canUnlockEarly, "Cannot unlock early unless all targets are met and raiseTargetPercentage is zero");
 
         // If unlocking early, update the state
-        if (canUnlockEarly_) {
+        if (canUnlockEarly) {
             delete rebalanceInfo[_setToken].rebalanceDuration;
             emit LockedRebalanceEndedEarly(_setToken);
         }
@@ -505,10 +512,10 @@ contract AuctionRebalanceModuleV1 is ModuleBase, ReentrancyGuard {
         for (uint256 i = 0; i < positions.length; i++) {
             ISetToken.Position memory position = positions[i];
             require(position.positionState == 0, "External positions not allowed");
-            executionInfo[_setToken][IERC20(position.component)].targetUnit = uint256(position.unit);
+            executionInfo[_setToken][IERC20(position.component)].targetUnit = position.unit.toUint256();
         }
 
-        rebalanceInfo[_setToken].positionMultiplier = uint256(_setToken.positionMultiplier());
+        rebalanceInfo[_setToken].positionMultiplier = _setToken.positionMultiplier().toUint256();
         _setToken.initializeModule();
     }
 
@@ -836,7 +843,7 @@ contract AuctionRebalanceModuleV1 is ModuleBase, ReentrancyGuard {
             address(_setToken),
             address(_component),
             _componentQuantity,
-            block.timestamp - rebalanceInfo[_setToken].rebalanceStartTime,
+            block.timestamp.sub(rebalanceInfo[_setToken].rebalanceStartTime),
             rebalanceInfo[_setToken].rebalanceDuration,
             bidInfo.priceAdapterConfigData
         );
@@ -955,8 +962,8 @@ contract AuctionRebalanceModuleV1 is ModuleBase, ReentrancyGuard {
 
         // Calculate the max quantity of the component to be exchanged. If buying, account for the protocol fees.
         maxComponentQty = isSellAuction
-            ? (currentNotional- targetNotional)
-            : (targetNotional - currentNotional).preciseDiv(PreciseUnitMath.preciseUnit() - protocolFee);
+            ? currentNotional.sub(targetNotional)
+            : targetNotional.sub(currentNotional).preciseDiv(PreciseUnitMath.preciseUnit().sub(protocolFee));
     }
 
       /**
@@ -998,7 +1005,8 @@ contract AuctionRebalanceModuleV1 is ModuleBase, ReentrancyGuard {
         ISetToken setToken = _bidInfo.setToken;
 
         // Calculate the amount of tokens exchanged during the bid.
-        uint256 exchangedQuantity = receiveToken.balanceOf(address(setToken)) - _bidInfo.preBidTokenReceivedBalance;
+        uint256 exchangedQuantity = receiveToken.balanceOf(address(setToken))
+            .sub(_bidInfo.preBidTokenReceivedBalance);
 
         // Calculate the protocol fee.
         uint256 protocolFee = getModuleFee(AUCTION_MODULE_V1_PROTOCOL_FEE_INDEX, exchangedQuantity);
@@ -1040,8 +1048,8 @@ contract AuctionRebalanceModuleV1 is ModuleBase, ReentrancyGuard {
         );
 
         // Calculate the net amount of tokens used and received.
-        uint256 netSendAmount = _bidInfo.preBidTokenSentBalance - postBidSendTokenBalance;
-        uint256 netReceiveAmount = postBidReceiveTokenBalance - _bidInfo.preBidTokenReceivedBalance;
+        uint256 netSendAmount = _bidInfo.preBidTokenSentBalance.sub(postBidSendTokenBalance);
+        uint256 netReceiveAmount = postBidReceiveTokenBalance.sub(_bidInfo.preBidTokenReceivedBalance);
 
         return (netSendAmount, netReceiveAmount);
     }
@@ -1139,7 +1147,7 @@ contract AuctionRebalanceModuleV1 is ModuleBase, ReentrancyGuard {
         view
         returns (uint256)
     {
-        return uint256(_setToken.getDefaultPositionRealUnit(address(_component)));
+        return _setToken.getDefaultPositionRealUnit(address(_component)).toUint256();
     }
 
     /**
@@ -1159,9 +1167,10 @@ contract AuctionRebalanceModuleV1 is ModuleBase, ReentrancyGuard {
         returns(uint256)
     {
         // (targetUnit * current position multiplier) / position multiplier at the start of rebalance
-        return (
-            executionInfo[_setToken][_component].targetUnit* uint256(_setToken.positionMultiplier())
-        )/ rebalanceInfo[_setToken].positionMultiplier;
+        return executionInfo[_setToken][_component]
+            .targetUnit
+            .mul(_setToken.positionMultiplier().toUint256())
+            .div(rebalanceInfo[_setToken].positionMultiplier);
     }
 
     /**
@@ -1218,7 +1227,7 @@ contract AuctionRebalanceModuleV1 is ModuleBase, ReentrancyGuard {
      */
     function _isRebalanceDurationElapsed(ISetToken _setToken) internal view returns (bool) {
         RebalanceInfo storage rebalance = rebalanceInfo[_setToken];
-        return (rebalance.rebalanceStartTime + rebalance.rebalanceDuration) <= block.timestamp;
+        return (rebalance.rebalanceStartTime.add(rebalance.rebalanceDuration)) <= block.timestamp;
     }
 
     /**

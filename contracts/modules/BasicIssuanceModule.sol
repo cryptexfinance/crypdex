@@ -1,4 +1,5 @@
 /*
+    Copyright 2020 Set Labs Inc.
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -8,13 +9,16 @@
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
-    SPDX-License-Identifier: Apache-2.0
+    SPDX-License-Identifier: Apache License, Version 2.0
 */
 
-pragma solidity ^0.8.25;
+pragma solidity 0.6.10;
+pragma experimental "ABIEncoderV2";
 
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import { SafeCast } from "@openzeppelin/contracts/utils/SafeCast.sol";
+import { SafeMath } from "@openzeppelin/contracts/math/SafeMath.sol";
 
 import { IController } from "../interfaces/IController.sol";
 import { IManagerIssuanceHook } from "../interfaces/IManagerIssuanceHook.sol";
@@ -26,6 +30,7 @@ import { PreciseUnitMath } from "../lib/PreciseUnitMath.sol";
 
 /**
  * @title BasicIssuanceModule
+ * @author Set Protocol
  *
  * Module that enables issuance and redemption functionality on a SetToken. This is a module that is
  * required to bring the totalSupply of a Set above 0.
@@ -35,6 +40,8 @@ contract BasicIssuanceModule is ModuleBase, ReentrancyGuard {
     using Position for ISetToken.Position;
     using Position for ISetToken;
     using PreciseUnitMath for uint256;
+    using SafeMath for uint256;
+    using SafeCast for int256;
 
     /* ============ Events ============ */
 
@@ -64,7 +71,7 @@ contract BasicIssuanceModule is ModuleBase, ReentrancyGuard {
      *
      * @param _controller             Address of controller contract
      */
-    constructor(IController _controller) ModuleBase(_controller) {}
+    constructor(IController _controller) public ModuleBase(_controller) {}
 
     /* ============ External Functions ============ */
 
@@ -139,7 +146,7 @@ contract BasicIssuanceModule is ModuleBase, ReentrancyGuard {
             address component = components[i];
             require(!_setToken.hasExternalPosition(component), "Only default positions are supported");
 
-            uint256 unit = uint256(_setToken.getDefaultPositionRealUnit(component));
+            uint256 unit = _setToken.getDefaultPositionRealUnit(component).toUint256();
 
             // Use preciseMul to round down to ensure overcollateration when small redeem quantities are provided
             uint256 componentQuantity = _quantity.preciseMul(unit);
@@ -179,7 +186,7 @@ contract BasicIssuanceModule is ModuleBase, ReentrancyGuard {
      * Reverts as this module should not be removable after added. Users should always
      * have a way to redeem their Sets
      */
-    function removeModule() external pure override {
+    function removeModule() external override {
         revert("The BasicIssuanceModule module cannot be removed");
     }
 
@@ -209,7 +216,7 @@ contract BasicIssuanceModule is ModuleBase, ReentrancyGuard {
         for (uint256 i = 0; i < components.length; i++) {
             require(!_setToken.hasExternalPosition(components[i]), "Only default positions are supported");
 
-            notionalUnits[i] = uint256(_setToken.getDefaultPositionRealUnit(components[i])).preciseMulCeil(_quantity);
+            notionalUnits[i] = _setToken.getDefaultPositionRealUnit(components[i]).toUint256().preciseMulCeil(_quantity);
         }
 
         return (components, notionalUnits);

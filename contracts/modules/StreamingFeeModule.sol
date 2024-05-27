@@ -1,4 +1,6 @@
 /*
+    Copyright 2020 Set Labs Inc.
+
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -11,12 +13,16 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 
-    SPDX-License-Identifier: Apache-2.0
+    SPDX-License-Identifier: Apache License, Version 2.0
 */
 
-pragma solidity ^0.8.25;
+pragma solidity 0.6.10;
+pragma experimental "ABIEncoderV2";
 
 import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import { SafeCast } from "@openzeppelin/contracts/utils/SafeCast.sol";
+import { SafeMath } from "@openzeppelin/contracts/math/SafeMath.sol";
+import { SignedSafeMath } from "@openzeppelin/contracts/math/SignedSafeMath.sol";
 
 import { IController } from "../interfaces/IController.sol";
 import { ISetToken } from "../interfaces/ISetToken.sol";
@@ -32,8 +38,13 @@ import { PreciseUnitMath } from "../lib/PreciseUnitMath.sol";
  * per year and realized as Set inflation rewarded to the manager.
  */
 contract StreamingFeeModule is ModuleBase, ReentrancyGuard {
+    using SafeMath for uint256;
     using PreciseUnitMath for uint256;
+    using SafeCast for uint256;
+
+    using SignedSafeMath for int256;
     using PreciseUnitMath for int256;
+    using SafeCast for int256;
 
 
     /* ============ Structs ============ */
@@ -62,7 +73,7 @@ contract StreamingFeeModule is ModuleBase, ReentrancyGuard {
 
     /* ============ Constructor ============ */
 
-    constructor(IController _controller) ModuleBase(_controller) {}
+    constructor(IController _controller) public ModuleBase(_controller) {}
 
     /* ============ External Functions ============ */
 
@@ -190,10 +201,10 @@ contract StreamingFeeModule is ModuleBase, ReentrancyGuard {
      * @return uint256            Streaming fee denominated in percentage of totalSupply
      */
     function _calculateStreamingFee(ISetToken _setToken) internal view returns(uint256) {
-        uint256 timeSinceLastFee = block.timestamp - _lastStreamingFeeTimestamp(_setToken);
+        uint256 timeSinceLastFee = block.timestamp.sub(_lastStreamingFeeTimestamp(_setToken));
 
         // Streaming fee is streaming fee times years since last fee
-        return (timeSinceLastFee * _streamingFeePercentage(_setToken)) / ONE_YEAR_IN_SECONDS;
+        return timeSinceLastFee.mul(_streamingFeePercentage(_setToken)).div(ONE_YEAR_IN_SECONDS);
     }
 
     /**
@@ -221,12 +232,12 @@ contract StreamingFeeModule is ModuleBase, ReentrancyGuard {
         uint256 totalSupply = _setToken.totalSupply();
 
         // fee * totalSupply
-        uint256 a = _feePercentage * totalSupply;
+        uint256 a = _feePercentage.mul(totalSupply);
 
         // ScaleFactor (10e18) - fee
-        uint256 b = PreciseUnitMath.preciseUnit() - _feePercentage;
+        uint256 b = PreciseUnitMath.preciseUnit().sub(_feePercentage);
 
-        return a / b;
+        return a.div(b);
     }
 
     /**
@@ -243,7 +254,7 @@ contract StreamingFeeModule is ModuleBase, ReentrancyGuard {
         uint256 protocolFee = controller.getModuleFee(address(this), PROTOCOL_STREAMING_FEE_INDEX);
 
         uint256 protocolFeeAmount = _feeQuantity.preciseMul(protocolFee);
-        uint256 managerFeeAmount = _feeQuantity - protocolFeeAmount;
+        uint256 managerFeeAmount = _feeQuantity.sub(protocolFeeAmount);
 
         _setToken.mint(_feeRecipient(_setToken), managerFeeAmount);
 
@@ -266,7 +277,7 @@ contract StreamingFeeModule is ModuleBase, ReentrancyGuard {
      */
     function _editPositionMultiplier(ISetToken _setToken, uint256 _inflationFee) internal {
         int256 currentMultipler = _setToken.positionMultiplier();
-        int256 newMultiplier = currentMultipler.preciseMul(int256(PreciseUnitMath.preciseUnit() - _inflationFee));
+        int256 newMultiplier = currentMultipler.preciseMul(PreciseUnitMath.preciseUnit().sub(_inflationFee).toInt256());
 
         _setToken.editPositionMultiplier(newMultiplier);
     }

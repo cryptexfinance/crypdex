@@ -1,4 +1,6 @@
 /*
+    Copyright 2020 Set Labs Inc.
+
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -11,23 +13,27 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 
-    SPDX-License-Identifier: Apache-2.0
+    SPDX-License-Identifier: Apache License, Version 2.0
 */
 
-pragma solidity ^0.8.25;
+pragma solidity 0.6.10;
+pragma experimental "ABIEncoderV2";
 
 import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import { SafeCast } from "@openzeppelin/contracts/utils/SafeCast.sol";
+import { SignedSafeMath } from "@openzeppelin/contracts/math/SignedSafeMath.sol";
 
 import { IController } from "../interfaces/IController.sol";
 import { ISetToken } from "../interfaces/ISetToken.sol";
 import { IPriceOracle } from "../interfaces/IPriceOracle.sol";
 import { PreciseUnitMath } from "../lib/PreciseUnitMath.sol";
-import { Position } from "../lib/Position.sol";
-import { ResourceIdentifier } from "../lib/ResourceIdentifier.sol";
+import { Position } from "./lib/Position.sol";
+import { ResourceIdentifier } from "./lib/ResourceIdentifier.sol";
 
 
 /**
  * @title SetValuer
+ * @author Set Protocol
  *
  * Contract that returns the valuation of SetTokens using price oracle data used in contracts
  * that are external to the system.
@@ -39,6 +45,9 @@ contract SetValuer {
     using PreciseUnitMath for uint256;
     using Position for ISetToken;
     using ResourceIdentifier for IController;
+    using SafeCast for int256;
+    using SafeCast for uint256;
+    using SignedSafeMath for int256;
 
     /* ============ State Variables ============ */
 
@@ -52,7 +61,7 @@ contract SetValuer {
      *
      * @param _controller             Address of controller contract
      */
-    constructor(IController _controller) {
+    constructor(IController _controller) public {
         controller = _controller;
     }
 
@@ -87,17 +96,17 @@ contract SetValuer {
             // Normalize each position unit to preciseUnits 1e18 and cast to signed int
             uint256 unitDecimals = ERC20(component).decimals();
             uint256 baseUnits = 10 ** unitDecimals;
-            int256 normalizedUnits = aggregateUnits.preciseDiv(int256(baseUnits));
+            int256 normalizedUnits = aggregateUnits.preciseDiv(baseUnits.toInt256());
 
             // Calculate valuation of the component. Debt positions are effectively subtracted
-            valuation = normalizedUnits.preciseMul(int256(componentPrice)) + valuation;
+            valuation = normalizedUnits.preciseMul(componentPrice.toInt256()).add(valuation);
         }
 
         if (masterQuoteAsset != _quoteAsset) {
             uint256 quoteToMaster = priceOracle.getPrice(_quoteAsset, masterQuoteAsset);
-            valuation = valuation.preciseDiv(int256(quoteToMaster));
+            valuation = valuation.preciseDiv(quoteToMaster.toInt256());
         }
 
-        return uint256(valuation);
+        return valuation.toUint256();
     }
 }

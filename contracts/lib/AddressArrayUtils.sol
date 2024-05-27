@@ -1,4 +1,5 @@
 /*
+    Copyright 2020 Set Labs Inc.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -12,17 +13,20 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 
-    SPDX-License-Identifier: Apache-2.0
+    SPDX-License-Identifier: Apache License, Version 2.0
 
 */
 
-pragma solidity ^0.8.25;
+pragma solidity 0.6.10;
 
 /**
  * @title AddressArrayUtils
- * @author Cryptex
+ * @author Set Protocol
  *
  * Utility functions to handle Address Arrays
+ *
+ * CHANGELOG:
+ * - 4/21/21: Added validatePairsWithArray methods
  */
 library AddressArrayUtils {
 
@@ -39,7 +43,7 @@ library AddressArrayUtils {
                 return (i, true);
             }
         }
-        return (type(uint256).max, false);
+        return (uint256(-1), false);
     }
 
     /**

@@ -13,16 +13,19 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 
-    SPDX-License-Identifier: Apache-2.0
+    SPDX-License-Identifier: Apache License, Version 2.0
 */
 
-pragma solidity ^0.8.25;
+pragma solidity 0.6.10;
+pragma experimental "ABIEncoderV2";
 
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { SafeCast } from "@openzeppelin/contracts/utils/SafeCast.sol";
+import { SafeMath } from "@openzeppelin/contracts/math/SafeMath.sol";
+import { SignedSafeMath } from "@openzeppelin/contracts/math/SignedSafeMath.sol";
 
-
-import { ISetToken } from "../interfaces/ISetToken.sol";
-import { PreciseUnitMath } from "../lib/PreciseUnitMath.sol";
+import { ISetToken } from "../../interfaces/ISetToken.sol";
+import { PreciseUnitMath } from "../../lib/PreciseUnitMath.sol";
 
 
 /**
@@ -35,7 +38,10 @@ import { PreciseUnitMath } from "../lib/PreciseUnitMath.sol";
  *  - Updated editExternalPosition to work when no external position is associated with module
  */
 library Position {
-
+    using SafeCast for uint256;
+    using SafeMath for uint256;
+    using SafeCast for int256;
+    using SignedSafeMath for int256;
     using PreciseUnitMath for uint256;
 
     /* ============ Helper ============ */
@@ -58,7 +64,7 @@ library Position {
      * Returns whether the SetToken component default position real unit is greater than or equal to units passed in.
      */
     function hasSufficientDefaultUnits(ISetToken _setToken, address _component, uint256 _unit) internal view returns(bool) {
-        return _setToken.getDefaultPositionRealUnit(_component) >= int256(_unit);
+        return _setToken.getDefaultPositionRealUnit(_component) >= _unit.toInt256();
     }
 
     /**
@@ -74,7 +80,7 @@ library Position {
         view
         returns(bool)
     {
-       return _setToken.getExternalPositionRealUnit(_component, _positionModule) >= int256(_unit);
+       return _setToken.getExternalPositionRealUnit(_component, _positionModule) >= _unit.toInt256();
     }
 
     /**
@@ -100,8 +106,7 @@ library Position {
             }
         }
 
-        _setToken.editDefaultPositionUnit(_component, int256(_newUnit));
-        _setToken.editDefaultPositionUnit(_component, int256(_newUnit));
+        _setToken.editDefaultPositionUnit(_component, _newUnit.toInt256());
     }
 
     /**
@@ -184,7 +189,7 @@ library Position {
      */
     function getDefaultTrackedBalance(ISetToken _setToken, address _component) internal view returns(uint256) {
         int256 positionUnit = _setToken.getDefaultPositionRealUnit(_component);
-        return _setToken.totalSupply().preciseMul(uint256(positionUnit));
+        return _setToken.totalSupply().preciseMul(positionUnit.toUint256());
     }
 
     /**
@@ -208,7 +213,7 @@ library Position {
         returns(uint256, uint256, uint256)
     {
         uint256 currentBalance = IERC20(_component).balanceOf(address(_setToken));
-        uint256 positionUnit = uint256(_setToken.getDefaultPositionRealUnit(_component));
+        uint256 positionUnit = _setToken.getDefaultPositionRealUnit(_component).toUint256();
 
         uint256 newTokenUnit;
         if (currentBalance > 0) {
@@ -248,7 +253,7 @@ library Position {
         returns (uint256)
     {
         // If pre action total notional amount is greater then subtract post action total notional and calculate new position units
-        uint256 airdroppedAmount = _preTotalNotional - (_prePositionUnit.preciseMul(_setTokenSupply));
-        return (_postTotalNotional- airdroppedAmount).preciseDiv(_setTokenSupply);
+        uint256 airdroppedAmount = _preTotalNotional.sub(_prePositionUnit.preciseMul(_setTokenSupply));
+        return _postTotalNotional.sub(airdroppedAmount).preciseDiv(_setTokenSupply);
     }
 }
