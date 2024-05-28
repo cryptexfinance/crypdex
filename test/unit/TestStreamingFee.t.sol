@@ -18,6 +18,8 @@ contract TestStreamingFee is SystemFixture {
 
     uint256 protocolFee = 15 ether / 100;
 
+    event FeeActualized(address indexed _setToken, uint256 _managerFee, uint256 _protocolFee);
+
     function setUp() external {
         setUpSystem();
         setupIndexToken();
@@ -155,7 +157,7 @@ contract TestStreamingFee is SystemFixture {
 
         vm.warp(recentAccrueTimestamp);
         vm.expectEmit(true, true, true, true, address(streamingFeeModule));
-        emit StreamingFeeModule.FeeActualized(
+        emit FeeActualized(
             address(setToken),
             feeInflation - protocolFeeAmount,
             protocolFeeAmount

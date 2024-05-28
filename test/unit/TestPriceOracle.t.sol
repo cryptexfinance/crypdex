@@ -34,6 +34,13 @@ contract TestPriceOracle is Test {
 
     address[] defaultModules = [deployer];
 
+    event PairAdded(address indexed _assetOne, address indexed _assetTwo, address _oracle);
+    event PairRemoved(address indexed _assetOne, address indexed _assetTwo, address _oracle);
+    event PairEdited(address indexed _assetOne, address indexed _assetTwo, address _newOracle);
+    event AdapterAdded(address _adapter);
+    event AdapterRemoved(address _adapter);
+    event MasterQuoteAssetEdited(address _newMasterQuote);
+
 
     function setUp() external {
         vm.startPrank(deployer);
@@ -115,7 +122,7 @@ contract TestPriceOracle is Test {
         address newOracle = address(0x72);
         vm.prank(deployer);
         vm.expectEmit(true, false, false, true, address(masterOracle));
-        emit PriceOracle.PairEdited(wETH, USDC, newOracle);
+        emit PairEdited(wETH, USDC, newOracle);
         masterOracle.editPair(
             wETH,
             USDC,
@@ -132,7 +139,7 @@ contract TestPriceOracle is Test {
         address newOracle = address(0x72);
         vm.prank(deployer);
         vm.expectEmit(true, false, false, true, address(masterOracle));
-        emit PriceOracle.PairAdded(randomAsset, USDC, newOracle);
+        emit PairAdded(randomAsset, USDC, newOracle);
         masterOracle.addPair(
             randomAsset,
             USDC,
@@ -147,7 +154,7 @@ contract TestPriceOracle is Test {
     function testRemovePair() external {
         vm.prank(deployer);
         vm.expectEmit(true, false, false, true, address(masterOracle));
-        emit PriceOracle.PairRemoved(wETH, USDC, address(ethusdcOracle));
+        emit PairRemoved(wETH, USDC, address(ethusdcOracle));
         masterOracle.removePair(
             wETH,
             USDC

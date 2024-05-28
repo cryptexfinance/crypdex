@@ -23,6 +23,16 @@ contract TestController is Test {
     uint256[] internal defaultResourceIds = [0];
 
     Controller internal controller;
+    event FactoryAdded(address indexed _factory);
+    event FactoryRemoved(address indexed _factory);
+    event FeeEdited(address indexed _module, uint256 indexed _feeType, uint256 _feePercentage);
+    event FeeRecipientChanged(address _newFeeRecipient);
+    event ModuleAdded(address indexed _module);
+    event ModuleRemoved(address indexed _module);
+    event ResourceAdded(address indexed _resource, uint256 _id);
+    event ResourceRemoved(address indexed _resource, uint256 _id);
+    event SetAdded(address indexed _setToken, address indexed _factory);
+    event SetRemoved(address indexed _setToken);
 
     function setUp() external {
         vm.prank(deployer);
@@ -244,7 +254,7 @@ contract TestController is Test {
         );
         vm.prank(mockSetTokenFactory);
         vm.expectEmit(true, false, false, true, address(controller));
-        emit Controller.SetAdded(mockSetToken, mockSetTokenFactory);
+        emit SetAdded(mockSetToken, mockSetTokenFactory);
         controller.addSet(mockSetToken);
     }
 
@@ -315,7 +325,7 @@ contract TestController is Test {
         controller.addSet(mockSetToken);
         vm.prank(deployer);
         vm.expectEmit(true, false, false, true, address(controller));
-        emit Controller.SetRemoved(mockSetToken);
+        emit SetRemoved(mockSetToken);
         controller.removeSet(mockSetToken);
     }
 
@@ -381,7 +391,7 @@ contract TestController is Test {
         );
         vm.prank(deployer);
         vm.expectEmit(true, false, false, true, address(controller));
-        emit Controller.FactoryAdded(mockSetTokenFactory);
+        emit FactoryAdded(mockSetTokenFactory);
         controller.addFactory(mockSetTokenFactory);
     }
 
@@ -431,7 +441,7 @@ contract TestController is Test {
         );
         vm.prank(deployer);
         vm.expectEmit(true, false, false, true, address(controller));
-        emit Controller.FactoryRemoved(mockSetTokenFactory);
+        emit FactoryRemoved(mockSetTokenFactory);
         controller.removeFactory(mockSetTokenFactory);
     }
 
@@ -498,7 +508,7 @@ contract TestController is Test {
         );
         vm.prank(deployer);
         vm.expectEmit(true, false, false, true, address(controller));
-        emit Controller.ModuleAdded(mockBasicIssuanceModule);
+        emit ModuleAdded(mockBasicIssuanceModule);
         controller.addModule(mockBasicIssuanceModule);
     }
 
@@ -564,7 +574,7 @@ contract TestController is Test {
         );
         vm.prank(deployer);
         vm.expectEmit(true, false, false, true, address(controller));
-        emit Controller.ModuleRemoved(mockBasicIssuanceModule);
+        emit ModuleRemoved(mockBasicIssuanceModule);
         controller.removeModule(mockBasicIssuanceModule);
     }
 
@@ -654,7 +664,7 @@ contract TestController is Test {
         );
         vm.prank(deployer);
         vm.expectEmit(true, false, false, true, address(controller));
-        emit Controller.ResourceAdded(mockPriceOracle, 0);
+        emit ResourceAdded(mockPriceOracle, 0);
         controller.addResource(mockPriceOracle, 0);
     }
 
@@ -733,7 +743,7 @@ contract TestController is Test {
         );
         vm.prank(deployer);
         vm.expectEmit(true, false, false, true, address(controller));
-        emit Controller.ResourceRemoved(mockPriceOracle, 0);
+        emit ResourceRemoved(mockPriceOracle, 0);
         controller.removeResource(0);
     }
 
@@ -760,7 +770,7 @@ contract TestController is Test {
         );
         vm.prank(deployer);
         vm.expectEmit(true, false, false, true, address(controller));
-        emit Controller.FeeEdited(mockBasicIssuanceModule, 0, 5);
+        emit FeeEdited(mockBasicIssuanceModule, 0, 5);
         controller.addFee(mockBasicIssuanceModule, 0, 5);
         assertEq(controller.getModuleFee(mockBasicIssuanceModule, 0), 5);
     }
@@ -777,7 +787,7 @@ contract TestController is Test {
         assertEq(controller.getModuleFee(mockBasicIssuanceModule, 0), 5);
         vm.prank(deployer);
         vm.expectEmit(true, false, false, true, address(controller));
-        emit Controller.FeeEdited(mockBasicIssuanceModule, 0, 0);
+        emit FeeEdited(mockBasicIssuanceModule, 0, 0);
         controller.editFee(mockBasicIssuanceModule, 0, 0);
         assertEq(controller.getModuleFee(mockBasicIssuanceModule, 0), 0);
     }

@@ -19,7 +19,7 @@ pragma solidity 0.6.10;
 contract MockOracle {
     uint256 public price;
 
-    constructor(uint256 _startingPrice) {
+    constructor(uint256 _startingPrice) public {
         price = _startingPrice;
     }
 

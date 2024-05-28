@@ -24,8 +24,8 @@ import { SafeCast } from "@openzeppelin/contracts/utils/SafeCast.sol";
 import { SafeMath } from "@openzeppelin/contracts/math/SafeMath.sol";
 import { SignedSafeMath } from "@openzeppelin/contracts/math/SignedSafeMath.sol";
 
-import { ISetToken } from "../../interfaces/ISetToken.sol";
-import { PreciseUnitMath } from "../../lib/PreciseUnitMath.sol";
+import { ISetToken } from "../interfaces/ISetToken.sol";
+import { PreciseUnitMath } from "../lib/PreciseUnitMath.sol";
 
 
 /**

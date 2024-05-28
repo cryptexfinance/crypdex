@@ -27,8 +27,8 @@ import { IController } from "../interfaces/IController.sol";
 import { ISetToken } from "../interfaces/ISetToken.sol";
 import { IPriceOracle } from "../interfaces/IPriceOracle.sol";
 import { PreciseUnitMath } from "../lib/PreciseUnitMath.sol";
-import { Position } from "./lib/Position.sol";
-import { ResourceIdentifier } from "./lib/ResourceIdentifier.sol";
+import { Position } from "../lib/Position.sol";
+import { ResourceIdentifier } from "../lib/ResourceIdentifier.sol";
 
 
 /**

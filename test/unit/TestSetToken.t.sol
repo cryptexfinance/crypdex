@@ -10,7 +10,7 @@ import {IModule} from "contracts/interfaces/IModule.sol";
 import "../fixtures/SystemFixture.sol";
 
 contract MockModule is IModule {
-    function removeModule() external {}
+    function removeModule() external override {}
 }
 
 contract TestSetToken is SystemFixture {

@@ -27,6 +27,14 @@ contract TestIntegrationRegistry is Test {
     string[] internal defaultAdapterNames = [firstAdapterName, secondAdapterName];
     address[] internal defaultAdapters = [mockFirstAdapter, mockSecondAdapter];
 
+    event IntegrationAdded(address indexed _module, address indexed _adapter, string _integrationName);
+    event IntegrationRemoved(address indexed _module, address indexed _adapter, string _integrationName);
+    event IntegrationEdited(
+        address indexed _module,
+        address _newAdapter,
+        string _integrationName
+    );
+
     function setUp() external {
         vm.startPrank(owner);
         controller = new Controller(owner);
@@ -55,7 +63,7 @@ contract TestIntegrationRegistry is Test {
     function testAddIntegrationEvent() external {
         vm.prank(owner);
         vm.expectEmit(true, false, false, true, address(integrationRegistry));
-        emit IntegrationRegistry.IntegrationAdded(mockFirstModule, mockFirstAdapter, firstAdapterName);
+        emit IntegrationAdded(mockFirstModule, mockFirstAdapter, firstAdapterName);
         integrationRegistry.addIntegration(
             mockFirstModule,
             firstAdapterName,
@@ -110,8 +118,8 @@ contract TestIntegrationRegistry is Test {
         );
         vm.prank(owner);
         vm.expectEmit(true, true, false, true, address(integrationRegistry));
-        emit IntegrationRegistry.IntegrationAdded(mockFirstModule, mockFirstAdapter, firstAdapterName);
-        emit IntegrationRegistry.IntegrationAdded(mockSecondModule, mockSecondAdapter, secondAdapterName);
+        emit IntegrationAdded(mockFirstModule, mockFirstAdapter, firstAdapterName);
+        emit IntegrationAdded(mockSecondModule, mockSecondAdapter, secondAdapterName);
         integrationRegistry.batchAddIntegration(
             defaultModules,
             defaultAdapterNames,
@@ -190,7 +198,7 @@ contract TestIntegrationRegistry is Test {
         );
         vm.prank(owner);
         vm.expectEmit(true, false, false, true, address(integrationRegistry));
-        emit IntegrationRegistry.IntegrationRemoved(mockFirstModule, mockFirstAdapter, firstAdapterName);
+        emit IntegrationRemoved(mockFirstModule, mockFirstAdapter, firstAdapterName);
         integrationRegistry.removeIntegration(
             mockFirstModule,
             firstAdapterName
@@ -227,8 +235,8 @@ contract TestIntegrationRegistry is Test {
         (defaultAdapters[0], defaultAdapters[1]) = (defaultAdapters[1], defaultAdapters[0]);
         vm.prank(owner);
         vm.expectEmit(true, true, false, true, address(integrationRegistry));
-        emit IntegrationRegistry.IntegrationEdited(mockFirstModule, mockSecondAdapter, firstAdapterName);
-        emit IntegrationRegistry.IntegrationEdited(mockSecondModule, mockFirstAdapter, secondAdapterName);
+        emit IntegrationEdited(mockFirstModule, mockSecondAdapter, firstAdapterName);
+        emit IntegrationEdited(mockSecondModule, mockFirstAdapter, secondAdapterName);
         integrationRegistry.batchEditIntegration(
             defaultModules,
             defaultAdapterNames,

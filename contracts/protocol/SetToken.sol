@@ -28,7 +28,7 @@ import { SignedSafeMath } from "@openzeppelin/contracts/math/SignedSafeMath.sol"
 import { IController } from "../interfaces/IController.sol";
 import { IModule } from "../interfaces/IModule.sol";
 import { ISetToken } from "../interfaces/ISetToken.sol";
-import { Position } from "./lib/Position.sol";
+import { Position } from "../lib/Position.sol";
 import { PreciseUnitMath } from "../lib/PreciseUnitMath.sol";
 import { AddressArrayUtils } from "../lib/AddressArrayUtils.sol";
 

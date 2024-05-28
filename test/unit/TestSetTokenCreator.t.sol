@@ -35,6 +35,8 @@ contract TestSetTokenCreator is Test {
     Controller internal controller;
     SetTokenCreator internal setTokenCreator;
 
+    event SetTokenCreated(address indexed _setToken, address _manager, string _name, string _symbol);
+
     function setUp() external {
         vm.startPrank(deployer);
         controller = new Controller(protocolFeeRecipient);
@@ -103,7 +105,7 @@ contract TestSetTokenCreator is Test {
         );
         address setTokenAddress = address(uint160(uint256(hash)));
         vm.expectEmit(false, true, false, true, address(setTokenCreator));
-        emit SetTokenCreator.SetTokenCreated(
+        emit SetTokenCreated(
             setTokenAddress,
             owner,
             defaultName,

@@ -18,30 +18,48 @@
 
 pragma solidity 0.6.10;
 
+import { IController } from "../interfaces/IController.sol";
+import { IIntegrationRegistry } from "../interfaces/IIntegrationRegistry.sol";
+import { IPriceOracle } from "../interfaces/IPriceOracle.sol";
+import { ISetValuer } from "../interfaces/ISetValuer.sol";
+
 /**
- * @title Uint256ArrayUtils
+ * @title ResourceIdentifier
  * @author Set Protocol
  *
- * Utility functions to handle Uint256 Arrays
+ * A collection of utility functions to fetch information related to Resource contracts in the system
  */
-library Uint256ArrayUtils {
+library ResourceIdentifier {
+
+    // IntegrationRegistry will always be resource ID 0 in the system
+    uint256 constant internal INTEGRATION_REGISTRY_RESOURCE_ID = 0;
+    // PriceOracle will always be resource ID 1 in the system
+    uint256 constant internal PRICE_ORACLE_RESOURCE_ID = 1;
+    // SetValuer resource will always be resource ID 2 in the system
+    uint256 constant internal SET_VALUER_RESOURCE_ID = 2;
+
+    /* ============ Internal ============ */
 
     /**
-     * Returns the combination of the two arrays
-     * @param A The first array
-     * @param B The second array
-     * @return Returns A extended by B
+     * Gets the instance of integration registry stored on Controller. Note: IntegrationRegistry is stored as index 0 on
+     * the Controller
      */
-    function extend(uint256[] memory A, uint256[] memory B) internal pure returns (uint256[] memory) {
-        uint256 aLength = A.length;
-        uint256 bLength = B.length;
-        uint256[] memory newUints = new uint256[](aLength + bLength);
-        for (uint256 i = 0; i < aLength; i++) {
-            newUints[i] = A[i];
-        }
-        for (uint256 j = 0; j < bLength; j++) {
-            newUints[aLength + j] = B[j];
-        }
-        return newUints;
+    function getIntegrationRegistry(IController _controller) internal view returns (IIntegrationRegistry) {
+        return IIntegrationRegistry(_controller.resourceId(INTEGRATION_REGISTRY_RESOURCE_ID));
+    }
+
+    /**
+     * Gets instance of price oracle on Controller. Note: PriceOracle is stored as index 1 on the Controller
+     */
+    function getPriceOracle(IController _controller) internal view returns (IPriceOracle) {
+        return IPriceOracle(_controller.resourceId(PRICE_ORACLE_RESOURCE_ID));
+    }
+
+    /**
+     * Gets the instance of Set valuer on Controller. Note: SetValuer is stored as index 2 on the Controller
+     */
+    function getSetValuer(IController _controller) internal view returns (ISetValuer) {
+        return ISetValuer(_controller.resourceId(SET_VALUER_RESOURCE_ID));
     }
 }
+

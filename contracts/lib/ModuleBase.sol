@@ -20,15 +20,15 @@ pragma solidity 0.6.10;
 
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-import { AddressArrayUtils } from "../../lib/AddressArrayUtils.sol";
-import { ExplicitERC20 } from "../../lib/ExplicitERC20.sol";
-import { IController } from "../../interfaces/IController.sol";
-import { IModule } from "../../interfaces/IModule.sol";
-import { ISetToken } from "../../interfaces/ISetToken.sol";
+import { AddressArrayUtils } from "../lib/AddressArrayUtils.sol";
+import { ExplicitERC20 } from "../lib/ExplicitERC20.sol";
+import { IController } from "../interfaces/IController.sol";
+import { IModule } from "../interfaces/IModule.sol";
+import { ISetToken } from "../interfaces/ISetToken.sol";
 import { Invoke } from "./Invoke.sol";
 import { Position } from "./Position.sol";
-import { PreciseUnitMath } from "../../lib/PreciseUnitMath.sol";
-import { ResourceIdentifier } from "./ResourceIdentifier.sol";
+import { PreciseUnitMath } from "../lib/PreciseUnitMath.sol";
+import { ResourceIdentifier } from "../lib/ResourceIdentifier.sol";
 import { SafeCast } from "@openzeppelin/contracts/utils/SafeCast.sol";
 import { SafeMath } from "@openzeppelin/contracts/math/SafeMath.sol";
 import { SignedSafeMath } from "@openzeppelin/contracts/math/SignedSafeMath.sol";

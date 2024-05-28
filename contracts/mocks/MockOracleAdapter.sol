@@ -22,7 +22,7 @@ contract MockOracleAdapter {
     uint256 public dummyPrice;
     address public asset;
 
-    constructor(address _asset, uint256 _dummyPrice) {
+    constructor(address _asset, uint256 _dummyPrice) public {
         dummyPrice = _dummyPrice;
         asset = _asset;
     }
