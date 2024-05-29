@@ -560,7 +560,7 @@
   integrity sha512-YhzPdzb612X591FOe68q+qXVXGG2ANZRvDo0RRUtimev85rCrAlv/TLMEZw5c+kq9AbzocLTVX/h2jVIFPL9Xg==
 
 "@openzeppelin/contracts@./lib/openzeppelin-contracts/contracts":
-  version "5.0.2"
+  version "3.4.2"
 
 "@scure/base@~1.1.0":
   version "1.1.6"
@@ -2441,6 +2441,9 @@ slice-ansi@^4.0.0:
     ansi-styles "^4.0.0"
     astral-regex "^2.0.0"
     is-fullwidth-code-point "^3.0.0"
+
+solady@./lib/solady:
+  version "0.0.107"
 
 solc@0.7.3:
   version "0.7.3"
