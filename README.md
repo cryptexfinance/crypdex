@@ -3,8 +3,10 @@
 Index token collateralized as a weighted basket of tokens.
 
 # Note
-This is a fork of the [index coop smart contracts](https://github.com/IndexCoop/index-protocol). We have updated the solidity version to 0.8.25 in the contracts and we've rewritten the tests in foundry to make sure that we understand the contracts correctly.
-This repository is currently WORK IN PROGRESS. Most of the smart contracts have been finalised, but we still have more tests to write for better coverage. 
+This is a fork of the [index coop smart contracts](https://github.com/IndexCoop/index-protocol).
+We've only kept the contracts that we need for this project. 
+We've re-written the tests in foundry for the sake of our understanding and to also show that this not a blind fork.
+
 
 # Testing
 After cloning the repository, make sure that all the github modules have been updated
