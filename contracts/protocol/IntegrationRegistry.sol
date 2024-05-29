@@ -1,6 +1,4 @@
 /*
-    Copyright 2020 Set Labs Inc.
-
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -24,7 +22,6 @@ import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 
 /**
  * @title IntegrationRegistry
- * @author Set Protocol
  *
  * The IntegrationRegistry holds state relating to the Modules and the integrations they are connected with.
  * The state is combined into a single Registry to allow governance updates to be aggregated to one contract.

@@ -35,7 +35,12 @@ contract TestSetTokenCreator is Test {
     Controller internal controller;
     SetTokenCreator internal setTokenCreator;
 
-    event SetTokenCreated(address indexed _setToken, address _manager, string _name, string _symbol);
+    event SetTokenCreated(
+        address indexed _setToken,
+        address _manager,
+        string _name,
+        string _symbol
+    );
 
     function setUp() external {
         vm.startPrank(deployer);

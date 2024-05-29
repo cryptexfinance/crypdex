@@ -5,16 +5,14 @@ pragma experimental ABIEncoderV2;
 import "forge-std/Test.sol";
 import "forge-std/console.sol";
 
-import { Controller } from "contracts/protocol/Controller.sol";
-import { IController } from "contracts/interfaces/IController.sol";
-import { IOracle } from "contracts/interfaces/IOracle.sol";
-import { PriceOracle } from "contracts/protocol/PriceOracle.sol";
+import {Controller} from "contracts/protocol/Controller.sol";
+import {IController} from "contracts/interfaces/IController.sol";
+import {IOracle} from "contracts/interfaces/IOracle.sol";
+import {PriceOracle} from "contracts/protocol/PriceOracle.sol";
 import {MockOracle} from "contracts/mocks/MockOracle.sol";
 import {MockOracleAdapter} from "contracts/mocks/MockOracleAdapter.sol";
 
-
 contract TestPriceOracle is Test {
-
     Controller controller;
     PriceOracle masterOracle;
     MockOracleAdapter oracleAdapter;
@@ -34,13 +32,24 @@ contract TestPriceOracle is Test {
 
     address[] defaultModules = [deployer];
 
-    event PairAdded(address indexed _assetOne, address indexed _assetTwo, address _oracle);
-    event PairRemoved(address indexed _assetOne, address indexed _assetTwo, address _oracle);
-    event PairEdited(address indexed _assetOne, address indexed _assetTwo, address _newOracle);
+    event PairAdded(
+        address indexed _assetOne,
+        address indexed _assetTwo,
+        address _oracle
+    );
+    event PairRemoved(
+        address indexed _assetOne,
+        address indexed _assetTwo,
+        address _oracle
+    );
+    event PairEdited(
+        address indexed _assetOne,
+        address indexed _assetTwo,
+        address _newOracle
+    );
     event AdapterAdded(address _adapter);
     event AdapterRemoved(address _adapter);
     event MasterQuoteAssetEdited(address _newMasterQuote);
-
 
     function setUp() external {
         vm.startPrank(deployer);
@@ -48,7 +57,12 @@ contract TestPriceOracle is Test {
         ethbtcOracle = new MockOracle(initialETHBTCValue);
         oracleAdapter = new MockOracleAdapter(adapterAsset, adapterDummyPrice);
         controller = new Controller(deployer);
-        controller.initialize(new address[](0), defaultModules, new address[](0), new uint256[](0));
+        controller.initialize(
+            new address[](0),
+            defaultModules,
+            new address[](0),
+            new uint256[](0)
+        );
         setUpPriceOracle();
         vm.stopPrank();
     }
@@ -57,7 +71,7 @@ contract TestPriceOracle is Test {
         address[] memory priceOracleAdapters = new address[](1);
         address[] memory priceOracleAssetOnes = new address[](2);
         address[] memory priceOracleAssetTwos = new address[](2);
-        IOracle[] memory oracles  = new IOracle[](2);
+        IOracle[] memory oracles = new IOracle[](2);
         priceOracleAdapters[0] = address(oracleAdapter);
         priceOracleAssetOnes[0] = wETH;
         priceOracleAssetOnes[1] = wETH;
@@ -75,14 +89,12 @@ contract TestPriceOracle is Test {
         );
     }
 
-    function inverse(uint256 val) private view returns(uint256) {
+    function inverse(uint256 val) private view returns (uint256) {
         return (1 ether * 1 ether) / val;
     }
 
     function testControllerSet() external {
-        assertEq(
-            address(masterOracle.controller()), address(controller)
-        );
+        assertEq(address(masterOracle.controller()), address(controller));
     }
 
     function testGetPrice() external {
@@ -101,7 +113,8 @@ contract TestPriceOracle is Test {
     function testMasterQuotePrice() external {
         vm.prank(deployer);
         uint256 actualPrice = masterOracle.getPrice(wBTC, USDC);
-        uint256 expectedPrice = (inverse(initialETHBTCValue) * 1 ether) / inverse(initialETHValue);
+        uint256 expectedPrice = (inverse(initialETHBTCValue) * 1 ether) /
+            inverse(initialETHValue);
         assertEq(actualPrice, expectedPrice);
     }
 
@@ -123,15 +136,8 @@ contract TestPriceOracle is Test {
         vm.prank(deployer);
         vm.expectEmit(true, false, false, true, address(masterOracle));
         emit PairEdited(wETH, USDC, newOracle);
-        masterOracle.editPair(
-            wETH,
-            USDC,
-            IOracle(newOracle)
-        );
-        assertEq(
-            address(masterOracle.oracles(wETH, USDC)),
-            newOracle
-        );
+        masterOracle.editPair(wETH, USDC, IOracle(newOracle));
+        assertEq(address(masterOracle.oracles(wETH, USDC)), newOracle);
     }
 
     function testAddPair() external {
@@ -140,28 +146,15 @@ contract TestPriceOracle is Test {
         vm.prank(deployer);
         vm.expectEmit(true, false, false, true, address(masterOracle));
         emit PairAdded(randomAsset, USDC, newOracle);
-        masterOracle.addPair(
-            randomAsset,
-            USDC,
-            IOracle(newOracle)
-        );
-        assertEq(
-            address(masterOracle.oracles(randomAsset, USDC)),
-            newOracle
-        );
+        masterOracle.addPair(randomAsset, USDC, IOracle(newOracle));
+        assertEq(address(masterOracle.oracles(randomAsset, USDC)), newOracle);
     }
 
     function testRemovePair() external {
         vm.prank(deployer);
         vm.expectEmit(true, false, false, true, address(masterOracle));
         emit PairRemoved(wETH, USDC, address(ethusdcOracle));
-        masterOracle.removePair(
-            wETH,
-            USDC
-        );
-        assertEq(
-            address(masterOracle.oracles(wETH, USDC)),
-            address(0)
-        );
+        masterOracle.removePair(wETH, USDC);
+        assertEq(address(masterOracle.oracles(wETH, USDC)), address(0));
     }
 }

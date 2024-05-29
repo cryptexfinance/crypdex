@@ -1,6 +1,4 @@
 /*
-    Copyright 2020 Set Labs Inc.
-
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -22,7 +20,6 @@ import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 /**
  * @title ISetToken
- * @author Set Protocol
  *
  * Interface for operating with SetTokens.
  */

@@ -1,6 +1,4 @@
 /*
-    Copyright 2020 Set Labs Inc.
-
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -25,7 +23,6 @@ import { ISetValuer } from "../interfaces/ISetValuer.sol";
 
 /**
  * @title ResourceIdentifier
- * @author Set Protocol
  *
  * A collection of utility functions to fetch information related to Resource contracts in the system
  */

@@ -5,9 +5,9 @@ pragma experimental ABIEncoderV2;
 import "forge-std/Test.sol";
 import "forge-std/console.sol";
 
-import { Controller } from "contracts/protocol/Controller.sol";
-import { IController } from "contracts/interfaces/IController.sol";
-import { IntegrationRegistry } from "contracts/protocol/IntegrationRegistry.sol";
+import {Controller} from "contracts/protocol/Controller.sol";
+import {IController} from "contracts/interfaces/IController.sol";
+import {IntegrationRegistry} from "contracts/protocol/IntegrationRegistry.sol";
 
 contract TestIntegrationRegistry is Test {
     IntegrationRegistry internal integrationRegistry;
@@ -24,11 +24,22 @@ contract TestIntegrationRegistry is Test {
     string internal secondAdapterName = "KYBER";
     string internal thirdAdapterName = "ONEINCH";
     address[] internal defaultModules = [mockFirstModule, mockSecondModule];
-    string[] internal defaultAdapterNames = [firstAdapterName, secondAdapterName];
+    string[] internal defaultAdapterNames = [
+        firstAdapterName,
+        secondAdapterName
+    ];
     address[] internal defaultAdapters = [mockFirstAdapter, mockSecondAdapter];
 
-    event IntegrationAdded(address indexed _module, address indexed _adapter, string _integrationName);
-    event IntegrationRemoved(address indexed _module, address indexed _adapter, string _integrationName);
+    event IntegrationAdded(
+        address indexed _module,
+        address indexed _adapter,
+        string _integrationName
+    );
+    event IntegrationRemoved(
+        address indexed _module,
+        address indexed _adapter,
+        string _integrationName
+    );
     event IntegrationEdited(
         address indexed _module,
         address _newAdapter,
@@ -38,14 +49,24 @@ contract TestIntegrationRegistry is Test {
     function setUp() external {
         vm.startPrank(owner);
         controller = new Controller(owner);
-        controller.initialize(new address[](0), defaultModules, new address[](0), new uint256[](0));
-        integrationRegistry = new IntegrationRegistry(IController(address(controller)));
+        controller.initialize(
+            new address[](0),
+            defaultModules,
+            new address[](0),
+            new uint256[](0)
+        );
+        integrationRegistry = new IntegrationRegistry(
+            IController(address(controller))
+        );
         vm.stopPrank();
     }
 
     function testAddIntegration() external {
         assertEq(
-            integrationRegistry.getIntegrationAdapter(mockFirstModule, firstAdapterName),
+            integrationRegistry.getIntegrationAdapter(
+                mockFirstModule,
+                firstAdapterName
+            ),
             address(0)
         );
         vm.prank(owner);
@@ -55,7 +76,10 @@ contract TestIntegrationRegistry is Test {
             mockFirstAdapter
         );
         assertEq(
-            integrationRegistry.getIntegrationAdapter(mockFirstModule, firstAdapterName),
+            integrationRegistry.getIntegrationAdapter(
+                mockFirstModule,
+                firstAdapterName
+            ),
             mockFirstAdapter
         );
     }
@@ -63,7 +87,11 @@ contract TestIntegrationRegistry is Test {
     function testAddIntegrationEvent() external {
         vm.prank(owner);
         vm.expectEmit(true, false, false, true, address(integrationRegistry));
-        emit IntegrationAdded(mockFirstModule, mockFirstAdapter, firstAdapterName);
+        emit IntegrationAdded(
+            mockFirstModule,
+            mockFirstAdapter,
+            firstAdapterName
+        );
         integrationRegistry.addIntegration(
             mockFirstModule,
             firstAdapterName,
@@ -109,28 +137,48 @@ contract TestIntegrationRegistry is Test {
 
     function testBatchAddIntegration() external {
         assertEq(
-            integrationRegistry.getIntegrationAdapter(mockFirstModule, firstAdapterName),
+            integrationRegistry.getIntegrationAdapter(
+                mockFirstModule,
+                firstAdapterName
+            ),
             address(0)
         );
         assertEq(
-            integrationRegistry.getIntegrationAdapter(mockSecondModule, secondAdapterName),
+            integrationRegistry.getIntegrationAdapter(
+                mockSecondModule,
+                secondAdapterName
+            ),
             address(0)
         );
         vm.prank(owner);
         vm.expectEmit(true, true, false, true, address(integrationRegistry));
-        emit IntegrationAdded(mockFirstModule, mockFirstAdapter, firstAdapterName);
-        emit IntegrationAdded(mockSecondModule, mockSecondAdapter, secondAdapterName);
+        emit IntegrationAdded(
+            mockFirstModule,
+            mockFirstAdapter,
+            firstAdapterName
+        );
+        emit IntegrationAdded(
+            mockSecondModule,
+            mockSecondAdapter,
+            secondAdapterName
+        );
         integrationRegistry.batchAddIntegration(
             defaultModules,
             defaultAdapterNames,
             defaultAdapters
         );
         assertEq(
-            integrationRegistry.getIntegrationAdapter(mockFirstModule, firstAdapterName),
+            integrationRegistry.getIntegrationAdapter(
+                mockFirstModule,
+                firstAdapterName
+            ),
             mockFirstAdapter
         );
         assertEq(
-            integrationRegistry.getIntegrationAdapter(mockSecondModule, secondAdapterName),
+            integrationRegistry.getIntegrationAdapter(
+                mockSecondModule,
+                secondAdapterName
+            ),
             mockSecondAdapter
         );
     }
@@ -193,18 +241,28 @@ contract TestIntegrationRegistry is Test {
             mockFirstAdapter
         );
         assertEq(
-            integrationRegistry.getIntegrationAdapter(mockFirstModule, firstAdapterName),
+            integrationRegistry.getIntegrationAdapter(
+                mockFirstModule,
+                firstAdapterName
+            ),
             mockFirstAdapter
         );
         vm.prank(owner);
         vm.expectEmit(true, false, false, true, address(integrationRegistry));
-        emit IntegrationRemoved(mockFirstModule, mockFirstAdapter, firstAdapterName);
+        emit IntegrationRemoved(
+            mockFirstModule,
+            mockFirstAdapter,
+            firstAdapterName
+        );
         integrationRegistry.removeIntegration(
             mockFirstModule,
             firstAdapterName
         );
         assertEq(
-            integrationRegistry.getIntegrationAdapter(mockFirstModule, firstAdapterName),
+            integrationRegistry.getIntegrationAdapter(
+                mockFirstModule,
+                firstAdapterName
+            ),
             address(0)
         );
     }
@@ -232,22 +290,39 @@ contract TestIntegrationRegistry is Test {
             defaultAdapters
         );
         // swap
-        (defaultAdapters[0], defaultAdapters[1]) = (defaultAdapters[1], defaultAdapters[0]);
+        (defaultAdapters[0], defaultAdapters[1]) = (
+            defaultAdapters[1],
+            defaultAdapters[0]
+        );
         vm.prank(owner);
         vm.expectEmit(true, true, false, true, address(integrationRegistry));
-        emit IntegrationEdited(mockFirstModule, mockSecondAdapter, firstAdapterName);
-        emit IntegrationEdited(mockSecondModule, mockFirstAdapter, secondAdapterName);
+        emit IntegrationEdited(
+            mockFirstModule,
+            mockSecondAdapter,
+            firstAdapterName
+        );
+        emit IntegrationEdited(
+            mockSecondModule,
+            mockFirstAdapter,
+            secondAdapterName
+        );
         integrationRegistry.batchEditIntegration(
             defaultModules,
             defaultAdapterNames,
             defaultAdapters
         );
         assertEq(
-            integrationRegistry.getIntegrationAdapter(mockFirstModule, firstAdapterName),
+            integrationRegistry.getIntegrationAdapter(
+                mockFirstModule,
+                firstAdapterName
+            ),
             mockSecondAdapter
         );
         assertEq(
-            integrationRegistry.getIntegrationAdapter(mockSecondModule, secondAdapterName),
+            integrationRegistry.getIntegrationAdapter(
+                mockSecondModule,
+                secondAdapterName
+            ),
             mockFirstAdapter
         );
     }
@@ -310,7 +385,12 @@ contract TestIntegrationRegistry is Test {
             defaultAdapterNames,
             defaultAdapters
         );
-        assertTrue(integrationRegistry.isValidIntegration(mockFirstModule, firstAdapterName));
+        assertTrue(
+            integrationRegistry.isValidIntegration(
+                mockFirstModule,
+                firstAdapterName
+            )
+        );
     }
 
     function testIsInValidIntegration() external {
@@ -320,7 +400,12 @@ contract TestIntegrationRegistry is Test {
             defaultAdapterNames,
             defaultAdapters
         );
-        assertFalse(integrationRegistry.isValidIntegration(mockFirstModule, secondAdapterName));
+        assertFalse(
+            integrationRegistry.isValidIntegration(
+                mockFirstModule,
+                secondAdapterName
+            )
+        );
     }
 
     function testGetIntegrationAdapter() external {
@@ -331,7 +416,10 @@ contract TestIntegrationRegistry is Test {
             defaultAdapters
         );
         assertEq(
-            integrationRegistry.getIntegrationAdapter(mockFirstModule, firstAdapterName),
+            integrationRegistry.getIntegrationAdapter(
+                mockFirstModule,
+                firstAdapterName
+            ),
             mockFirstAdapter
         );
     }
@@ -345,7 +433,10 @@ contract TestIntegrationRegistry is Test {
         );
 
         assertEq(
-            integrationRegistry.getIntegrationAdapterWithHash(mockFirstModule, keccak256(bytes(firstAdapterName))),
+            integrationRegistry.getIntegrationAdapterWithHash(
+                mockFirstModule,
+                keccak256(bytes(firstAdapterName))
+            ),
             mockFirstAdapter
         );
     }

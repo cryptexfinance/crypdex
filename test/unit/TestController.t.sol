@@ -25,7 +25,11 @@ contract TestController is Test {
     Controller internal controller;
     event FactoryAdded(address indexed _factory);
     event FactoryRemoved(address indexed _factory);
-    event FeeEdited(address indexed _module, uint256 indexed _feeType, uint256 _feePercentage);
+    event FeeEdited(
+        address indexed _module,
+        uint256 indexed _feeType,
+        uint256 _feePercentage
+    );
     event FeeRecipientChanged(address _newFeeRecipient);
     event ModuleAdded(address indexed _module);
     event ModuleRemoved(address indexed _module);

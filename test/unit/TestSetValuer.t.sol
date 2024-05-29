@@ -5,7 +5,7 @@ pragma experimental ABIEncoderV2;
 import "../fixtures/SystemFixture.sol";
 import {SetValuer} from "contracts/protocol/SetValuer.sol";
 import {IManagerIssuanceHook} from "contracts/interfaces/IManagerIssuanceHook.sol";
-import { PreciseUnitMath } from "contracts/lib/PreciseUnitMath.sol";
+import {PreciseUnitMath} from "contracts/lib/PreciseUnitMath.sol";
 
 contract TestSetValuer is SystemFixture {
     using PreciseUnitMath for uint256;
@@ -41,7 +41,10 @@ contract TestSetValuer is SystemFixture {
         _modules[0] = address(basicIssuanceModule);
         setToken = createSetToken(_components, _units, _modules);
         vm.prank(owner);
-        basicIssuanceModule.initialize(setToken, IManagerIssuanceHook(address(0)));
+        basicIssuanceModule.initialize(
+            setToken,
+            IManagerIssuanceHook(address(0))
+        );
     }
 
     function testController() external {
@@ -50,10 +53,14 @@ contract TestSetValuer is SystemFixture {
 
     function testCalculateSetTokenValuation() external {
         vm.prank(deployer);
-        uint256 valuation = setValuer.calculateSetTokenValuation(setToken, address(usdc));
+        uint256 valuation = setValuer.calculateSetTokenValuation(
+            setToken,
+            address(usdc)
+        );
         uint256 normalizedUnitOne = usdcUnit.preciseDiv(baseUSDCUnit);
         uint256 normalizedUnitTwo = wETHUnit.preciseDiv(baseWETHUnit);
-        uint256 expectedValuation = normalizedUnitOne.preciseMul(usdcPrice) + normalizedUnitTwo.preciseMul(wETHPrice);
+        uint256 expectedValuation = normalizedUnitOne.preciseMul(usdcPrice) +
+            normalizedUnitTwo.preciseMul(wETHPrice);
         assertEq(valuation, expectedValuation);
     }
 }

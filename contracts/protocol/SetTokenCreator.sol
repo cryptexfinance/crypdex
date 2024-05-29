@@ -1,6 +1,4 @@
 /*
-    Copyright 2020 Set Labs Inc.
-
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -25,7 +23,6 @@ import { AddressArrayUtils } from "../lib/AddressArrayUtils.sol";
 
 /**
  * @title SetTokenCreator
- * @author Set Protocol
  *
  * SetTokenCreator is a smart contract used to deploy new SetToken contracts. The SetTokenCreator
  * is a Factory contract that is enabled by the controller to create and register new SetTokens.

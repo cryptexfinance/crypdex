@@ -16,7 +16,9 @@ import {MockERC20} from "contracts/mocks/MockERC20.sol";
 import {SystemFixture} from "./SystemFixture.sol";
 
 interface IConstantPriceAdapter is IAuctionPriceAdapterV1 {
-    function getEncodedData(uint256 _price) external pure returns (bytes memory);
+    function getEncodedData(
+        uint256 _price
+    ) external pure returns (bytes memory);
 }
 
 interface IBoundedStepwiseExponentialPriceAdapter is IAuctionPriceAdapterV1 {
@@ -28,10 +30,7 @@ interface IBoundedStepwiseExponentialPriceAdapter is IAuctionPriceAdapterV1 {
         bool _isDecreasing,
         uint256 _maxPrice,
         uint256 _minPrice
-    )
-        external
-        pure
-        returns (bytes memory data);
+    ) external pure returns (bytes memory data);
 }
 
 interface IBoundedStepwiseLinearPriceAdapter is IAuctionPriceAdapterV1 {
@@ -42,10 +41,7 @@ interface IBoundedStepwiseLinearPriceAdapter is IAuctionPriceAdapterV1 {
         bool _isDecreasing,
         uint256 _maxPrice,
         uint256 _minPrice
-    )
-        external
-        pure
-        returns (bytes memory data);
+    ) external pure returns (bytes memory data);
 }
 
 interface IBoundedStepwiseLogarithmicPriceAdapter is IAuctionPriceAdapterV1 {
@@ -57,10 +53,7 @@ interface IBoundedStepwiseLogarithmicPriceAdapter is IAuctionPriceAdapterV1 {
         bool _isDecreasing,
         uint256 _maxPrice,
         uint256 _minPrice
-    )
-        external
-        pure
-        returns (bytes memory data);
+    ) external pure returns (bytes memory data);
 }
 
 contract AuctionFixture is SystemFixture {
@@ -172,18 +165,34 @@ contract AuctionFixture is SystemFixture {
         setUpSystem();
         vm.startPrank(deployer);
         auctionRebalanceModuleV1 = new AuctionRebalanceModuleV1(controller);
-        boundedStepwiseExponentialPriceAdapter = IBoundedStepwiseExponentialPriceAdapter(deployCode(
-            vm.getCode("out/BoundedStepwiseExponentialPriceAdapter.sol/BoundedStepwiseExponentialPriceAdapter.json")
-        ));
-        boundedStepwiseLinearPriceAdapter = IBoundedStepwiseLinearPriceAdapter(deployCode(
-            vm.getCode("out/BoundedStepwiseLinearPriceAdapter.sol/BoundedStepwiseLinearPriceAdapter.json")
-        ));
-        boundedStepwiseLogarithmicPriceAdapter = IBoundedStepwiseLogarithmicPriceAdapter(deployCode(
-            vm.getCode("out/BoundedStepwiseLogarithmicPriceAdapter.sol/BoundedStepwiseLogarithmicPriceAdapter.json")
-        ));
-        constantPriceAdapter = IConstantPriceAdapter(deployCode(
-            vm.getCode("out/ConstantPriceAdapter.sol/ConstantPriceAdapter.json")
-        ));
+        boundedStepwiseExponentialPriceAdapter = IBoundedStepwiseExponentialPriceAdapter(
+            deployCode(
+                vm.getCode(
+                    "out/BoundedStepwiseExponentialPriceAdapter.sol/BoundedStepwiseExponentialPriceAdapter.json"
+                )
+            )
+        );
+        boundedStepwiseLinearPriceAdapter = IBoundedStepwiseLinearPriceAdapter(
+            deployCode(
+                vm.getCode(
+                    "out/BoundedStepwiseLinearPriceAdapter.sol/BoundedStepwiseLinearPriceAdapter.json"
+                )
+            )
+        );
+        boundedStepwiseLogarithmicPriceAdapter = IBoundedStepwiseLogarithmicPriceAdapter(
+            deployCode(
+                vm.getCode(
+                    "out/BoundedStepwiseLogarithmicPriceAdapter.sol/BoundedStepwiseLogarithmicPriceAdapter.json"
+                )
+            )
+        );
+        constantPriceAdapter = IConstantPriceAdapter(
+            deployCode(
+                vm.getCode(
+                    "out/ConstantPriceAdapter.sol/ConstantPriceAdapter.json"
+                )
+            )
+        );
         Controller(address(controller)).addModule(
             address(auctionRebalanceModuleV1)
         );
@@ -214,7 +223,6 @@ contract AuctionFixture is SystemFixture {
         assembly {
             addr := create(0, add(code, 0x20), mload(code))
         }
-//        require(addr.code.length != 0, "Failed to deploy code.");
     }
 
     function setupIndexToken() internal {

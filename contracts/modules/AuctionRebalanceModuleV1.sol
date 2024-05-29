@@ -1,6 +1,4 @@
 /*
-    Copyright 2023 Index Coop
-
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -36,7 +34,6 @@ import { PreciseUnitMath } from "../lib/PreciseUnitMath.sol";
 
 /**
  * @title AuctionRebalanceModuleV1
- * @author Index Coop
  * @notice Facilitates rebalances for index sets via single-asset auctions. Managers initiate
  * rebalances specifying target allocations in precise units (scaled by 10^18), quote asset
  * (e.g., WETH, USDC), auction parameters per component, and rebalance duration through

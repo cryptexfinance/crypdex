@@ -1,6 +1,4 @@
 /*
-    Copyright 2020 Set Labs Inc.
-
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -33,7 +31,6 @@ import { ResourceIdentifier } from "../lib/ResourceIdentifier.sol";
 
 /**
  * @title SetValuer
- * @author Set Protocol
  *
  * Contract that returns the valuation of SetTokens using price oracle data used in contracts
  * that are external to the system.

@@ -56,9 +56,7 @@ contract TestAuctionRebalance is AuctionFixture {
         uint256 protocolFee,
         uint256 setTotalSupply
     );
-    event LockedRebalanceEndedEarly(
-        ISetToken indexed setToken
-    );
+    event LockedRebalanceEndedEarly(ISetToken indexed setToken);
 
     function setUp() external {
         setUpAuctionContracts();
@@ -406,10 +404,7 @@ contract TestAuctionRebalance is AuctionFixture {
             true,
             address(auctionRebalanceModuleV1)
         );
-        emit RaiseTargetPercentageUpdated(
-            setToken,
-            raiseTargetPercentage
-        );
+        emit RaiseTargetPercentageUpdated(setToken, raiseTargetPercentage);
         auctionRebalanceModuleV1.setRaiseTargetPercentage(
             setToken,
             raiseTargetPercentage
@@ -502,10 +497,7 @@ contract TestAuctionRebalance is AuctionFixture {
             true,
             address(auctionRebalanceModuleV1)
         );
-        emit AssetTargetsRaised(
-            setToken,
-            expectedPositionMultiplier
-        );
+        emit AssetTargetsRaised(setToken, expectedPositionMultiplier);
         auctionRebalanceModuleV1.raiseAssetTargets(setToken);
 
         (, , , uint256 positionMultiplier, ) = auctionRebalanceModuleV1
@@ -778,11 +770,7 @@ contract TestAuctionRebalance is AuctionFixture {
             true,
             address(auctionRebalanceModuleV1)
         );
-        emit BidderStatusUpdated(
-            setToken,
-            newBidder,
-            true
-        );
+        emit BidderStatusUpdated(setToken, newBidder, true);
         auctionRebalanceModuleV1.setBidderStatus(
             setToken,
             bidders,

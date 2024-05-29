@@ -18,7 +18,11 @@ contract TestStreamingFee is SystemFixture {
 
     uint256 protocolFee = 15 ether / 100;
 
-    event FeeActualized(address indexed _setToken, uint256 _managerFee, uint256 _protocolFee);
+    event FeeActualized(
+        address indexed _setToken,
+        uint256 _managerFee,
+        uint256 _protocolFee
+    );
 
     function setUp() external {
         setUpSystem();
