@@ -1,0 +1,114 @@
+{
+  "address": "0x99FF1d1A51Ff29590FDe37aDE46B122e1a19A8Ce",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_startingPrice",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [],
+      "name": "price",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "read",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_newPrice",
+          "type": "uint256"
+        }
+      ],
+      "name": "updatePrice",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0x74d92dce0273296a6590105f809c68041af1faea3caf289985aff8030b95b20d",
+  "receipt": {
+    "to": null,
+    "from": "0x570f581D23a2AB09FD1990279D9DB6f5DcE18F4A",
+    "contractAddress": "0x99FF1d1A51Ff29590FDe37aDE46B122e1a19A8Ce",
+    "transactionIndex": 44,
+    "gasUsed": "118299",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0x747e7e4b8ead24d7f5a6d6a5e076bc21b266ce1305103d2981f6e63cc2ac86d8",
+    "transactionHash": "0x74d92dce0273296a6590105f809c68041af1faea3caf289985aff8030b95b20d",
+    "logs": [],
+    "blockNumber": 6177206,
+    "cumulativeGasUsed": "12550654",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [
+    "1000000000000000000"
+  ],
+  "numDeployments": 1,
+  "solcInputHash": "e92ac1b960310aabd23f360f125586bc",
+  "metadata": "{\"compiler\":{\"version\":\"0.6.10+commit.00c0fcaf\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_startingPrice\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[],\"name\":\"price\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"read\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_newPrice\",\"type\":\"uint256\"}],\"name\":\"updatePrice\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"methods\":{\"read()\":{\"returns\":{\"_0\":\"Current price of asset represented in uint256\"}}}},\"userdoc\":{\"methods\":{\"read()\":{\"notice\":\"Returns the queried data from an oracle returning uint256\"}}}},\"settings\":{\"compilationTarget\":{\"contracts/mocks/MockOracle.sol\":\"MockOracle\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"contracts/mocks/MockOracle.sol\":{\"content\":\"/*\\n    Licensed under the Apache License, Version 2.0 (the \\\"License\\\");\\n    you may not use this file except in compliance with the License.\\n    You may obtain a copy of the License at\\n\\n    http://www.apache.org/licenses/LICENSE-2.0\\n\\n    Unless required by applicable law or agreed to in writing, software\\n    distributed under the License is distributed on an \\\"AS IS\\\" BASIS,\\n    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\\n    See the License for the specific language governing permissions and\\n    limitations under the License.\\n\\n    SPDX-License-Identifier: Apache-2.0\\n*/\\n\\npragma solidity 0.6.10;\\n\\ncontract MockOracle {\\n    uint256 public price;\\n\\n    constructor(uint256 _startingPrice) public {\\n        price = _startingPrice;\\n    }\\n\\n    /* ============ External Functions ============ */\\n    function updatePrice(uint256 _newPrice) external {\\n        price = _newPrice;\\n    }\\n\\n    /**\\n     * Returns the queried data from an oracle returning uint256\\n     *\\n     * @return  Current price of asset represented in uint256\\n     */\\n    function read() external view returns (uint256) {\\n        return price;\\n    }\\n}\\n\",\"keccak256\":\"0xb5cb2a1af8ad99357627008112180e85f58463a71387b9b5f95b76fd3f870632\",\"license\":\"Apache-2.0\"}},\"version\":1}",
+  "bytecode": "0x608060405234801561001057600080fd5b506040516101083803806101088339818101604052602081101561003357600080fd5b505160005560c2806100466000396000f3fe6080604052348015600f57600080fd5b5060043610603c5760003560e01c806357de26a41460415780638d6cc56d146059578063a035b1fe146075575b600080fd5b6047607b565b60408051918252519081900360200190f35b607360048036036020811015606d57600080fd5b50356081565b005b60476086565b60005490565b600055565b6000548156fea2646970667358221220edec122b89f0235804f061cec0620ded2d4dbcb2109cde2399ffda103ddc45f664736f6c634300060a0033",
+  "deployedBytecode": "0x6080604052348015600f57600080fd5b5060043610603c5760003560e01c806357de26a41460415780638d6cc56d146059578063a035b1fe146075575b600080fd5b6047607b565b60408051918252519081900360200190f35b607360048036036020811015606d57600080fd5b50356081565b005b60476086565b60005490565b600055565b6000548156fea2646970667358221220edec122b89f0235804f061cec0620ded2d4dbcb2109cde2399ffda103ddc45f664736f6c634300060a0033",
+  "devdoc": {
+    "methods": {
+      "read()": {
+        "returns": {
+          "_0": "Current price of asset represented in uint256"
+        }
+      }
+    }
+  },
+  "userdoc": {
+    "methods": {
+      "read()": {
+        "notice": "Returns the queried data from an oracle returning uint256"
+      }
+    }
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 3,
+        "contract": "contracts/mocks/MockOracle.sol:MockOracle",
+        "label": "price",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_uint256"
+      }
+    ],
+    "types": {
+      "t_uint256": {
+        "encoding": "inplace",
+        "label": "uint256",
+        "numberOfBytes": "32"
+      }
+    }
+  }
+}
