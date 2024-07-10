@@ -5,6 +5,7 @@ import { FixedPointMathLib } from "solady/src/utils/FixedPointMathLib.sol";
 
 /**
  * @title BoundedStepwiseExponentialPriceAdapter
+ * @author Index Coop
  * @notice Price adapter contract for the AuctionRebalanceModuleV1. It returns a price that
  * increases or decreases exponentially in steps over time, within a bounded range.
  * The rate of change is increasing.

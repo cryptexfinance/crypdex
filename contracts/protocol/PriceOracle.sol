@@ -1,4 +1,6 @@
 /*
+    Copyright 2020 Set Labs Inc.
+
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -28,6 +30,7 @@ import { PreciseUnitMath } from "../lib/PreciseUnitMath.sol";
 
 /**
  * @title PriceOracle
+ * @author Set Protocol
  *
  * Contract that returns the price for any given asset pair. Price is retrieved either directly from an oracle,
  * calculated using common asset pairs, or uses external data to calculate price.

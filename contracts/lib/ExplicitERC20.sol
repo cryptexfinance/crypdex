@@ -1,4 +1,6 @@
 /*
+    Copyright 2020 Set Labs Inc.
+
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -22,6 +24,7 @@ import { SafeMath } from "@openzeppelin/contracts/math/SafeMath.sol";
 
 /**
  * @title ExplicitERC20
+ * @author Set Protocol
  *
  * Utility functions for ERC20 transfers that require the explicit amount to be transferred.
  */

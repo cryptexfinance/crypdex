@@ -1,4 +1,6 @@
 /*
+    Copyright 2023 Index Coop
+
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -17,6 +19,7 @@ pragma solidity 0.6.10;
 
 /**
  * @title  IAuctionPriceAdapterV1
+ * @author Index Coop
  * @notice Interface for price adapter implementations for AuctionRebalanceModuleV1.
  *         Implementations provide a custom price curve for an auction based on various parameters such as
  *         target auction, time elapsed, bid quantity, and adapter-specific parameters.

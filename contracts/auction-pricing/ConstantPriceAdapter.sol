@@ -3,6 +3,7 @@ pragma solidity 0.8.17;
 
 /**
  * @title ConstantPriceAdapter
+ * @author Index Coop
  * @notice Price adapter contract for AuctionRebalanceModuleV1 that returns a constant price.
  * The rate of change is zero.
  * Price formula: price = initialPrice
