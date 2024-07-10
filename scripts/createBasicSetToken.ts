@@ -54,8 +54,8 @@ async function main() {
     [ethers.utils.parseEther("1"), 10 ** 8],
     [basicIssuanceModuleDeployment.address, streamingFeeModuleDeployment.address, auctionRebalanceModuleDeployment.address],
     manager,
-    "Top 2",
-    "T2"
+    "Cryptex Meme Index",
+    "MEME"
   )
   console.log(tx);
   let lx = await tx.wait();
