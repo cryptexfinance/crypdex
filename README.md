@@ -17,6 +17,10 @@ To run the tests run:
 ```
 forge test -vvv
 ```
+To run fork tests
+```
+FOUNDRY_PROFILE="fork" forge test -vvv --fork-url https://eth-mainnet.g.alchemy.com/v2/<token>
+```
 
 # Smart Contracts
 
