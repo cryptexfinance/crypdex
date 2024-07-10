@@ -5,8 +5,8 @@ import "@pythnetwork/pyth-sdk-solidity/IPyth.sol";
 
 
 contract PythOracle {
-    IPyth pyth;
-    bytes32 priceId;
+    IPyth public pyth;
+    bytes32 public priceId;
 
     constructor(address pythContract, bytes32 _priceId) {
         pyth = IPyth(pythContract);
