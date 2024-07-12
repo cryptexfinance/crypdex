@@ -10,7 +10,8 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deployments, getNamedAccounts } = hre;
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
-  cont timeLockAddress = "0xa54074b2cc0e96a43048d4a68472F7F046aC0DA8";
+  const timeLockAddress = "0xa54074b2cc0e96a43048d4a68472F7F046aC0DA8";
+  console.log(deployer);
 
   await deploy("Controller", {
     from: deployer,

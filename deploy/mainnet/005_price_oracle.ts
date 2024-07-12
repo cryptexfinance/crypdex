@@ -30,7 +30,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     from: deployer,
     args: [
         controllerDeployment.address,
-        usdcDeployment.address,
+        usdcAddress,
         [],
         [dogeAddress, shibAddress, pepeAddress, flokiAddress, wETHAddress],
         [usdcAddress, usdcAddress, usdcAddress, usdcAddress, usdcAddress],

@@ -7,6 +7,7 @@ import "hardhat-deploy";
 
 const DEPLOYER_PRIVATE_KEY = process.env.DEPLOYER_PRIVATE_KEY as string;
 const MANAGER_PRIVATE_KEY = process.env.MANAGER_PRIVATE_KEY as string;
+const MAINNET_DEPLOYER_PRIVATE_KEY = process.env.MAINNET_DEPLOYER_PRIVATE_KEY as string;
 
 const config: HardhatUserConfig = {
   namedAccounts: {
@@ -43,12 +44,18 @@ const config: HardhatUserConfig = {
       chainId: 11155111,
       url: process.env.SEPOLIA_URL,
       accounts: [DEPLOYER_PRIVATE_KEY, MANAGER_PRIVATE_KEY],
+    },
+    mainnet: {
+      chainId: 1,
+      url: process.env.MAINNET_URL,
+      accounts: [MAINNET_DEPLOYER_PRIVATE_KEY, MANAGER_PRIVATE_KEY],
     }
   },
   etherscan: {
     apiKey: {
         baseSepolia: process.env.BASESCAN_API_KEY,
         sepolia: process.env.ETHERSCAN_API_KEY,
+        mainnet: process.env.ETHERSCAN_API_KEY,
     }
   }
 };

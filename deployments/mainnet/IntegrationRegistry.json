@@ -1,0 +1,546 @@
+{
+  "address": "0x99c1AbfD91C7b0d43865316eF2BCa614237bEB2A",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "contract IController",
+          "name": "_controller",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "_module",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "_adapter",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "_integrationName",
+          "type": "string"
+        }
+      ],
+      "name": "IntegrationAdded",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "_module",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "_newAdapter",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "_integrationName",
+          "type": "string"
+        }
+      ],
+      "name": "IntegrationEdited",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "_module",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "_adapter",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "_integrationName",
+          "type": "string"
+        }
+      ],
+      "name": "IntegrationRemoved",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "previousOwner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipTransferred",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_module",
+          "type": "address"
+        },
+        {
+          "internalType": "string",
+          "name": "_name",
+          "type": "string"
+        },
+        {
+          "internalType": "address",
+          "name": "_adapter",
+          "type": "address"
+        }
+      ],
+      "name": "addIntegration",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address[]",
+          "name": "_modules",
+          "type": "address[]"
+        },
+        {
+          "internalType": "string[]",
+          "name": "_names",
+          "type": "string[]"
+        },
+        {
+          "internalType": "address[]",
+          "name": "_adapters",
+          "type": "address[]"
+        }
+      ],
+      "name": "batchAddIntegration",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address[]",
+          "name": "_modules",
+          "type": "address[]"
+        },
+        {
+          "internalType": "string[]",
+          "name": "_names",
+          "type": "string[]"
+        },
+        {
+          "internalType": "address[]",
+          "name": "_adapters",
+          "type": "address[]"
+        }
+      ],
+      "name": "batchEditIntegration",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "controller",
+      "outputs": [
+        {
+          "internalType": "contract IController",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_module",
+          "type": "address"
+        },
+        {
+          "internalType": "string",
+          "name": "_name",
+          "type": "string"
+        },
+        {
+          "internalType": "address",
+          "name": "_adapter",
+          "type": "address"
+        }
+      ],
+      "name": "editIntegration",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_module",
+          "type": "address"
+        },
+        {
+          "internalType": "string",
+          "name": "_name",
+          "type": "string"
+        }
+      ],
+      "name": "getIntegrationAdapter",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_module",
+          "type": "address"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "_nameHash",
+          "type": "bytes32"
+        }
+      ],
+      "name": "getIntegrationAdapterWithHash",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_module",
+          "type": "address"
+        },
+        {
+          "internalType": "string",
+          "name": "_name",
+          "type": "string"
+        }
+      ],
+      "name": "isValidIntegration",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_module",
+          "type": "address"
+        },
+        {
+          "internalType": "string",
+          "name": "_name",
+          "type": "string"
+        }
+      ],
+      "name": "removeIntegration",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "renounceOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0xfce719543ae66c6c041fe27c7f80bc8c861f1e62f557619b99732b016a9aa1f3",
+  "receipt": {
+    "to": null,
+    "from": "0xf8Bd793A7c9cB86e827C084D49f343F1296a8247",
+    "contractAddress": "0x99c1AbfD91C7b0d43865316eF2BCa614237bEB2A",
+    "transactionIndex": 15,
+    "gasUsed": "1008843",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000400800000000000000000000000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000001000000000000000000000000000000000000020000000000000000000880000000000000000000000000000000400000040000000000000000000000400000000020000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0x23f910bc5b9b71e4b8634381366397a1c45f7bdf1dc82bb59b3e67d0175b816b",
+    "transactionHash": "0xfce719543ae66c6c041fe27c7f80bc8c861f1e62f557619b99732b016a9aa1f3",
+    "logs": [
+      {
+        "transactionIndex": 15,
+        "blockNumber": 20293176,
+        "transactionHash": "0xfce719543ae66c6c041fe27c7f80bc8c861f1e62f557619b99732b016a9aa1f3",
+        "address": "0x99c1AbfD91C7b0d43865316eF2BCa614237bEB2A",
+        "topics": [
+          "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
+          "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "0x000000000000000000000000f8bd793a7c9cb86e827c084d49f343f1296a8247"
+        ],
+        "data": "0x",
+        "logIndex": 116,
+        "blockHash": "0x23f910bc5b9b71e4b8634381366397a1c45f7bdf1dc82bb59b3e67d0175b816b"
+      }
+    ],
+    "blockNumber": 20293176,
+    "cumulativeGasUsed": "3884152",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [
+    "0x15f9cec1c568352Cd48Da1E84D3e74F27f6ee160"
+  ],
+  "numDeployments": 1,
+  "solcInputHash": "13e98a859e1a3af05e67485695bc7e06",
+  "metadata": "{\"compiler\":{\"version\":\"0.6.10+commit.00c0fcaf\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"contract IController\",\"name\":\"_controller\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"_module\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"_adapter\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"_integrationName\",\"type\":\"string\"}],\"name\":\"IntegrationAdded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"_module\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"_newAdapter\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"_integrationName\",\"type\":\"string\"}],\"name\":\"IntegrationEdited\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"_module\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"_adapter\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"_integrationName\",\"type\":\"string\"}],\"name\":\"IntegrationRemoved\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_module\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"_name\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"_adapter\",\"type\":\"address\"}],\"name\":\"addIntegration\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"_modules\",\"type\":\"address[]\"},{\"internalType\":\"string[]\",\"name\":\"_names\",\"type\":\"string[]\"},{\"internalType\":\"address[]\",\"name\":\"_adapters\",\"type\":\"address[]\"}],\"name\":\"batchAddIntegration\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"_modules\",\"type\":\"address[]\"},{\"internalType\":\"string[]\",\"name\":\"_names\",\"type\":\"string[]\"},{\"internalType\":\"address[]\",\"name\":\"_adapters\",\"type\":\"address[]\"}],\"name\":\"batchEditIntegration\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"controller\",\"outputs\":[{\"internalType\":\"contract IController\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_module\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"_name\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"_adapter\",\"type\":\"address\"}],\"name\":\"editIntegration\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_module\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"_name\",\"type\":\"string\"}],\"name\":\"getIntegrationAdapter\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_module\",\"type\":\"address\"},{\"internalType\":\"bytes32\",\"name\":\"_nameHash\",\"type\":\"bytes32\"}],\"name\":\"getIntegrationAdapterWithHash\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_module\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"_name\",\"type\":\"string\"}],\"name\":\"isValidIntegration\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_module\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"_name\",\"type\":\"string\"}],\"name\":\"removeIntegration\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"author\":\"Set Protocol The IntegrationRegistry holds state relating to the Modules and the integrations they are connected with. The state is combined into a single Registry to allow governance updates to be aggregated to one contract.\",\"methods\":{\"addIntegration(address,string,address)\":{\"params\":{\"_adapter\":\"Address of the adapter contract to add\",\"_module\":\"The address of the module associated with the integration\",\"_name\":\"Human readable string identifying the integration\"}},\"batchAddIntegration(address[],string[],address[])\":{\"params\":{\"_adapters\":\"Array of addresses of the adapter contracts to add\",\"_modules\":\"Array of addresses of the modules associated with integration\",\"_names\":\"Array of human readable strings identifying the integration\"}},\"batchEditIntegration(address[],string[],address[])\":{\"params\":{\"_adapters\":\"Array of addresses of the adapter contracts to add\",\"_modules\":\"Array of addresses of the modules associated with integration\",\"_names\":\"Array of human readable strings identifying the integration\"}},\"constructor\":{\"params\":{\"_controller\":\"Instance of the controller\"}},\"editIntegration(address,string,address)\":{\"params\":{\"_adapter\":\"Address of the adapter contract to edit\",\"_module\":\"The address of the module associated with the integration\",\"_name\":\"Human readable string identifying the integration\"}},\"getIntegrationAdapter(address,string)\":{\"params\":{\"_module\":\"The address of the module associated with the integration\",\"_name\":\"Human readable adapter name\"},\"returns\":{\"_0\":\"Address of adapter\"}},\"getIntegrationAdapterWithHash(address,bytes32)\":{\"params\":{\"_module\":\"The address of the module associated with the integration\",\"_nameHash\":\"Hash of human readable adapter name\"},\"returns\":{\"_0\":\"Address of adapter\"}},\"isValidIntegration(address,string)\":{\"params\":{\"_module\":\"The address of the module associated with the integration\",\"_name\":\"Human readable string identifying the integration\"},\"returns\":{\"_0\":\"Boolean indicating if valid\"}},\"owner()\":{\"details\":\"Returns the address of the current owner.\"},\"removeIntegration(address,string)\":{\"params\":{\"_module\":\"The address of the module associated with the integration\",\"_name\":\"Human readable string identifying the integration\"}},\"renounceOwnership()\":{\"details\":\"Leaves the contract without owner. It will not be possible to call `onlyOwner` functions anymore. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby removing any functionality that is only available to the owner.\"},\"transferOwnership(address)\":{\"details\":\"Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner.\"}},\"title\":\"IntegrationRegistry\"},\"userdoc\":{\"methods\":{\"addIntegration(address,string,address)\":{\"notice\":\"GOVERNANCE FUNCTION: Add a new integration to the registry\"},\"batchAddIntegration(address[],string[],address[])\":{\"notice\":\"GOVERNANCE FUNCTION: Batch add new adapters. Reverts if exists on any module and name\"},\"batchEditIntegration(address[],string[],address[])\":{\"notice\":\"GOVERNANCE FUNCTION: Batch edit adapters for modules. Reverts if module and adapter name don't map to an adapter address\"},\"constructor\":\"Initializes the controller\",\"editIntegration(address,string,address)\":{\"notice\":\"GOVERNANCE FUNCTION: Edit an existing integration on the registry\"},\"getIntegrationAdapter(address,string)\":{\"notice\":\"Get integration adapter address associated with passed human readable name\"},\"getIntegrationAdapterWithHash(address,bytes32)\":{\"notice\":\"Get integration adapter address associated with passed hashed name\"},\"isValidIntegration(address,string)\":{\"notice\":\"Check if adapter name is valid\"},\"removeIntegration(address,string)\":{\"notice\":\"GOVERNANCE FUNCTION: Remove an existing integration on the registry\"}}}},\"settings\":{\"compilationTarget\":{\"contracts/protocol/IntegrationRegistry.sol\":\"IntegrationRegistry\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"@openzeppelin/contracts/access/Ownable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n\\npragma solidity >=0.6.0 <0.8.0;\\n\\nimport \\\"../utils/Context.sol\\\";\\n/**\\n * @dev Contract module which provides a basic access control mechanism, where\\n * there is an account (an owner) that can be granted exclusive access to\\n * specific functions.\\n *\\n * By default, the owner account will be the one that deploys the contract. This\\n * can later be changed with {transferOwnership}.\\n *\\n * This module is used through inheritance. It will make available the modifier\\n * `onlyOwner`, which can be applied to your functions to restrict their use to\\n * the owner.\\n */\\nabstract contract Ownable is Context {\\n    address private _owner;\\n\\n    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);\\n\\n    /**\\n     * @dev Initializes the contract setting the deployer as the initial owner.\\n     */\\n    constructor () internal {\\n        address msgSender = _msgSender();\\n        _owner = msgSender;\\n        emit OwnershipTransferred(address(0), msgSender);\\n    }\\n\\n    /**\\n     * @dev Returns the address of the current owner.\\n     */\\n    function owner() public view virtual returns (address) {\\n        return _owner;\\n    }\\n\\n    /**\\n     * @dev Throws if called by any account other than the owner.\\n     */\\n    modifier onlyOwner() {\\n        require(owner() == _msgSender(), \\\"Ownable: caller is not the owner\\\");\\n        _;\\n    }\\n\\n    /**\\n     * @dev Leaves the contract without owner. It will not be possible to call\\n     * `onlyOwner` functions anymore. Can only be called by the current owner.\\n     *\\n     * NOTE: Renouncing ownership will leave the contract without an owner,\\n     * thereby removing any functionality that is only available to the owner.\\n     */\\n    function renounceOwnership() public virtual onlyOwner {\\n        emit OwnershipTransferred(_owner, address(0));\\n        _owner = address(0);\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Can only be called by the current owner.\\n     */\\n    function transferOwnership(address newOwner) public virtual onlyOwner {\\n        require(newOwner != address(0), \\\"Ownable: new owner is the zero address\\\");\\n        emit OwnershipTransferred(_owner, newOwner);\\n        _owner = newOwner;\\n    }\\n}\\n\",\"keccak256\":\"0x15e2d5bd4c28a88548074c54d220e8086f638a71ed07e6b3ba5a70066fcf458d\",\"license\":\"MIT\"},\"@openzeppelin/contracts/utils/Context.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n\\npragma solidity >=0.6.0 <0.8.0;\\n\\n/*\\n * @dev Provides information about the current execution context, including the\\n * sender of the transaction and its data. While these are generally available\\n * via msg.sender and msg.data, they should not be accessed in such a direct\\n * manner, since when dealing with GSN meta-transactions the account sending and\\n * paying for execution may not be the actual sender (as far as an application\\n * is concerned).\\n *\\n * This contract is only required for intermediate, library-like contracts.\\n */\\nabstract contract Context {\\n    function _msgSender() internal view virtual returns (address payable) {\\n        return msg.sender;\\n    }\\n\\n    function _msgData() internal view virtual returns (bytes memory) {\\n        this; // silence state mutability warning without generating bytecode - see https://github.com/ethereum/solidity/issues/2691\\n        return msg.data;\\n    }\\n}\\n\",\"keccak256\":\"0x8d3cb350f04ff49cfb10aef08d87f19dcbaecc8027b0bed12f3275cd12f38cf0\",\"license\":\"MIT\"},\"contracts/interfaces/IController.sol\":{\"content\":\"/*\\n    Copyright 2020 Set Labs Inc.\\n\\n    Licensed under the Apache License, Version 2.0 (the \\\"License\\\");\\n    you may not use this file except in compliance with the License.\\n    You may obtain a copy of the License at\\n\\n    http://www.apache.org/licenses/LICENSE-2.0\\n\\n    Unless required by applicable law or agreed to in writing, software\\n    distributed under the License is distributed on an \\\"AS IS\\\" BASIS,\\n    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\\n    See the License for the specific language governing permissions and\\n    limitations under the License.\\n\\n    SPDX-License-Identifier: Apache License, Version 2.0\\n*/\\npragma solidity 0.6.10;\\n\\ninterface IController {\\n    function addSet(address _setToken) external;\\n    function feeRecipient() external view returns(address);\\n    function getModuleFee(address _module, uint256 _feeType) external view returns(uint256);\\n    function isModule(address _module) external view returns(bool);\\n    function isSet(address _setToken) external view returns(bool);\\n    function isSystemContract(address _contractAddress) external view returns (bool);\\n    function resourceId(uint256 _id) external view returns(address);\\n}\\n\",\"keccak256\":\"0x7c2677c02bcdba795e290d6b54e16308ee1dafd4ecbd23ee4dfb89e1801dc70b\",\"license\":\"Apache License\"},\"contracts/protocol/IntegrationRegistry.sol\":{\"content\":\"/*\\n    Copyright 2020 Set Labs Inc.\\n\\n    Licensed under the Apache License, Version 2.0 (the \\\"License\\\");\\n    you may not use this file except in compliance with the License.\\n    You may obtain a copy of the License at\\n\\n    http://www.apache.org/licenses/LICENSE-2.0\\n\\n    Unless required by applicable law or agreed to in writing, software\\n    distributed under the License is distributed on an \\\"AS IS\\\" BASIS,\\n    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\\n    See the License for the specific language governing permissions and\\n    limitations under the License.\\n\\n    SPDX-License-Identifier: Apache License, Version 2.0\\n*/\\n\\npragma solidity 0.6.10;\\npragma experimental ABIEncoderV2;\\n\\nimport { IController } from \\\"../interfaces/IController.sol\\\";\\nimport { Ownable } from \\\"@openzeppelin/contracts/access/Ownable.sol\\\";\\n\\n/**\\n * @title IntegrationRegistry\\n * @author Set Protocol\\n *\\n * The IntegrationRegistry holds state relating to the Modules and the integrations they are connected with.\\n * The state is combined into a single Registry to allow governance updates to be aggregated to one contract.\\n */\\ncontract IntegrationRegistry is Ownable {\\n\\n    /* ============ Events ============ */\\n\\n    event IntegrationAdded(address indexed _module, address indexed _adapter, string _integrationName);\\n    event IntegrationRemoved(address indexed _module, address indexed _adapter, string _integrationName);\\n    event IntegrationEdited(\\n        address indexed _module,\\n        address _newAdapter,\\n        string _integrationName\\n    );\\n\\n    /* ============ State Variables ============ */\\n\\n    // Address of the Controller contract\\n    IController public controller;\\n\\n    // Mapping of module => integration identifier => adapter address\\n    mapping(address => mapping(bytes32 => address)) private integrations;\\n\\n    /* ============ Constructor ============ */\\n\\n    /**\\n     * Initializes the controller\\n     *\\n     * @param _controller          Instance of the controller\\n     */\\n    constructor(IController _controller) public {\\n        controller = _controller;\\n    }\\n\\n    /* ============ External Functions ============ */\\n\\n    /**\\n     * GOVERNANCE FUNCTION: Add a new integration to the registry\\n     *\\n     * @param  _module       The address of the module associated with the integration\\n     * @param  _name         Human readable string identifying the integration\\n     * @param  _adapter      Address of the adapter contract to add\\n     */\\n    function addIntegration(\\n        address _module,\\n        string memory _name,\\n        address _adapter\\n    )\\n        public\\n        onlyOwner\\n    {\\n        bytes32 hashedName = _nameHash(_name);\\n        require(controller.isModule(_module), \\\"Must be valid module.\\\");\\n        require(integrations[_module][hashedName] == address(0), \\\"Integration exists already.\\\");\\n        require(_adapter != address(0), \\\"Adapter address must exist.\\\");\\n\\n        integrations[_module][hashedName] = _adapter;\\n\\n        emit IntegrationAdded(_module, _adapter, _name);\\n    }\\n\\n    /**\\n     * GOVERNANCE FUNCTION: Batch add new adapters. Reverts if exists on any module and name\\n     *\\n     * @param  _modules      Array of addresses of the modules associated with integration\\n     * @param  _names        Array of human readable strings identifying the integration\\n     * @param  _adapters     Array of addresses of the adapter contracts to add\\n     */\\n    function batchAddIntegration(\\n        address[] memory _modules,\\n        string[] memory _names,\\n        address[] memory _adapters\\n    )\\n        external\\n        onlyOwner\\n    {\\n        // Storing modules count to local variable to save on invocation\\n        uint256 modulesCount = _modules.length;\\n\\n        require(modulesCount > 0, \\\"Modules must not be empty\\\");\\n        require(modulesCount == _names.length, \\\"Module and name lengths mismatch\\\");\\n        require(modulesCount == _adapters.length, \\\"Module and adapter lengths mismatch\\\");\\n\\n        for (uint256 i = 0; i < modulesCount; i++) {\\n            // Add integrations to the specified module. Will revert if module and name combination exists\\n            addIntegration(\\n                _modules[i],\\n                _names[i],\\n                _adapters[i]\\n            );\\n        }\\n    }\\n\\n    /**\\n     * GOVERNANCE FUNCTION: Edit an existing integration on the registry\\n     *\\n     * @param  _module       The address of the module associated with the integration\\n     * @param  _name         Human readable string identifying the integration\\n     * @param  _adapter      Address of the adapter contract to edit\\n     */\\n    function editIntegration(\\n        address _module,\\n        string memory _name,\\n        address _adapter\\n    )\\n        public\\n        onlyOwner\\n    {\\n        bytes32 hashedName = _nameHash(_name);\\n\\n        require(controller.isModule(_module), \\\"Must be valid module.\\\");\\n        require(integrations[_module][hashedName] != address(0), \\\"Integration does not exist.\\\");\\n        require(_adapter != address(0), \\\"Adapter address must exist.\\\");\\n\\n        integrations[_module][hashedName] = _adapter;\\n\\n        emit IntegrationEdited(_module, _adapter, _name);\\n    }\\n\\n    /**\\n     * GOVERNANCE FUNCTION: Batch edit adapters for modules. Reverts if module and\\n     * adapter name don't map to an adapter address\\n     *\\n     * @param  _modules      Array of addresses of the modules associated with integration\\n     * @param  _names        Array of human readable strings identifying the integration\\n     * @param  _adapters     Array of addresses of the adapter contracts to add\\n     */\\n    function batchEditIntegration(\\n        address[] memory _modules,\\n        string[] memory _names,\\n        address[] memory _adapters\\n    )\\n        external\\n        onlyOwner\\n    {\\n        // Storing name count to local variable to save on invocation\\n        uint256 modulesCount = _modules.length;\\n\\n        require(modulesCount > 0, \\\"Modules must not be empty\\\");\\n        require(modulesCount == _names.length, \\\"Module and name lengths mismatch\\\");\\n        require(modulesCount == _adapters.length, \\\"Module and adapter lengths mismatch\\\");\\n\\n        for (uint256 i = 0; i < modulesCount; i++) {\\n            // Edits integrations to the specified module. Will revert if module and name combination does not exist\\n            editIntegration(\\n                _modules[i],\\n                _names[i],\\n                _adapters[i]\\n            );\\n        }\\n    }\\n\\n    /**\\n     * GOVERNANCE FUNCTION: Remove an existing integration on the registry\\n     *\\n     * @param  _module       The address of the module associated with the integration\\n     * @param  _name         Human readable string identifying the integration\\n     */\\n    function removeIntegration(address _module, string memory _name) external onlyOwner {\\n        bytes32 hashedName = _nameHash(_name);\\n        require(integrations[_module][hashedName] != address(0), \\\"Integration does not exist.\\\");\\n\\n        address oldAdapter = integrations[_module][hashedName];\\n        delete integrations[_module][hashedName];\\n\\n        emit IntegrationRemoved(_module, oldAdapter, _name);\\n    }\\n\\n    /* ============ External Getter Functions ============ */\\n\\n    /**\\n     * Get integration adapter address associated with passed human readable name\\n     *\\n     * @param  _module       The address of the module associated with the integration\\n     * @param  _name         Human readable adapter name\\n     *\\n     * @return               Address of adapter\\n     */\\n    function getIntegrationAdapter(address _module, string memory _name) external view returns (address) {\\n        return integrations[_module][_nameHash(_name)];\\n    }\\n\\n    /**\\n     * Get integration adapter address associated with passed hashed name\\n     *\\n     * @param  _module       The address of the module associated with the integration\\n     * @param  _nameHash     Hash of human readable adapter name\\n     *\\n     * @return               Address of adapter\\n     */\\n    function getIntegrationAdapterWithHash(address _module, bytes32 _nameHash) external view returns (address) {\\n        return integrations[_module][_nameHash];\\n    }\\n\\n    /**\\n     * Check if adapter name is valid\\n     *\\n     * @param  _module       The address of the module associated with the integration\\n     * @param  _name         Human readable string identifying the integration\\n     *\\n     * @return               Boolean indicating if valid\\n     */\\n    function isValidIntegration(address _module, string memory _name) external view returns (bool) {\\n        return integrations[_module][_nameHash(_name)] != address(0);\\n    }\\n\\n    /* ============ Internal Functions ============ */\\n\\n    /**\\n     * Hashes the string and returns a bytes32 value\\n     */\\n    function _nameHash(string memory _name) internal pure returns(bytes32) {\\n        return keccak256(bytes(_name));\\n    }\\n}\\n\",\"keccak256\":\"0x79ef4728a0f4b48e2f70502556c43237cc5ea8287f3d3608f0495f809ef419fb\",\"license\":\"Apache License\"}},\"version\":1}",
+  "bytecode": "0x608060405234801561001057600080fd5b5060405161115338038061115383398101604081905261002f916100b5565b60006100426001600160e01b036100b116565b600080546001600160a01b0319166001600160a01b0383169081178255604051929350917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0908290a350600180546001600160a01b0319166001600160a01b03929092169190911790556100e3565b3390565b6000602082840312156100c6578081fd5b81516001600160a01b03811681146100dc578182fd5b9392505050565b611061806100f26000396000f3fe608060405234801561001057600080fd5b50600436106100b45760003560e01c8063ad1f231611610071578063ad1f23161461013a578063bdf590751461014d578063d9be0e1214610160578063e6d642c514610173578063f2fde38b14610186578063f77c479114610199576100b4565b8063639a3978146100b9578063715018a6146100e25780637a3d5b2a146100ec5780638da5cb5b146100ff578063a19ba6dc14610114578063a30945cb14610127575b600080fd5b6100cc6100c7366004610b91565b6101a1565b6040516100d99190610dc8565b60405180910390f35b6100ea6101ea565b005b6100ea6100fa366004610c48565b61027c565b610107610378565b6040516100d99190610d88565b610107610122366004610b91565b610387565b6100ea610135366004610bea565b6103ca565b6100ea610148366004610bea565b610590565b6100ea61015b366004610c48565b61075a565b6100ea61016e366004610b91565b61084f565b610107610181366004610b67565b610949565b6100ea610194366004610b45565b610971565b610107610a31565b6001600160a01b03821660009081526002602052604081208190816101c585610a40565b81526020810191909152604001600020546001600160a01b0316141590505b92915050565b6101f2610a4b565b6001600160a01b0316610203610378565b6001600160a01b0316146102325760405162461bcd60e51b815260040161022990610ec9565b60405180910390fd5b600080546040516001600160a01b03909116907f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0908390a3600080546001600160a01b0319169055565b610284610a4b565b6001600160a01b0316610295610378565b6001600160a01b0316146102bb5760405162461bcd60e51b815260040161022990610ec9565b8251806102da5760405162461bcd60e51b815260040161022990610e15565b825181146102fa5760405162461bcd60e51b815260040161022990610faf565b8151811461031a5760405162461bcd60e51b815260040161022990610efe565b60005b818110156103715761036985828151811061033457fe5b602002602001015185838151811061034857fe5b602002602001015185848151811061035c57fe5b60200260200101516103ca565b60010161031d565b5050505050565b6000546001600160a01b031690565b6001600160a01b0382166000908152600260205260408120816103a984610a40565b81526020810191909152604001600020546001600160a01b03169392505050565b6103d2610a4b565b6001600160a01b03166103e3610378565b6001600160a01b0316146104095760405162461bcd60e51b815260040161022990610ec9565b600061041483610a40565b6001546040516342f6e38960e01b81529192506001600160a01b0316906342f6e38990610445908790600401610d88565b60206040518083038186803b15801561045d57600080fd5b505afa158015610471573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906104959190610d1d565b6104b15760405162461bcd60e51b815260040161022990610de6565b6001600160a01b03848116600090815260026020908152604080832085845290915290205416156104f45760405162461bcd60e51b815260040161022990610e92565b6001600160a01b03821661051a5760405162461bcd60e51b815260040161022990610f41565b6001600160a01b0384811660008181526002602090815260408083208684529091529081902080546001600160a01b0319169386169384179055517f43640b154e7a2d5d196915068b6d815bb713d3263abf2a154581f32dab54890d90610582908790610dd3565b60405180910390a350505050565b610598610a4b565b6001600160a01b03166105a9610378565b6001600160a01b0316146105cf5760405162461bcd60e51b815260040161022990610ec9565b60006105da83610a40565b6001546040516342f6e38960e01b81529192506001600160a01b0316906342f6e3899061060b908790600401610d88565b60206040518083038186803b15801561062357600080fd5b505afa158015610637573d6000803e3d6000fd5b505050506040513d601f19601f8201168201806040525081019061065b9190610d1d565b6106775760405162461bcd60e51b815260040161022990610de6565b6001600160a01b038481166000908152600260209081526040808320858452909152902054166106b95760405162461bcd60e51b815260040161022990610f78565b6001600160a01b0382166106df5760405162461bcd60e51b815260040161022990610f41565b6001600160a01b0384811660008181526002602090815260408083208684529091529081902080546001600160a01b0319169386169390931790925590517fa2dbad778187774fb7e1aa28aa65a07b1f6fc3f3ad3eea64f843dacae9ed0e009061074c9085908790610d9c565b60405180910390a250505050565b610762610a4b565b6001600160a01b0316610773610378565b6001600160a01b0316146107995760405162461bcd60e51b815260040161022990610ec9565b8251806107b85760405162461bcd60e51b815260040161022990610e15565b825181146107d85760405162461bcd60e51b815260040161022990610faf565b815181146107f85760405162461bcd60e51b815260040161022990610efe565b60005b818110156103715761084785828151811061081257fe5b602002602001015185838151811061082657fe5b602002602001015185848151811061083a57fe5b6020026020010151610590565b6001016107fb565b610857610a4b565b6001600160a01b0316610868610378565b6001600160a01b03161461088e5760405162461bcd60e51b815260040161022990610ec9565b600061089982610a40565b6001600160a01b038481166000908152600260209081526040808320858452909152902054919250166108de5760405162461bcd60e51b815260040161022990610f78565b6001600160a01b0383811660008181526002602090815260408083208684529091529081902080546001600160a01b0319811690915590519216918291907f824b40f41a4e550651acdd3e4f51be3b80092c952b2ae347cab6930b5a6f50fc90610582908790610dd3565b6001600160a01b03918216600090815260026020908152604080832093835292905220541690565b610979610a4b565b6001600160a01b031661098a610378565b6001600160a01b0316146109b05760405162461bcd60e51b815260040161022990610ec9565b6001600160a01b0381166109d65760405162461bcd60e51b815260040161022990610e4c565b600080546040516001600160a01b03808516939216917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e091a3600080546001600160a01b0319166001600160a01b0392909216919091179055565b6001546001600160a01b031681565b805160209091012090565b3390565b80356001600160a01b03811681146101e457600080fd5b600082601f830112610a76578081fd5b8135610a89610a848261100b565b610fe4565b818152915060208083019084810181840286018201871015610aaa57600080fd5b60005b84811015610ad157610abf8883610a4f565b84529282019290820190600101610aad565b505050505092915050565b600082601f830112610aec578081fd5b813567ffffffffffffffff811115610b02578182fd5b610b15601f8201601f1916602001610fe4565b9150808252836020828501011115610b2c57600080fd5b8060208401602084013760009082016020015292915050565b600060208284031215610b56578081fd5b610b608383610a4f565b9392505050565b60008060408385031215610b79578081fd5b610b838484610a4f565b946020939093013593505050565b60008060408385031215610ba3578182fd5b82356001600160a01b0381168114610bb9578283fd5b9150602083013567ffffffffffffffff811115610bd4578182fd5b610be085828601610adc565b9150509250929050565b600080600060608486031215610bfe578081fd5b610c088585610a4f565b9250602084013567ffffffffffffffff811115610c23578182fd5b610c2f86828701610adc565b925050610c3f8560408601610a4f565b90509250925092565b600080600060608486031215610c5c578283fd5b833567ffffffffffffffff80821115610c73578485fd5b610c7f87838801610a66565b9450602091508186013581811115610c95578485fd5b80870188601f820112610ca6578586fd5b80359150610cb6610a848361100b565b82815284810190828601885b85811015610ceb57610cd98d898435880101610adc565b84529287019290870190600101610cc2565b50909750505050604087013592505080821115610d06578283fd5b50610d1386828701610a66565b9150509250925092565b600060208284031215610d2e578081fd5b81518015158114610b60578182fd5b60008151808452815b81811015610d6257602081850181015186830182015201610d46565b81811115610d735782602083870101525b50601f01601f19169290920160200192915050565b6001600160a01b0391909116815260200190565b6001600160a01b0383168152604060208201819052600090610dc090830184610d3d565b949350505050565b901515815260200190565b600060208252610b606020830184610d3d565b60208082526015908201527426bab9ba103132903b30b634b21036b7b23ab6329760591b604082015260600190565b60208082526019908201527f4d6f64756c6573206d757374206e6f7420626520656d70747900000000000000604082015260600190565b60208082526026908201527f4f776e61626c653a206e6577206f776e657220697320746865207a65726f206160408201526564647265737360d01b606082015260800190565b6020808252601b908201527f496e746567726174696f6e2065786973747320616c72656164792e0000000000604082015260600190565b6020808252818101527f4f776e61626c653a2063616c6c6572206973206e6f7420746865206f776e6572604082015260600190565b60208082526023908201527f4d6f64756c6520616e642061646170746572206c656e67746873206d69736d616040820152620e8c6d60eb1b606082015260800190565b6020808252601b908201527f416461707465722061646472657373206d7573742065786973742e0000000000604082015260600190565b6020808252601b908201527f496e746567726174696f6e20646f6573206e6f742065786973742e0000000000604082015260600190565b6020808252818101527f4d6f64756c6520616e64206e616d65206c656e67746873206d69736d61746368604082015260600190565b60405181810167ffffffffffffffff8111828210171561100357600080fd5b604052919050565b600067ffffffffffffffff821115611021578081fd5b506020908102019056fea2646970667358221220d2b88a5b9f46712ab209ef6dd99eb0f8aa7d6073ba30c5876adb255a2b2c7ae164736f6c634300060a0033",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b50600436106100b45760003560e01c8063ad1f231611610071578063ad1f23161461013a578063bdf590751461014d578063d9be0e1214610160578063e6d642c514610173578063f2fde38b14610186578063f77c479114610199576100b4565b8063639a3978146100b9578063715018a6146100e25780637a3d5b2a146100ec5780638da5cb5b146100ff578063a19ba6dc14610114578063a30945cb14610127575b600080fd5b6100cc6100c7366004610b91565b6101a1565b6040516100d99190610dc8565b60405180910390f35b6100ea6101ea565b005b6100ea6100fa366004610c48565b61027c565b610107610378565b6040516100d99190610d88565b610107610122366004610b91565b610387565b6100ea610135366004610bea565b6103ca565b6100ea610148366004610bea565b610590565b6100ea61015b366004610c48565b61075a565b6100ea61016e366004610b91565b61084f565b610107610181366004610b67565b610949565b6100ea610194366004610b45565b610971565b610107610a31565b6001600160a01b03821660009081526002602052604081208190816101c585610a40565b81526020810191909152604001600020546001600160a01b0316141590505b92915050565b6101f2610a4b565b6001600160a01b0316610203610378565b6001600160a01b0316146102325760405162461bcd60e51b815260040161022990610ec9565b60405180910390fd5b600080546040516001600160a01b03909116907f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0908390a3600080546001600160a01b0319169055565b610284610a4b565b6001600160a01b0316610295610378565b6001600160a01b0316146102bb5760405162461bcd60e51b815260040161022990610ec9565b8251806102da5760405162461bcd60e51b815260040161022990610e15565b825181146102fa5760405162461bcd60e51b815260040161022990610faf565b8151811461031a5760405162461bcd60e51b815260040161022990610efe565b60005b818110156103715761036985828151811061033457fe5b602002602001015185838151811061034857fe5b602002602001015185848151811061035c57fe5b60200260200101516103ca565b60010161031d565b5050505050565b6000546001600160a01b031690565b6001600160a01b0382166000908152600260205260408120816103a984610a40565b81526020810191909152604001600020546001600160a01b03169392505050565b6103d2610a4b565b6001600160a01b03166103e3610378565b6001600160a01b0316146104095760405162461bcd60e51b815260040161022990610ec9565b600061041483610a40565b6001546040516342f6e38960e01b81529192506001600160a01b0316906342f6e38990610445908790600401610d88565b60206040518083038186803b15801561045d57600080fd5b505afa158015610471573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906104959190610d1d565b6104b15760405162461bcd60e51b815260040161022990610de6565b6001600160a01b03848116600090815260026020908152604080832085845290915290205416156104f45760405162461bcd60e51b815260040161022990610e92565b6001600160a01b03821661051a5760405162461bcd60e51b815260040161022990610f41565b6001600160a01b0384811660008181526002602090815260408083208684529091529081902080546001600160a01b0319169386169384179055517f43640b154e7a2d5d196915068b6d815bb713d3263abf2a154581f32dab54890d90610582908790610dd3565b60405180910390a350505050565b610598610a4b565b6001600160a01b03166105a9610378565b6001600160a01b0316146105cf5760405162461bcd60e51b815260040161022990610ec9565b60006105da83610a40565b6001546040516342f6e38960e01b81529192506001600160a01b0316906342f6e3899061060b908790600401610d88565b60206040518083038186803b15801561062357600080fd5b505afa158015610637573d6000803e3d6000fd5b505050506040513d601f19601f8201168201806040525081019061065b9190610d1d565b6106775760405162461bcd60e51b815260040161022990610de6565b6001600160a01b038481166000908152600260209081526040808320858452909152902054166106b95760405162461bcd60e51b815260040161022990610f78565b6001600160a01b0382166106df5760405162461bcd60e51b815260040161022990610f41565b6001600160a01b0384811660008181526002602090815260408083208684529091529081902080546001600160a01b0319169386169390931790925590517fa2dbad778187774fb7e1aa28aa65a07b1f6fc3f3ad3eea64f843dacae9ed0e009061074c9085908790610d9c565b60405180910390a250505050565b610762610a4b565b6001600160a01b0316610773610378565b6001600160a01b0316146107995760405162461bcd60e51b815260040161022990610ec9565b8251806107b85760405162461bcd60e51b815260040161022990610e15565b825181146107d85760405162461bcd60e51b815260040161022990610faf565b815181146107f85760405162461bcd60e51b815260040161022990610efe565b60005b818110156103715761084785828151811061081257fe5b602002602001015185838151811061082657fe5b602002602001015185848151811061083a57fe5b6020026020010151610590565b6001016107fb565b610857610a4b565b6001600160a01b0316610868610378565b6001600160a01b03161461088e5760405162461bcd60e51b815260040161022990610ec9565b600061089982610a40565b6001600160a01b038481166000908152600260209081526040808320858452909152902054919250166108de5760405162461bcd60e51b815260040161022990610f78565b6001600160a01b0383811660008181526002602090815260408083208684529091529081902080546001600160a01b0319811690915590519216918291907f824b40f41a4e550651acdd3e4f51be3b80092c952b2ae347cab6930b5a6f50fc90610582908790610dd3565b6001600160a01b03918216600090815260026020908152604080832093835292905220541690565b610979610a4b565b6001600160a01b031661098a610378565b6001600160a01b0316146109b05760405162461bcd60e51b815260040161022990610ec9565b6001600160a01b0381166109d65760405162461bcd60e51b815260040161022990610e4c565b600080546040516001600160a01b03808516939216917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e091a3600080546001600160a01b0319166001600160a01b0392909216919091179055565b6001546001600160a01b031681565b805160209091012090565b3390565b80356001600160a01b03811681146101e457600080fd5b600082601f830112610a76578081fd5b8135610a89610a848261100b565b610fe4565b818152915060208083019084810181840286018201871015610aaa57600080fd5b60005b84811015610ad157610abf8883610a4f565b84529282019290820190600101610aad565b505050505092915050565b600082601f830112610aec578081fd5b813567ffffffffffffffff811115610b02578182fd5b610b15601f8201601f1916602001610fe4565b9150808252836020828501011115610b2c57600080fd5b8060208401602084013760009082016020015292915050565b600060208284031215610b56578081fd5b610b608383610a4f565b9392505050565b60008060408385031215610b79578081fd5b610b838484610a4f565b946020939093013593505050565b60008060408385031215610ba3578182fd5b82356001600160a01b0381168114610bb9578283fd5b9150602083013567ffffffffffffffff811115610bd4578182fd5b610be085828601610adc565b9150509250929050565b600080600060608486031215610bfe578081fd5b610c088585610a4f565b9250602084013567ffffffffffffffff811115610c23578182fd5b610c2f86828701610adc565b925050610c3f8560408601610a4f565b90509250925092565b600080600060608486031215610c5c578283fd5b833567ffffffffffffffff80821115610c73578485fd5b610c7f87838801610a66565b9450602091508186013581811115610c95578485fd5b80870188601f820112610ca6578586fd5b80359150610cb6610a848361100b565b82815284810190828601885b85811015610ceb57610cd98d898435880101610adc565b84529287019290870190600101610cc2565b50909750505050604087013592505080821115610d06578283fd5b50610d1386828701610a66565b9150509250925092565b600060208284031215610d2e578081fd5b81518015158114610b60578182fd5b60008151808452815b81811015610d6257602081850181015186830182015201610d46565b81811115610d735782602083870101525b50601f01601f19169290920160200192915050565b6001600160a01b0391909116815260200190565b6001600160a01b0383168152604060208201819052600090610dc090830184610d3d565b949350505050565b901515815260200190565b600060208252610b606020830184610d3d565b60208082526015908201527426bab9ba103132903b30b634b21036b7b23ab6329760591b604082015260600190565b60208082526019908201527f4d6f64756c6573206d757374206e6f7420626520656d70747900000000000000604082015260600190565b60208082526026908201527f4f776e61626c653a206e6577206f776e657220697320746865207a65726f206160408201526564647265737360d01b606082015260800190565b6020808252601b908201527f496e746567726174696f6e2065786973747320616c72656164792e0000000000604082015260600190565b6020808252818101527f4f776e61626c653a2063616c6c6572206973206e6f7420746865206f776e6572604082015260600190565b60208082526023908201527f4d6f64756c6520616e642061646170746572206c656e67746873206d69736d616040820152620e8c6d60eb1b606082015260800190565b6020808252601b908201527f416461707465722061646472657373206d7573742065786973742e0000000000604082015260600190565b6020808252601b908201527f496e746567726174696f6e20646f6573206e6f742065786973742e0000000000604082015260600190565b6020808252818101527f4d6f64756c6520616e64206e616d65206c656e67746873206d69736d61746368604082015260600190565b60405181810167ffffffffffffffff8111828210171561100357600080fd5b604052919050565b600067ffffffffffffffff821115611021578081fd5b506020908102019056fea2646970667358221220d2b88a5b9f46712ab209ef6dd99eb0f8aa7d6073ba30c5876adb255a2b2c7ae164736f6c634300060a0033",
+  "devdoc": {
+    "author": "Set Protocol The IntegrationRegistry holds state relating to the Modules and the integrations they are connected with. The state is combined into a single Registry to allow governance updates to be aggregated to one contract.",
+    "methods": {
+      "addIntegration(address,string,address)": {
+        "params": {
+          "_adapter": "Address of the adapter contract to add",
+          "_module": "The address of the module associated with the integration",
+          "_name": "Human readable string identifying the integration"
+        }
+      },
+      "batchAddIntegration(address[],string[],address[])": {
+        "params": {
+          "_adapters": "Array of addresses of the adapter contracts to add",
+          "_modules": "Array of addresses of the modules associated with integration",
+          "_names": "Array of human readable strings identifying the integration"
+        }
+      },
+      "batchEditIntegration(address[],string[],address[])": {
+        "params": {
+          "_adapters": "Array of addresses of the adapter contracts to add",
+          "_modules": "Array of addresses of the modules associated with integration",
+          "_names": "Array of human readable strings identifying the integration"
+        }
+      },
+      "constructor": {
+        "params": {
+          "_controller": "Instance of the controller"
+        }
+      },
+      "editIntegration(address,string,address)": {
+        "params": {
+          "_adapter": "Address of the adapter contract to edit",
+          "_module": "The address of the module associated with the integration",
+          "_name": "Human readable string identifying the integration"
+        }
+      },
+      "getIntegrationAdapter(address,string)": {
+        "params": {
+          "_module": "The address of the module associated with the integration",
+          "_name": "Human readable adapter name"
+        },
+        "returns": {
+          "_0": "Address of adapter"
+        }
+      },
+      "getIntegrationAdapterWithHash(address,bytes32)": {
+        "params": {
+          "_module": "The address of the module associated with the integration",
+          "_nameHash": "Hash of human readable adapter name"
+        },
+        "returns": {
+          "_0": "Address of adapter"
+        }
+      },
+      "isValidIntegration(address,string)": {
+        "params": {
+          "_module": "The address of the module associated with the integration",
+          "_name": "Human readable string identifying the integration"
+        },
+        "returns": {
+          "_0": "Boolean indicating if valid"
+        }
+      },
+      "owner()": {
+        "details": "Returns the address of the current owner."
+      },
+      "removeIntegration(address,string)": {
+        "params": {
+          "_module": "The address of the module associated with the integration",
+          "_name": "Human readable string identifying the integration"
+        }
+      },
+      "renounceOwnership()": {
+        "details": "Leaves the contract without owner. It will not be possible to call `onlyOwner` functions anymore. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby removing any functionality that is only available to the owner."
+      },
+      "transferOwnership(address)": {
+        "details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
+      }
+    },
+    "title": "IntegrationRegistry"
+  },
+  "userdoc": {
+    "methods": {
+      "addIntegration(address,string,address)": {
+        "notice": "GOVERNANCE FUNCTION: Add a new integration to the registry"
+      },
+      "batchAddIntegration(address[],string[],address[])": {
+        "notice": "GOVERNANCE FUNCTION: Batch add new adapters. Reverts if exists on any module and name"
+      },
+      "batchEditIntegration(address[],string[],address[])": {
+        "notice": "GOVERNANCE FUNCTION: Batch edit adapters for modules. Reverts if module and adapter name don't map to an adapter address"
+      },
+      "constructor": "Initializes the controller",
+      "editIntegration(address,string,address)": {
+        "notice": "GOVERNANCE FUNCTION: Edit an existing integration on the registry"
+      },
+      "getIntegrationAdapter(address,string)": {
+        "notice": "Get integration adapter address associated with passed human readable name"
+      },
+      "getIntegrationAdapterWithHash(address,bytes32)": {
+        "notice": "Get integration adapter address associated with passed hashed name"
+      },
+      "isValidIntegration(address,string)": {
+        "notice": "Check if adapter name is valid"
+      },
+      "removeIntegration(address,string)": {
+        "notice": "GOVERNANCE FUNCTION: Remove an existing integration on the registry"
+      }
+    }
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 7,
+        "contract": "contracts/protocol/IntegrationRegistry.sol:IntegrationRegistry",
+        "label": "_owner",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_address"
+      },
+      {
+        "astId": 9268,
+        "contract": "contracts/protocol/IntegrationRegistry.sol:IntegrationRegistry",
+        "label": "controller",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_contract(IController)2262"
+      },
+      {
+        "astId": 9274,
+        "contract": "contracts/protocol/IntegrationRegistry.sol:IntegrationRegistry",
+        "label": "integrations",
+        "offset": 0,
+        "slot": "2",
+        "type": "t_mapping(t_address,t_mapping(t_bytes32,t_address))"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_bytes32": {
+        "encoding": "inplace",
+        "label": "bytes32",
+        "numberOfBytes": "32"
+      },
+      "t_contract(IController)2262": {
+        "encoding": "inplace",
+        "label": "contract IController",
+        "numberOfBytes": "20"
+      },
+      "t_mapping(t_address,t_mapping(t_bytes32,t_address))": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => mapping(bytes32 => address))",
+        "numberOfBytes": "32",
+        "value": "t_mapping(t_bytes32,t_address)"
+      },
+      "t_mapping(t_bytes32,t_address)": {
+        "encoding": "mapping",
+        "key": "t_bytes32",
+        "label": "mapping(bytes32 => address)",
+        "numberOfBytes": "32",
+        "value": "t_address"
+      }
+    }
+  }
+}
