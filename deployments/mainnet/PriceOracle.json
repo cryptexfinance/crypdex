@@ -1,0 +1,657 @@
+{
+  "address": "0x92a34CC540E43284Da1382E079333F45726292f9",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "contract IController",
+          "name": "_controller",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_masterQuoteAsset",
+          "type": "address"
+        },
+        {
+          "internalType": "address[]",
+          "name": "_adapters",
+          "type": "address[]"
+        },
+        {
+          "internalType": "address[]",
+          "name": "_assetOnes",
+          "type": "address[]"
+        },
+        {
+          "internalType": "address[]",
+          "name": "_assetTwos",
+          "type": "address[]"
+        },
+        {
+          "internalType": "contract IOracle[]",
+          "name": "_oracles",
+          "type": "address[]"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "_adapter",
+          "type": "address"
+        }
+      ],
+      "name": "AdapterAdded",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "_adapter",
+          "type": "address"
+        }
+      ],
+      "name": "AdapterRemoved",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "_newMasterQuote",
+          "type": "address"
+        }
+      ],
+      "name": "MasterQuoteAssetEdited",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "previousOwner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipTransferred",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "_assetOne",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "_assetTwo",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "_oracle",
+          "type": "address"
+        }
+      ],
+      "name": "PairAdded",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "_assetOne",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "_assetTwo",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "_newOracle",
+          "type": "address"
+        }
+      ],
+      "name": "PairEdited",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "_assetOne",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "_assetTwo",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "_oracle",
+          "type": "address"
+        }
+      ],
+      "name": "PairRemoved",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "adapters",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_adapter",
+          "type": "address"
+        }
+      ],
+      "name": "addAdapter",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_assetOne",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_assetTwo",
+          "type": "address"
+        },
+        {
+          "internalType": "contract IOracle",
+          "name": "_oracle",
+          "type": "address"
+        }
+      ],
+      "name": "addPair",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "controller",
+      "outputs": [
+        {
+          "internalType": "contract IController",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_newMasterQuoteAsset",
+          "type": "address"
+        }
+      ],
+      "name": "editMasterQuoteAsset",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_assetOne",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_assetTwo",
+          "type": "address"
+        },
+        {
+          "internalType": "contract IOracle",
+          "name": "_oracle",
+          "type": "address"
+        }
+      ],
+      "name": "editPair",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getAdapters",
+      "outputs": [
+        {
+          "internalType": "address[]",
+          "name": "",
+          "type": "address[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_assetOne",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_assetTwo",
+          "type": "address"
+        }
+      ],
+      "name": "getPrice",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "masterQuoteAsset",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "oracles",
+      "outputs": [
+        {
+          "internalType": "contract IOracle",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_adapter",
+          "type": "address"
+        }
+      ],
+      "name": "removeAdapter",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_assetOne",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_assetTwo",
+          "type": "address"
+        }
+      ],
+      "name": "removePair",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "renounceOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0x0eeb27e72447ca948db527838cad9fde82ae25f16df533a1065cebf95d699c6f",
+  "receipt": {
+    "to": null,
+    "from": "0xf8Bd793A7c9cB86e827C084D49f343F1296a8247",
+    "contractAddress": "0x92a34CC540E43284Da1382E079333F45726292f9",
+    "transactionIndex": 9,
+    "gasUsed": "1529240",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000800000000000000000000008000000000000000000000000000000000000000000000000000000000400000000000000000000000000000001000000000000000000000000000000000000020000000000000000000880000000000000000000000000000000400000040000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000400000000000000000000000020000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0xc516c58d9cf9a38131c94ea3a5fdcac5701d7e7dec0431dd54a6b085fc3a178e",
+    "transactionHash": "0x0eeb27e72447ca948db527838cad9fde82ae25f16df533a1065cebf95d699c6f",
+    "logs": [
+      {
+        "transactionIndex": 9,
+        "blockNumber": 20293175,
+        "transactionHash": "0x0eeb27e72447ca948db527838cad9fde82ae25f16df533a1065cebf95d699c6f",
+        "address": "0x92a34CC540E43284Da1382E079333F45726292f9",
+        "topics": [
+          "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
+          "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "0x000000000000000000000000f8bd793a7c9cb86e827c084d49f343f1296a8247"
+        ],
+        "data": "0x",
+        "logIndex": 56,
+        "blockHash": "0xc516c58d9cf9a38131c94ea3a5fdcac5701d7e7dec0431dd54a6b085fc3a178e"
+      }
+    ],
+    "blockNumber": 20293175,
+    "cumulativeGasUsed": "3170114",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [
+    "0x15f9cec1c568352Cd48Da1E84D3e74F27f6ee160",
+    "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+    [],
+    [
+      "0x4206931337dc273a630d328dA6441786BfaD668f",
+      "0x95aD61b0a150d79219dCF64E1E6Cc01f0B64C4cE",
+      "0x6982508145454Ce325dDbE47a25d4ec3d2311933",
+      "0xcf0C122c6b73ff809C693DB761e7BaeBe62b6a2E",
+      "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"
+    ],
+    [
+      "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+      "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+      "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+      "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+      "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+    ],
+    [
+      "0xf51e45e42Ac6e162E01F888A381bbA8c353c7fD9",
+      "0x0EFfdEE5EB530a1d096305A57a437694db5a7Dd6",
+      "0xf0191f2bA6f5c73616E2B73a9b153e0eF3452486",
+      "0x14fE59529435D20B0875F99C97bbAc5407CCF1B0",
+      "0xFe602e452410e14aB6f6E033f84F0ED4aC6E53D8"
+    ]
+  ],
+  "numDeployments": 1,
+  "solcInputHash": "13e98a859e1a3af05e67485695bc7e06",
+  "metadata": "{\"compiler\":{\"version\":\"0.6.10+commit.00c0fcaf\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"contract IController\",\"name\":\"_controller\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_masterQuoteAsset\",\"type\":\"address\"},{\"internalType\":\"address[]\",\"name\":\"_adapters\",\"type\":\"address[]\"},{\"internalType\":\"address[]\",\"name\":\"_assetOnes\",\"type\":\"address[]\"},{\"internalType\":\"address[]\",\"name\":\"_assetTwos\",\"type\":\"address[]\"},{\"internalType\":\"contract IOracle[]\",\"name\":\"_oracles\",\"type\":\"address[]\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"_adapter\",\"type\":\"address\"}],\"name\":\"AdapterAdded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"_adapter\",\"type\":\"address\"}],\"name\":\"AdapterRemoved\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"_newMasterQuote\",\"type\":\"address\"}],\"name\":\"MasterQuoteAssetEdited\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"_assetOne\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"_assetTwo\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"_oracle\",\"type\":\"address\"}],\"name\":\"PairAdded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"_assetOne\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"_assetTwo\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"_newOracle\",\"type\":\"address\"}],\"name\":\"PairEdited\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"_assetOne\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"_assetTwo\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"_oracle\",\"type\":\"address\"}],\"name\":\"PairRemoved\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"adapters\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_adapter\",\"type\":\"address\"}],\"name\":\"addAdapter\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_assetOne\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_assetTwo\",\"type\":\"address\"},{\"internalType\":\"contract IOracle\",\"name\":\"_oracle\",\"type\":\"address\"}],\"name\":\"addPair\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"controller\",\"outputs\":[{\"internalType\":\"contract IController\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_newMasterQuoteAsset\",\"type\":\"address\"}],\"name\":\"editMasterQuoteAsset\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_assetOne\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_assetTwo\",\"type\":\"address\"},{\"internalType\":\"contract IOracle\",\"name\":\"_oracle\",\"type\":\"address\"}],\"name\":\"editPair\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getAdapters\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_assetOne\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_assetTwo\",\"type\":\"address\"}],\"name\":\"getPrice\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"masterQuoteAsset\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"oracles\",\"outputs\":[{\"internalType\":\"contract IOracle\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_adapter\",\"type\":\"address\"}],\"name\":\"removeAdapter\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_assetOne\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_assetTwo\",\"type\":\"address\"}],\"name\":\"removePair\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"author\":\"Set Protocol Contract that returns the price for any given asset pair. Price is retrieved either directly from an oracle, calculated using common asset pairs, or uses external data to calculate price. Note: Prices are returned in preciseUnits (i.e. 18 decimals of precision)\",\"methods\":{\"addAdapter(address)\":{\"params\":{\"_adapter\":\"Address of new adapter\"}},\"addPair(address,address,address)\":{\"params\":{\"_assetOne\":\"Address of first asset in pair\",\"_assetTwo\":\"Address of second asset in pair\",\"_oracle\":\"Address of asset pair's oracle\"}},\"constructor\":{\"params\":{\"_adapters\":\"List of adapters used to price assets created by other protocols\",\"_assetOnes\":\"List of first asset in pair, index i maps to same index in assetTwos and oracles\",\"_assetTwos\":\"List of second asset in pair, index i maps to same index in assetOnes and oracles\",\"_controller\":\"Address of controller contract\",\"_masterQuoteAsset\":\"Address of asset that can be used to link unrelated asset pairs\",\"_oracles\":\"List of oracles, index i maps to same index in assetOnes and assetTwos\"}},\"editMasterQuoteAsset(address)\":{\"params\":{\"_newMasterQuoteAsset\":\"New address of master quote asset\"}},\"editPair(address,address,address)\":{\"params\":{\"_assetOne\":\"Address of first asset in pair\",\"_assetTwo\":\"Address of second asset in pair\",\"_oracle\":\"Address of asset pair's new oracle\"}},\"getPrice(address,address)\":{\"params\":{\"_assetOne\":\"Address of first asset in pair\",\"_assetTwo\":\"Address of second asset in pair\"},\"returns\":{\"_0\":\"Price of asset pair to 18 decimals of precision\"}},\"owner()\":{\"details\":\"Returns the address of the current owner.\"},\"removeAdapter(address)\":{\"params\":{\"_adapter\":\"Address of adapter to remove\"}},\"removePair(address,address)\":{\"params\":{\"_assetOne\":\"Address of first asset in pair\",\"_assetTwo\":\"Address of second asset in pair\"}},\"renounceOwnership()\":{\"details\":\"Leaves the contract without owner. It will not be possible to call `onlyOwner` functions anymore. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby removing any functionality that is only available to the owner.\"},\"transferOwnership(address)\":{\"details\":\"Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner.\"}},\"title\":\"PriceOracle\"},\"userdoc\":{\"methods\":{\"addAdapter(address)\":{\"notice\":\"GOVERNANCE FUNCTION: Add new oracle adapter.\"},\"addPair(address,address,address)\":{\"notice\":\"GOVERNANCE FUNCTION: Add new asset pair oracle.\"},\"constructor\":\"Set state variables and map asset pairs to their oracles\",\"editMasterQuoteAsset(address)\":{\"notice\":\"GOVERNANCE FUNCTION: Change the master quote asset.\"},\"editPair(address,address,address)\":{\"notice\":\"GOVERNANCE FUNCTION: Edit an existing asset pair's oracle.\"},\"getAdapters()\":{\"notice\":\"Returns an array of adapters\"},\"getPrice(address,address)\":{\"notice\":\"SYSTEM-ONLY PRIVELEGE: Find price of passed asset pair, if possible. The steps it takes are:  1) Check to see if a direct or inverse oracle of the pair exists,  2) If not, use masterQuoteAsset to link pairs together (i.e. BTC/ETH and ETH/USDC     could be used to calculate BTC/USDC).  3) If not, check oracle adapters in case one or more of the assets needs external protocol data     to price.  4) If all steps fail, revert.\"},\"removeAdapter(address)\":{\"notice\":\"GOVERNANCE FUNCTION: Remove oracle adapter.\"},\"removePair(address,address)\":{\"notice\":\"GOVERNANCE FUNCTION: Remove asset pair's oracle.\"}}}},\"settings\":{\"compilationTarget\":{\"contracts/protocol/PriceOracle.sol\":\"PriceOracle\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"@openzeppelin/contracts/access/Ownable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n\\npragma solidity >=0.6.0 <0.8.0;\\n\\nimport \\\"../utils/Context.sol\\\";\\n/**\\n * @dev Contract module which provides a basic access control mechanism, where\\n * there is an account (an owner) that can be granted exclusive access to\\n * specific functions.\\n *\\n * By default, the owner account will be the one that deploys the contract. This\\n * can later be changed with {transferOwnership}.\\n *\\n * This module is used through inheritance. It will make available the modifier\\n * `onlyOwner`, which can be applied to your functions to restrict their use to\\n * the owner.\\n */\\nabstract contract Ownable is Context {\\n    address private _owner;\\n\\n    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);\\n\\n    /**\\n     * @dev Initializes the contract setting the deployer as the initial owner.\\n     */\\n    constructor () internal {\\n        address msgSender = _msgSender();\\n        _owner = msgSender;\\n        emit OwnershipTransferred(address(0), msgSender);\\n    }\\n\\n    /**\\n     * @dev Returns the address of the current owner.\\n     */\\n    function owner() public view virtual returns (address) {\\n        return _owner;\\n    }\\n\\n    /**\\n     * @dev Throws if called by any account other than the owner.\\n     */\\n    modifier onlyOwner() {\\n        require(owner() == _msgSender(), \\\"Ownable: caller is not the owner\\\");\\n        _;\\n    }\\n\\n    /**\\n     * @dev Leaves the contract without owner. It will not be possible to call\\n     * `onlyOwner` functions anymore. Can only be called by the current owner.\\n     *\\n     * NOTE: Renouncing ownership will leave the contract without an owner,\\n     * thereby removing any functionality that is only available to the owner.\\n     */\\n    function renounceOwnership() public virtual onlyOwner {\\n        emit OwnershipTransferred(_owner, address(0));\\n        _owner = address(0);\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Can only be called by the current owner.\\n     */\\n    function transferOwnership(address newOwner) public virtual onlyOwner {\\n        require(newOwner != address(0), \\\"Ownable: new owner is the zero address\\\");\\n        emit OwnershipTransferred(_owner, newOwner);\\n        _owner = newOwner;\\n    }\\n}\\n\",\"keccak256\":\"0x15e2d5bd4c28a88548074c54d220e8086f638a71ed07e6b3ba5a70066fcf458d\",\"license\":\"MIT\"},\"@openzeppelin/contracts/math/SafeMath.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n\\npragma solidity >=0.6.0 <0.8.0;\\n\\n/**\\n * @dev Wrappers over Solidity's arithmetic operations with added overflow\\n * checks.\\n *\\n * Arithmetic operations in Solidity wrap on overflow. This can easily result\\n * in bugs, because programmers usually assume that an overflow raises an\\n * error, which is the standard behavior in high level programming languages.\\n * `SafeMath` restores this intuition by reverting the transaction when an\\n * operation overflows.\\n *\\n * Using this library instead of the unchecked operations eliminates an entire\\n * class of bugs, so it's recommended to use it always.\\n */\\nlibrary SafeMath {\\n    /**\\n     * @dev Returns the addition of two unsigned integers, with an overflow flag.\\n     *\\n     * _Available since v3.4._\\n     */\\n    function tryAdd(uint256 a, uint256 b) internal pure returns (bool, uint256) {\\n        uint256 c = a + b;\\n        if (c < a) return (false, 0);\\n        return (true, c);\\n    }\\n\\n    /**\\n     * @dev Returns the substraction of two unsigned integers, with an overflow flag.\\n     *\\n     * _Available since v3.4._\\n     */\\n    function trySub(uint256 a, uint256 b) internal pure returns (bool, uint256) {\\n        if (b > a) return (false, 0);\\n        return (true, a - b);\\n    }\\n\\n    /**\\n     * @dev Returns the multiplication of two unsigned integers, with an overflow flag.\\n     *\\n     * _Available since v3.4._\\n     */\\n    function tryMul(uint256 a, uint256 b) internal pure returns (bool, uint256) {\\n        // Gas optimization: this is cheaper than requiring 'a' not being zero, but the\\n        // benefit is lost if 'b' is also tested.\\n        // See: https://github.com/OpenZeppelin/openzeppelin-contracts/pull/522\\n        if (a == 0) return (true, 0);\\n        uint256 c = a * b;\\n        if (c / a != b) return (false, 0);\\n        return (true, c);\\n    }\\n\\n    /**\\n     * @dev Returns the division of two unsigned integers, with a division by zero flag.\\n     *\\n     * _Available since v3.4._\\n     */\\n    function tryDiv(uint256 a, uint256 b) internal pure returns (bool, uint256) {\\n        if (b == 0) return (false, 0);\\n        return (true, a / b);\\n    }\\n\\n    /**\\n     * @dev Returns the remainder of dividing two unsigned integers, with a division by zero flag.\\n     *\\n     * _Available since v3.4._\\n     */\\n    function tryMod(uint256 a, uint256 b) internal pure returns (bool, uint256) {\\n        if (b == 0) return (false, 0);\\n        return (true, a % b);\\n    }\\n\\n    /**\\n     * @dev Returns the addition of two unsigned integers, reverting on\\n     * overflow.\\n     *\\n     * Counterpart to Solidity's `+` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - Addition cannot overflow.\\n     */\\n    function add(uint256 a, uint256 b) internal pure returns (uint256) {\\n        uint256 c = a + b;\\n        require(c >= a, \\\"SafeMath: addition overflow\\\");\\n        return c;\\n    }\\n\\n    /**\\n     * @dev Returns the subtraction of two unsigned integers, reverting on\\n     * overflow (when the result is negative).\\n     *\\n     * Counterpart to Solidity's `-` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - Subtraction cannot overflow.\\n     */\\n    function sub(uint256 a, uint256 b) internal pure returns (uint256) {\\n        require(b <= a, \\\"SafeMath: subtraction overflow\\\");\\n        return a - b;\\n    }\\n\\n    /**\\n     * @dev Returns the multiplication of two unsigned integers, reverting on\\n     * overflow.\\n     *\\n     * Counterpart to Solidity's `*` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - Multiplication cannot overflow.\\n     */\\n    function mul(uint256 a, uint256 b) internal pure returns (uint256) {\\n        if (a == 0) return 0;\\n        uint256 c = a * b;\\n        require(c / a == b, \\\"SafeMath: multiplication overflow\\\");\\n        return c;\\n    }\\n\\n    /**\\n     * @dev Returns the integer division of two unsigned integers, reverting on\\n     * division by zero. The result is rounded towards zero.\\n     *\\n     * Counterpart to Solidity's `/` operator. Note: this function uses a\\n     * `revert` opcode (which leaves remaining gas untouched) while Solidity\\n     * uses an invalid opcode to revert (consuming all remaining gas).\\n     *\\n     * Requirements:\\n     *\\n     * - The divisor cannot be zero.\\n     */\\n    function div(uint256 a, uint256 b) internal pure returns (uint256) {\\n        require(b > 0, \\\"SafeMath: division by zero\\\");\\n        return a / b;\\n    }\\n\\n    /**\\n     * @dev Returns the remainder of dividing two unsigned integers. (unsigned integer modulo),\\n     * reverting when dividing by zero.\\n     *\\n     * Counterpart to Solidity's `%` operator. This function uses a `revert`\\n     * opcode (which leaves remaining gas untouched) while Solidity uses an\\n     * invalid opcode to revert (consuming all remaining gas).\\n     *\\n     * Requirements:\\n     *\\n     * - The divisor cannot be zero.\\n     */\\n    function mod(uint256 a, uint256 b) internal pure returns (uint256) {\\n        require(b > 0, \\\"SafeMath: modulo by zero\\\");\\n        return a % b;\\n    }\\n\\n    /**\\n     * @dev Returns the subtraction of two unsigned integers, reverting with custom message on\\n     * overflow (when the result is negative).\\n     *\\n     * CAUTION: This function is deprecated because it requires allocating memory for the error\\n     * message unnecessarily. For custom revert reasons use {trySub}.\\n     *\\n     * Counterpart to Solidity's `-` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - Subtraction cannot overflow.\\n     */\\n    function sub(uint256 a, uint256 b, string memory errorMessage) internal pure returns (uint256) {\\n        require(b <= a, errorMessage);\\n        return a - b;\\n    }\\n\\n    /**\\n     * @dev Returns the integer division of two unsigned integers, reverting with custom message on\\n     * division by zero. The result is rounded towards zero.\\n     *\\n     * CAUTION: This function is deprecated because it requires allocating memory for the error\\n     * message unnecessarily. For custom revert reasons use {tryDiv}.\\n     *\\n     * Counterpart to Solidity's `/` operator. Note: this function uses a\\n     * `revert` opcode (which leaves remaining gas untouched) while Solidity\\n     * uses an invalid opcode to revert (consuming all remaining gas).\\n     *\\n     * Requirements:\\n     *\\n     * - The divisor cannot be zero.\\n     */\\n    function div(uint256 a, uint256 b, string memory errorMessage) internal pure returns (uint256) {\\n        require(b > 0, errorMessage);\\n        return a / b;\\n    }\\n\\n    /**\\n     * @dev Returns the remainder of dividing two unsigned integers. (unsigned integer modulo),\\n     * reverting with custom message when dividing by zero.\\n     *\\n     * CAUTION: This function is deprecated because it requires allocating memory for the error\\n     * message unnecessarily. For custom revert reasons use {tryMod}.\\n     *\\n     * Counterpart to Solidity's `%` operator. This function uses a `revert`\\n     * opcode (which leaves remaining gas untouched) while Solidity uses an\\n     * invalid opcode to revert (consuming all remaining gas).\\n     *\\n     * Requirements:\\n     *\\n     * - The divisor cannot be zero.\\n     */\\n    function mod(uint256 a, uint256 b, string memory errorMessage) internal pure returns (uint256) {\\n        require(b > 0, errorMessage);\\n        return a % b;\\n    }\\n}\\n\",\"keccak256\":\"0xcc78a17dd88fa5a2edc60c8489e2f405c0913b377216a5b26b35656b2d0dab52\",\"license\":\"MIT\"},\"@openzeppelin/contracts/math/SignedSafeMath.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n\\npragma solidity >=0.6.0 <0.8.0;\\n\\n/**\\n * @title SignedSafeMath\\n * @dev Signed math operations with safety checks that revert on error.\\n */\\nlibrary SignedSafeMath {\\n    int256 constant private _INT256_MIN = -2**255;\\n\\n    /**\\n     * @dev Returns the multiplication of two signed integers, reverting on\\n     * overflow.\\n     *\\n     * Counterpart to Solidity's `*` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - Multiplication cannot overflow.\\n     */\\n    function mul(int256 a, int256 b) internal pure returns (int256) {\\n        // Gas optimization: this is cheaper than requiring 'a' not being zero, but the\\n        // benefit is lost if 'b' is also tested.\\n        // See: https://github.com/OpenZeppelin/openzeppelin-contracts/pull/522\\n        if (a == 0) {\\n            return 0;\\n        }\\n\\n        require(!(a == -1 && b == _INT256_MIN), \\\"SignedSafeMath: multiplication overflow\\\");\\n\\n        int256 c = a * b;\\n        require(c / a == b, \\\"SignedSafeMath: multiplication overflow\\\");\\n\\n        return c;\\n    }\\n\\n    /**\\n     * @dev Returns the integer division of two signed integers. Reverts on\\n     * division by zero. The result is rounded towards zero.\\n     *\\n     * Counterpart to Solidity's `/` operator. Note: this function uses a\\n     * `revert` opcode (which leaves remaining gas untouched) while Solidity\\n     * uses an invalid opcode to revert (consuming all remaining gas).\\n     *\\n     * Requirements:\\n     *\\n     * - The divisor cannot be zero.\\n     */\\n    function div(int256 a, int256 b) internal pure returns (int256) {\\n        require(b != 0, \\\"SignedSafeMath: division by zero\\\");\\n        require(!(b == -1 && a == _INT256_MIN), \\\"SignedSafeMath: division overflow\\\");\\n\\n        int256 c = a / b;\\n\\n        return c;\\n    }\\n\\n    /**\\n     * @dev Returns the subtraction of two signed integers, reverting on\\n     * overflow.\\n     *\\n     * Counterpart to Solidity's `-` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - Subtraction cannot overflow.\\n     */\\n    function sub(int256 a, int256 b) internal pure returns (int256) {\\n        int256 c = a - b;\\n        require((b >= 0 && c <= a) || (b < 0 && c > a), \\\"SignedSafeMath: subtraction overflow\\\");\\n\\n        return c;\\n    }\\n\\n    /**\\n     * @dev Returns the addition of two signed integers, reverting on\\n     * overflow.\\n     *\\n     * Counterpart to Solidity's `+` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - Addition cannot overflow.\\n     */\\n    function add(int256 a, int256 b) internal pure returns (int256) {\\n        int256 c = a + b;\\n        require((b >= 0 && c >= a) || (b < 0 && c < a), \\\"SignedSafeMath: addition overflow\\\");\\n\\n        return c;\\n    }\\n}\\n\",\"keccak256\":\"0xd17ac7e1d8f83d20d80e652adfed83da122f3a3c7b69fefa2985d85aebf0a3e9\",\"license\":\"MIT\"},\"@openzeppelin/contracts/utils/Context.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n\\npragma solidity >=0.6.0 <0.8.0;\\n\\n/*\\n * @dev Provides information about the current execution context, including the\\n * sender of the transaction and its data. While these are generally available\\n * via msg.sender and msg.data, they should not be accessed in such a direct\\n * manner, since when dealing with GSN meta-transactions the account sending and\\n * paying for execution may not be the actual sender (as far as an application\\n * is concerned).\\n *\\n * This contract is only required for intermediate, library-like contracts.\\n */\\nabstract contract Context {\\n    function _msgSender() internal view virtual returns (address payable) {\\n        return msg.sender;\\n    }\\n\\n    function _msgData() internal view virtual returns (bytes memory) {\\n        this; // silence state mutability warning without generating bytecode - see https://github.com/ethereum/solidity/issues/2691\\n        return msg.data;\\n    }\\n}\\n\",\"keccak256\":\"0x8d3cb350f04ff49cfb10aef08d87f19dcbaecc8027b0bed12f3275cd12f38cf0\",\"license\":\"MIT\"},\"@openzeppelin/contracts/utils/SafeCast.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n\\npragma solidity >=0.6.0 <0.8.0;\\n\\n\\n/**\\n * @dev Wrappers over Solidity's uintXX/intXX casting operators with added overflow\\n * checks.\\n *\\n * Downcasting from uint256/int256 in Solidity does not revert on overflow. This can\\n * easily result in undesired exploitation or bugs, since developers usually\\n * assume that overflows raise errors. `SafeCast` restores this intuition by\\n * reverting the transaction when such an operation overflows.\\n *\\n * Using this library instead of the unchecked operations eliminates an entire\\n * class of bugs, so it's recommended to use it always.\\n *\\n * Can be combined with {SafeMath} and {SignedSafeMath} to extend it to smaller types, by performing\\n * all math on `uint256` and `int256` and then downcasting.\\n */\\nlibrary SafeCast {\\n\\n    /**\\n     * @dev Returns the downcasted uint128 from uint256, reverting on\\n     * overflow (when the input is greater than largest uint128).\\n     *\\n     * Counterpart to Solidity's `uint128` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 128 bits\\n     */\\n    function toUint128(uint256 value) internal pure returns (uint128) {\\n        require(value < 2**128, \\\"SafeCast: value doesn\\\\'t fit in 128 bits\\\");\\n        return uint128(value);\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted uint64 from uint256, reverting on\\n     * overflow (when the input is greater than largest uint64).\\n     *\\n     * Counterpart to Solidity's `uint64` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 64 bits\\n     */\\n    function toUint64(uint256 value) internal pure returns (uint64) {\\n        require(value < 2**64, \\\"SafeCast: value doesn\\\\'t fit in 64 bits\\\");\\n        return uint64(value);\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted uint32 from uint256, reverting on\\n     * overflow (when the input is greater than largest uint32).\\n     *\\n     * Counterpart to Solidity's `uint32` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 32 bits\\n     */\\n    function toUint32(uint256 value) internal pure returns (uint32) {\\n        require(value < 2**32, \\\"SafeCast: value doesn\\\\'t fit in 32 bits\\\");\\n        return uint32(value);\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted uint16 from uint256, reverting on\\n     * overflow (when the input is greater than largest uint16).\\n     *\\n     * Counterpart to Solidity's `uint16` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 16 bits\\n     */\\n    function toUint16(uint256 value) internal pure returns (uint16) {\\n        require(value < 2**16, \\\"SafeCast: value doesn\\\\'t fit in 16 bits\\\");\\n        return uint16(value);\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted uint8 from uint256, reverting on\\n     * overflow (when the input is greater than largest uint8).\\n     *\\n     * Counterpart to Solidity's `uint8` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 8 bits.\\n     */\\n    function toUint8(uint256 value) internal pure returns (uint8) {\\n        require(value < 2**8, \\\"SafeCast: value doesn\\\\'t fit in 8 bits\\\");\\n        return uint8(value);\\n    }\\n\\n    /**\\n     * @dev Converts a signed int256 into an unsigned uint256.\\n     *\\n     * Requirements:\\n     *\\n     * - input must be greater than or equal to 0.\\n     */\\n    function toUint256(int256 value) internal pure returns (uint256) {\\n        require(value >= 0, \\\"SafeCast: value must be positive\\\");\\n        return uint256(value);\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted int128 from int256, reverting on\\n     * overflow (when the input is less than smallest int128 or\\n     * greater than largest int128).\\n     *\\n     * Counterpart to Solidity's `int128` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 128 bits\\n     *\\n     * _Available since v3.1._\\n     */\\n    function toInt128(int256 value) internal pure returns (int128) {\\n        require(value >= -2**127 && value < 2**127, \\\"SafeCast: value doesn\\\\'t fit in 128 bits\\\");\\n        return int128(value);\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted int64 from int256, reverting on\\n     * overflow (when the input is less than smallest int64 or\\n     * greater than largest int64).\\n     *\\n     * Counterpart to Solidity's `int64` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 64 bits\\n     *\\n     * _Available since v3.1._\\n     */\\n    function toInt64(int256 value) internal pure returns (int64) {\\n        require(value >= -2**63 && value < 2**63, \\\"SafeCast: value doesn\\\\'t fit in 64 bits\\\");\\n        return int64(value);\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted int32 from int256, reverting on\\n     * overflow (when the input is less than smallest int32 or\\n     * greater than largest int32).\\n     *\\n     * Counterpart to Solidity's `int32` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 32 bits\\n     *\\n     * _Available since v3.1._\\n     */\\n    function toInt32(int256 value) internal pure returns (int32) {\\n        require(value >= -2**31 && value < 2**31, \\\"SafeCast: value doesn\\\\'t fit in 32 bits\\\");\\n        return int32(value);\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted int16 from int256, reverting on\\n     * overflow (when the input is less than smallest int16 or\\n     * greater than largest int16).\\n     *\\n     * Counterpart to Solidity's `int16` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 16 bits\\n     *\\n     * _Available since v3.1._\\n     */\\n    function toInt16(int256 value) internal pure returns (int16) {\\n        require(value >= -2**15 && value < 2**15, \\\"SafeCast: value doesn\\\\'t fit in 16 bits\\\");\\n        return int16(value);\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted int8 from int256, reverting on\\n     * overflow (when the input is less than smallest int8 or\\n     * greater than largest int8).\\n     *\\n     * Counterpart to Solidity's `int8` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 8 bits.\\n     *\\n     * _Available since v3.1._\\n     */\\n    function toInt8(int256 value) internal pure returns (int8) {\\n        require(value >= -2**7 && value < 2**7, \\\"SafeCast: value doesn\\\\'t fit in 8 bits\\\");\\n        return int8(value);\\n    }\\n\\n    /**\\n     * @dev Converts an unsigned uint256 into a signed int256.\\n     *\\n     * Requirements:\\n     *\\n     * - input must be less than or equal to maxInt256.\\n     */\\n    function toInt256(uint256 value) internal pure returns (int256) {\\n        require(value < 2**255, \\\"SafeCast: value doesn't fit in an int256\\\");\\n        return int256(value);\\n    }\\n}\\n\",\"keccak256\":\"0x7b2b8baa20fd60ab4a328c8e34c64a353651b80ba4b5b157cbb61813f6f85d55\",\"license\":\"MIT\"},\"contracts/interfaces/IController.sol\":{\"content\":\"/*\\n    Copyright 2020 Set Labs Inc.\\n\\n    Licensed under the Apache License, Version 2.0 (the \\\"License\\\");\\n    you may not use this file except in compliance with the License.\\n    You may obtain a copy of the License at\\n\\n    http://www.apache.org/licenses/LICENSE-2.0\\n\\n    Unless required by applicable law or agreed to in writing, software\\n    distributed under the License is distributed on an \\\"AS IS\\\" BASIS,\\n    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\\n    See the License for the specific language governing permissions and\\n    limitations under the License.\\n\\n    SPDX-License-Identifier: Apache License, Version 2.0\\n*/\\npragma solidity 0.6.10;\\n\\ninterface IController {\\n    function addSet(address _setToken) external;\\n    function feeRecipient() external view returns(address);\\n    function getModuleFee(address _module, uint256 _feeType) external view returns(uint256);\\n    function isModule(address _module) external view returns(bool);\\n    function isSet(address _setToken) external view returns(bool);\\n    function isSystemContract(address _contractAddress) external view returns (bool);\\n    function resourceId(uint256 _id) external view returns(address);\\n}\\n\",\"keccak256\":\"0x7c2677c02bcdba795e290d6b54e16308ee1dafd4ecbd23ee4dfb89e1801dc70b\",\"license\":\"Apache License\"},\"contracts/interfaces/IOracle.sol\":{\"content\":\"/*\\n    Copyright 2020 Set Labs Inc.\\n\\n    Licensed under the Apache License, Version 2.0 (the \\\"License\\\");\\n    you may not use this file except in compliance with the License.\\n    You may obtain a copy of the License at\\n\\n    http://www.apache.org/licenses/LICENSE-2.0\\n\\n    Unless required by applicable law or agreed to in writing, software\\n    distributed under the License is distributed on an \\\"AS IS\\\" BASIS,\\n    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\\n    See the License for the specific language governing permissions and\\n    limitations under the License.\\n\\n    SPDX-License-Identifier: Apache License, Version 2.0\\n*/\\npragma solidity 0.6.10;\\n\\n\\n/**\\n * @title IOracle\\n * @author Set Protocol\\n *\\n * Interface for operating with any external Oracle that returns uint256 or\\n * an adapting contract that converts oracle output to uint256\\n */\\ninterface IOracle {\\n    /**\\n     * @return  Current price of asset represented in uint256, typically a preciseUnit where 10^18 = 1.\\n     */\\n    function read() external view returns (uint256);\\n}\\n\",\"keccak256\":\"0x2966c6f6ca45a5ff500b608e48c331ae63fb042822d601099089d35010115096\",\"license\":\"Apache License\"},\"contracts/interfaces/IOracleAdapter.sol\":{\"content\":\"/*\\n    Copyright 2020 Set Labs Inc.\\n\\n    Licensed under the Apache License, Version 2.0 (the \\\"License\\\");\\n    you may not use this file except in compliance with the License.\\n    You may obtain a copy of the License at\\n\\n    http://www.apache.org/licenses/LICENSE-2.0\\n\\n    Unless required by applicable law or agreed to in writing, software\\n    distributed under the License is distributed on an \\\"AS IS\\\" BASIS,\\n    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\\n    See the License for the specific language governing permissions and\\n    limitations under the License.\\n\\n    SPDX-License-Identifier: Apache License, Version 2.0\\n*/\\npragma solidity 0.6.10;\\n\\n\\n/**\\n * @title IOracleAdapter\\n * @author Set Protocol\\n *\\n * Interface for calling an oracle adapter.\\n */\\ninterface IOracleAdapter {\\n\\n    /**\\n     * Function for retrieving a price that requires sourcing data from outside protocols to calculate.\\n     *\\n     * @param  _assetOne    First asset in pair\\n     * @param  _assetTwo    Second asset in pair\\n     * @return                  Boolean indicating if oracle exists\\n     * @return              Current price of asset represented in uint256\\n     */\\n    function getPrice(address _assetOne, address _assetTwo) external view returns (bool, uint256);\\n}\\n\",\"keccak256\":\"0x14f8dc4a31fbb21f4e747367799cd895db437da955d460fcb75d58d0b4fc883a\",\"license\":\"Apache License\"},\"contracts/lib/AddressArrayUtils.sol\":{\"content\":\"/*\\n    Copyright 2020 Set Labs Inc.\\n\\n    Licensed under the Apache License, Version 2.0 (the \\\"License\\\");\\n    you may not use this file except in compliance with the License.\\n    You may obtain a copy of the License at\\n\\n    http://www.apache.org/licenses/LICENSE-2.0\\n\\n    Unless required by applicable law or agreed to in writing, software\\n    distributed under the License is distributed on an \\\"AS IS\\\" BASIS,\\n    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\\n    See the License for the specific language governing permissions and\\n    limitations under the License.\\n\\n    SPDX-License-Identifier: Apache License, Version 2.0\\n\\n*/\\n\\npragma solidity 0.6.10;\\n\\n/**\\n * @title AddressArrayUtils\\n * @author Set Protocol\\n *\\n * Utility functions to handle Address Arrays\\n *\\n * CHANGELOG:\\n * - 4/21/21: Added validatePairsWithArray methods\\n */\\nlibrary AddressArrayUtils {\\n\\n    /**\\n     * Finds the index of the first occurrence of the given element.\\n     * @param A The input array to search\\n     * @param a The value to find\\n     * @return Returns (index and isIn) for the first occurrence starting from index 0\\n     */\\n    function indexOf(address[] memory A, address a) internal pure returns (uint256, bool) {\\n        uint256 length = A.length;\\n        for (uint256 i = 0; i < length; i++) {\\n            if (A[i] == a) {\\n                return (i, true);\\n            }\\n        }\\n        return (uint256(-1), false);\\n    }\\n\\n    /**\\n    * Returns true if the value is present in the list. Uses indexOf internally.\\n    * @param A The input array to search\\n    * @param a The value to find\\n    * @return Returns isIn for the first occurrence starting from index 0\\n    */\\n    function contains(address[] memory A, address a) internal pure returns (bool) {\\n        (, bool isIn) = indexOf(A, a);\\n        return isIn;\\n    }\\n\\n    /**\\n    * Returns true if there are 2 elements that are the same in an array\\n    * @param A The input array to search\\n    * @return Returns boolean for the first occurrence of a duplicate\\n    */\\n    function hasDuplicate(address[] memory A) internal pure returns(bool) {\\n        require(A.length > 0, \\\"A is empty\\\");\\n\\n        for (uint256 i = 0; i < A.length - 1; i++) {\\n            address current = A[i];\\n            for (uint256 j = i + 1; j < A.length; j++) {\\n                if (current == A[j]) {\\n                    return true;\\n                }\\n            }\\n        }\\n        return false;\\n    }\\n\\n    /**\\n     * @param A The input array to search\\n     * @param a The address to remove\\n     * @return Returns the array with the object removed.\\n     */\\n    function remove(address[] memory A, address a)\\n        internal\\n        pure\\n        returns (address[] memory)\\n    {\\n        (uint256 index, bool isIn) = indexOf(A, a);\\n        if (!isIn) {\\n            revert(\\\"Address not in array.\\\");\\n        } else {\\n            (address[] memory _A,) = pop(A, index);\\n            return _A;\\n        }\\n    }\\n\\n    /**\\n     * @param A The input array to search\\n     * @param a The address to remove\\n     */\\n    function removeStorage(address[] storage A, address a)\\n        internal\\n    {\\n        (uint256 index, bool isIn) = indexOf(A, a);\\n        if (!isIn) {\\n            revert(\\\"Address not in array.\\\");\\n        } else {\\n            uint256 lastIndex = A.length - 1; // If the array would be empty, the previous line would throw, so no underflow here\\n            if (index != lastIndex) { A[index] = A[lastIndex]; }\\n            A.pop();\\n        }\\n    }\\n\\n    /**\\n    * Removes specified index from array\\n    * @param A The input array to search\\n    * @param index The index to remove\\n    * @return Returns the new array and the removed entry\\n    */\\n    function pop(address[] memory A, uint256 index)\\n        internal\\n        pure\\n        returns (address[] memory, address)\\n    {\\n        uint256 length = A.length;\\n        require(index < A.length, \\\"Index must be < A length\\\");\\n        address[] memory newAddresses = new address[](length - 1);\\n        for (uint256 i = 0; i < index; i++) {\\n            newAddresses[i] = A[i];\\n        }\\n        for (uint256 j = index + 1; j < length; j++) {\\n            newAddresses[j - 1] = A[j];\\n        }\\n        return (newAddresses, A[index]);\\n    }\\n\\n    /**\\n     * Returns the combination of the two arrays\\n     * @param A The first array\\n     * @param B The second array\\n     * @return Returns A extended by B\\n     */\\n    function extend(address[] memory A, address[] memory B) internal pure returns (address[] memory) {\\n        uint256 aLength = A.length;\\n        uint256 bLength = B.length;\\n        address[] memory newAddresses = new address[](aLength + bLength);\\n        for (uint256 i = 0; i < aLength; i++) {\\n            newAddresses[i] = A[i];\\n        }\\n        for (uint256 j = 0; j < bLength; j++) {\\n            newAddresses[aLength + j] = B[j];\\n        }\\n        return newAddresses;\\n    }\\n\\n    /**\\n     * Validate that address and uint array lengths match. Validate address array is not empty\\n     * and contains no duplicate elements.\\n     *\\n     * @param A         Array of addresses\\n     * @param B         Array of uint\\n     */\\n    function validatePairsWithArray(address[] memory A, uint[] memory B) internal pure {\\n        require(A.length == B.length, \\\"Array length mismatch\\\");\\n        _validateLengthAndUniqueness(A);\\n    }\\n\\n    /**\\n     * Validate that address and bool array lengths match. Validate address array is not empty\\n     * and contains no duplicate elements.\\n     *\\n     * @param A         Array of addresses\\n     * @param B         Array of bool\\n     */\\n    function validatePairsWithArray(address[] memory A, bool[] memory B) internal pure {\\n        require(A.length == B.length, \\\"Array length mismatch\\\");\\n        _validateLengthAndUniqueness(A);\\n    }\\n\\n    /**\\n     * Validate that address and string array lengths match. Validate address array is not empty\\n     * and contains no duplicate elements.\\n     *\\n     * @param A         Array of addresses\\n     * @param B         Array of strings\\n     */\\n    function validatePairsWithArray(address[] memory A, string[] memory B) internal pure {\\n        require(A.length == B.length, \\\"Array length mismatch\\\");\\n        _validateLengthAndUniqueness(A);\\n    }\\n\\n    /**\\n     * Validate that address array lengths match, and calling address array are not empty\\n     * and contain no duplicate elements.\\n     *\\n     * @param A         Array of addresses\\n     * @param B         Array of addresses\\n     */\\n    function validatePairsWithArray(address[] memory A, address[] memory B) internal pure {\\n        require(A.length == B.length, \\\"Array length mismatch\\\");\\n        _validateLengthAndUniqueness(A);\\n    }\\n\\n    /**\\n     * Validate that address and bytes array lengths match. Validate address array is not empty\\n     * and contains no duplicate elements.\\n     *\\n     * @param A         Array of addresses\\n     * @param B         Array of bytes\\n     */\\n    function validatePairsWithArray(address[] memory A, bytes[] memory B) internal pure {\\n        require(A.length == B.length, \\\"Array length mismatch\\\");\\n        _validateLengthAndUniqueness(A);\\n    }\\n\\n    /**\\n     * Validate address array is not empty and contains no duplicate elements.\\n     *\\n     * @param A          Array of addresses\\n     */\\n    function _validateLengthAndUniqueness(address[] memory A) internal pure {\\n        require(A.length > 0, \\\"Array length must be > 0\\\");\\n        require(!hasDuplicate(A), \\\"Cannot duplicate addresses\\\");\\n    }\\n}\\n\",\"keccak256\":\"0x02e1a8a5f6ed402db74bb4bd3fd13041e2b9f93e17e8ca263c202003ef9874a8\",\"license\":\"Apache License\"},\"contracts/lib/PreciseUnitMath.sol\":{\"content\":\"/*\\n    Copyright 2020 Set Labs Inc.\\n\\n    Licensed under the Apache License, Version 2.0 (the \\\"License\\\");\\n    you may not use this file except in compliance with the License.\\n    You may obtain a copy of the License at\\n\\n    http://www.apache.org/licenses/LICENSE-2.0\\n\\n    Unless required by applicable law or agreed to in writing, software\\n    distributed under the License is distributed on an \\\"AS IS\\\" BASIS,\\n    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\\n    See the License for the specific language governing permissions and\\n    limitations under the License.\\n\\n    SPDX-License-Identifier: Apache License, Version 2.0\\n*/\\n\\npragma solidity 0.6.10;\\npragma experimental ABIEncoderV2;\\n\\nimport { SafeCast } from \\\"@openzeppelin/contracts/utils/SafeCast.sol\\\";\\nimport { SafeMath } from \\\"@openzeppelin/contracts/math/SafeMath.sol\\\";\\nimport { SignedSafeMath } from \\\"@openzeppelin/contracts/math/SignedSafeMath.sol\\\";\\n\\n\\n/**\\n * @title PreciseUnitMath\\n * @author Set Protocol\\n *\\n * Arithmetic for fixed-point numbers with 18 decimals of precision. Some functions taken from\\n * dYdX's BaseMath library.\\n *\\n * CHANGELOG:\\n * - 9/21/20: Added safePower function\\n * - 4/21/21: Added approximatelyEquals function\\n * - 12/13/21: Added preciseDivCeil (int overloads) function\\n * - 12/13/21: Added abs function\\n */\\nlibrary PreciseUnitMath {\\n    using SafeMath for uint256;\\n    using SignedSafeMath for int256;\\n    using SafeCast for int256;\\n\\n    // The number One in precise units.\\n    uint256 constant internal PRECISE_UNIT = 10 ** 18;\\n    int256 constant internal PRECISE_UNIT_INT = 10 ** 18;\\n\\n    // Max unsigned integer value\\n    uint256 constant internal MAX_UINT_256 = type(uint256).max;\\n    // Max and min signed integer value\\n    int256 constant internal MAX_INT_256 = type(int256).max;\\n    int256 constant internal MIN_INT_256 = type(int256).min;\\n\\n    /**\\n     * @dev Getter function since constants can't be read directly from libraries.\\n     */\\n    function preciseUnit() internal pure returns (uint256) {\\n        return PRECISE_UNIT;\\n    }\\n\\n    /**\\n     * @dev Getter function since constants can't be read directly from libraries.\\n     */\\n    function preciseUnitInt() internal pure returns (int256) {\\n        return PRECISE_UNIT_INT;\\n    }\\n\\n    /**\\n     * @dev Getter function since constants can't be read directly from libraries.\\n     */\\n    function maxUint256() internal pure returns (uint256) {\\n        return MAX_UINT_256;\\n    }\\n\\n    /**\\n     * @dev Getter function since constants can't be read directly from libraries.\\n     */\\n    function maxInt256() internal pure returns (int256) {\\n        return MAX_INT_256;\\n    }\\n\\n    /**\\n     * @dev Getter function since constants can't be read directly from libraries.\\n     */\\n    function minInt256() internal pure returns (int256) {\\n        return MIN_INT_256;\\n    }\\n\\n    /**\\n     * @dev Multiplies value a by value b (result is rounded down). It's assumed that the value b is the significand\\n     * of a number with 18 decimals precision.\\n     */\\n    function preciseMul(uint256 a, uint256 b) internal pure returns (uint256) {\\n        return a.mul(b).div(PRECISE_UNIT);\\n    }\\n\\n    /**\\n     * @dev Multiplies value a by value b (result is rounded towards zero). It's assumed that the value b is the\\n     * significand of a number with 18 decimals precision.\\n     */\\n    function preciseMul(int256 a, int256 b) internal pure returns (int256) {\\n        return a.mul(b).div(PRECISE_UNIT_INT);\\n    }\\n\\n    /**\\n     * @dev Multiplies value a by value b (result is rounded up). It's assumed that the value b is the significand\\n     * of a number with 18 decimals precision.\\n     */\\n    function preciseMulCeil(uint256 a, uint256 b) internal pure returns (uint256) {\\n        if (a == 0 || b == 0) {\\n            return 0;\\n        }\\n        return a.mul(b).sub(1).div(PRECISE_UNIT).add(1);\\n    }\\n\\n    /**\\n     * @dev Divides value a by value b (result is rounded down).\\n     */\\n    function preciseDiv(uint256 a, uint256 b) internal pure returns (uint256) {\\n        return a.mul(PRECISE_UNIT).div(b);\\n    }\\n\\n\\n    /**\\n     * @dev Divides value a by value b (result is rounded towards 0).\\n     */\\n    function preciseDiv(int256 a, int256 b) internal pure returns (int256) {\\n        return a.mul(PRECISE_UNIT_INT).div(b);\\n    }\\n\\n    /**\\n     * @dev Divides value a by value b (result is rounded up or away from 0).\\n     */\\n    function preciseDivCeil(uint256 a, uint256 b) internal pure returns (uint256) {\\n        require(b != 0, \\\"Cant divide by 0\\\");\\n\\n        return a > 0 ? a.mul(PRECISE_UNIT).sub(1).div(b).add(1) : 0;\\n    }\\n\\n    /**\\n     * @dev Divides value a by value b (result is rounded up or away from 0). When `a` is 0, 0 is\\n     * returned. When `b` is 0, method reverts with divide-by-zero error.\\n     */\\n    function preciseDivCeil(int256 a, int256 b) internal pure returns (int256) {\\n        require(b != 0, \\\"Cant divide by 0\\\");\\n\\n        a = a.mul(PRECISE_UNIT_INT);\\n        int256 c = a.div(b);\\n\\n        if (a % b != 0) {\\n            // a ^ b == 0 case is covered by the previous if statement, hence it won't resolve to --c\\n            (a ^ b > 0) ? ++c : --c;\\n        }\\n\\n        return c;\\n    }\\n\\n    /**\\n     * @dev Divides value a by value b (result is rounded down - positive numbers toward 0 and negative away from 0).\\n     */\\n    function divDown(int256 a, int256 b) internal pure returns (int256) {\\n        require(b != 0, \\\"Cant divide by 0\\\");\\n        require(a != MIN_INT_256 || b != -1, \\\"Invalid input\\\");\\n\\n        int256 result = a.div(b);\\n        if (a ^ b < 0 && a % b != 0) {\\n            result -= 1;\\n        }\\n\\n        return result;\\n    }\\n\\n    /**\\n     * @dev Multiplies value a by value b where rounding is towards the lesser number.\\n     * (positive values are rounded towards zero and negative values are rounded away from 0).\\n     */\\n    function conservativePreciseMul(int256 a, int256 b) internal pure returns (int256) {\\n        return divDown(a.mul(b), PRECISE_UNIT_INT);\\n    }\\n\\n    /**\\n     * @dev Divides value a by value b where rounding is towards the lesser number.\\n     * (positive values are rounded towards zero and negative values are rounded away from 0).\\n     */\\n    function conservativePreciseDiv(int256 a, int256 b) internal pure returns (int256) {\\n        return divDown(a.mul(PRECISE_UNIT_INT), b);\\n    }\\n\\n    /**\\n    * @dev Performs the power on a specified value, reverts on overflow.\\n    */\\n    function safePower(\\n        uint256 a,\\n        uint256 pow\\n    )\\n        internal\\n        pure\\n        returns (uint256)\\n    {\\n        require(a > 0, \\\"Value must be positive\\\");\\n\\n        uint256 result = 1;\\n        for (uint256 i = 0; i < pow; i++){\\n            uint256 previousResult = result;\\n\\n            // Using safemath multiplication prevents overflows\\n            result = previousResult.mul(a);\\n        }\\n\\n        return result;\\n    }\\n\\n    /**\\n     * @dev Returns true if a =~ b within range, false otherwise.\\n     */\\n    function approximatelyEquals(uint256 a, uint256 b, uint256 range) internal pure returns (bool) {\\n        return a <= b.add(range) && a >= b.sub(range);\\n    }\\n\\n    /**\\n     * Returns the absolute value of int256 `a` as a uint256\\n     */\\n    function abs(int256 a) internal pure returns (uint) {\\n        return a >= 0 ? a.toUint256() : a.mul(-1).toUint256();\\n    }\\n\\n    /**\\n     * Returns the negation of a\\n     */\\n    function neg(int256 a) internal pure returns (int256) {\\n        require(a > MIN_INT_256, \\\"Inversion overflow\\\");\\n        return -a;\\n    }\\n}\\n\",\"keccak256\":\"0x4a8f7889d936808d87b3eabd779d1fd081727537d837474bdc4a94f6bc2ed121\",\"license\":\"Apache License\"},\"contracts/protocol/PriceOracle.sol\":{\"content\":\"/*\\n    Copyright 2020 Set Labs Inc.\\n\\n    Licensed under the Apache License, Version 2.0 (the \\\"License\\\");\\n    you may not use this file except in compliance with the License.\\n    You may obtain a copy of the License at\\n\\n    http://www.apache.org/licenses/LICENSE-2.0\\n\\n    Unless required by applicable law or agreed to in writing, software\\n    distributed under the License is distributed on an \\\"AS IS\\\" BASIS,\\n    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\\n    See the License for the specific language governing permissions and\\n    limitations under the License.\\n\\n    SPDX-License-Identifier: Apache License, Version 2.0\\n*/\\n\\npragma solidity 0.6.10;\\npragma experimental \\\"ABIEncoderV2\\\";\\n\\nimport { Ownable } from \\\"@openzeppelin/contracts/access/Ownable.sol\\\";\\n\\nimport { AddressArrayUtils } from \\\"../lib/AddressArrayUtils.sol\\\";\\nimport { IController } from \\\"../interfaces/IController.sol\\\";\\nimport { IOracle } from \\\"../interfaces/IOracle.sol\\\";\\nimport { IOracleAdapter } from \\\"../interfaces/IOracleAdapter.sol\\\";\\nimport { PreciseUnitMath } from \\\"../lib/PreciseUnitMath.sol\\\";\\n\\n\\n/**\\n * @title PriceOracle\\n * @author Set Protocol\\n *\\n * Contract that returns the price for any given asset pair. Price is retrieved either directly from an oracle,\\n * calculated using common asset pairs, or uses external data to calculate price.\\n * Note: Prices are returned in preciseUnits (i.e. 18 decimals of precision)\\n */\\ncontract PriceOracle is Ownable {\\n    using PreciseUnitMath for uint256;\\n    using AddressArrayUtils for address[];\\n\\n    /* ============ Events ============ */\\n\\n    event PairAdded(address indexed _assetOne, address indexed _assetTwo, address _oracle);\\n    event PairRemoved(address indexed _assetOne, address indexed _assetTwo, address _oracle);\\n    event PairEdited(address indexed _assetOne, address indexed _assetTwo, address _newOracle);\\n    event AdapterAdded(address _adapter);\\n    event AdapterRemoved(address _adapter);\\n    event MasterQuoteAssetEdited(address _newMasterQuote);\\n\\n    /* ============ State Variables ============ */\\n\\n    // Address of the Controller contract\\n    IController public controller;\\n\\n    // Mapping between assetA/assetB and its associated Price Oracle\\n    // Asset 1 -> Asset 2 -> IOracle Interface\\n    mapping(address => mapping(address => IOracle)) public oracles;\\n\\n    // Token address of the bridge asset that prices are derived from if the specified pair price is missing\\n    address public masterQuoteAsset;\\n\\n    // List of IOracleAdapters used to return prices of third party protocols (e.g. Uniswap, Compound, Balancer)\\n    address[] public adapters;\\n\\n    /* ============ Constructor ============ */\\n\\n    /**\\n     * Set state variables and map asset pairs to their oracles\\n     *\\n     * @param _controller             Address of controller contract\\n     * @param _masterQuoteAsset       Address of asset that can be used to link unrelated asset pairs\\n     * @param _adapters               List of adapters used to price assets created by other protocols\\n     * @param _assetOnes              List of first asset in pair, index i maps to same index in assetTwos and oracles\\n     * @param _assetTwos              List of second asset in pair, index i maps to same index in assetOnes and oracles\\n     * @param _oracles                List of oracles, index i maps to same index in assetOnes and assetTwos\\n     */\\n    constructor(\\n        IController _controller,\\n        address _masterQuoteAsset,\\n        address[] memory _adapters,\\n        address[] memory _assetOnes,\\n        address[] memory _assetTwos,\\n        IOracle[] memory _oracles\\n    )\\n        public\\n    {\\n        controller = _controller;\\n        masterQuoteAsset = _masterQuoteAsset;\\n        adapters = _adapters;\\n        require(\\n            _assetOnes.length == _assetTwos.length && _assetTwos.length == _oracles.length,\\n            \\\"Array lengths do not match.\\\"\\n        );\\n\\n        for (uint256 i = 0; i < _assetOnes.length; i++) {\\n            oracles[_assetOnes[i]][_assetTwos[i]] = _oracles[i];\\n        }\\n    }\\n\\n    /* ============ External Functions ============ */\\n\\n    /**\\n     * SYSTEM-ONLY PRIVELEGE: Find price of passed asset pair, if possible. The steps it takes are:\\n     *  1) Check to see if a direct or inverse oracle of the pair exists,\\n     *  2) If not, use masterQuoteAsset to link pairs together (i.e. BTC/ETH and ETH/USDC\\n     *     could be used to calculate BTC/USDC).\\n     *  3) If not, check oracle adapters in case one or more of the assets needs external protocol data\\n     *     to price.\\n     *  4) If all steps fail, revert.\\n     *\\n     * @param _assetOne         Address of first asset in pair\\n     * @param _assetTwo         Address of second asset in pair\\n     * @return                  Price of asset pair to 18 decimals of precision\\n     */\\n    function getPrice(address _assetOne, address _assetTwo) external view returns (uint256) {\\n        require(\\n            controller.isSystemContract(msg.sender),\\n            \\\"PriceOracle.getPrice: Caller must be system contract.\\\"\\n        );\\n\\n        bool priceFound;\\n        uint256 price;\\n\\n        (priceFound, price) = _getDirectOrInversePrice(_assetOne, _assetTwo);\\n\\n        if (!priceFound) {\\n            (priceFound, price) = _getPriceFromMasterQuote(_assetOne, _assetTwo);\\n        }\\n\\n        if (!priceFound) {\\n            (priceFound, price) = _getPriceFromAdapters(_assetOne, _assetTwo);\\n        }\\n\\n        require(priceFound, \\\"PriceOracle.getPrice: Price not found.\\\");\\n\\n        return price;\\n    }\\n\\n    /**\\n     * GOVERNANCE FUNCTION: Add new asset pair oracle.\\n     *\\n     * @param _assetOne         Address of first asset in pair\\n     * @param _assetTwo         Address of second asset in pair\\n     * @param _oracle           Address of asset pair's oracle\\n     */\\n    function addPair(address _assetOne, address _assetTwo, IOracle _oracle) external onlyOwner {\\n        require(\\n            address(oracles[_assetOne][_assetTwo]) == address(0),\\n            \\\"PriceOracle.addPair: Pair already exists.\\\"\\n        );\\n        oracles[_assetOne][_assetTwo] = _oracle;\\n\\n        emit PairAdded(_assetOne, _assetTwo, address(_oracle));\\n    }\\n\\n    /**\\n     * GOVERNANCE FUNCTION: Edit an existing asset pair's oracle.\\n     *\\n     * @param _assetOne         Address of first asset in pair\\n     * @param _assetTwo         Address of second asset in pair\\n     * @param _oracle           Address of asset pair's new oracle\\n     */\\n    function editPair(address _assetOne, address _assetTwo, IOracle _oracle) external onlyOwner {\\n        require(\\n            address(oracles[_assetOne][_assetTwo]) != address(0),\\n            \\\"PriceOracle.editPair: Pair doesn't exist.\\\"\\n        );\\n        oracles[_assetOne][_assetTwo] = _oracle;\\n\\n        emit PairEdited(_assetOne, _assetTwo, address(_oracle));\\n    }\\n\\n    /**\\n     * GOVERNANCE FUNCTION: Remove asset pair's oracle.\\n     *\\n     * @param _assetOne         Address of first asset in pair\\n     * @param _assetTwo         Address of second asset in pair\\n     */\\n    function removePair(address _assetOne, address _assetTwo) external onlyOwner {\\n        require(\\n            address(oracles[_assetOne][_assetTwo]) != address(0),\\n            \\\"PriceOracle.removePair: Pair doesn't exist.\\\"\\n        );\\n        IOracle oldOracle = oracles[_assetOne][_assetTwo];\\n        delete oracles[_assetOne][_assetTwo];\\n\\n        emit PairRemoved(_assetOne, _assetTwo, address(oldOracle));\\n    }\\n\\n    /**\\n     * GOVERNANCE FUNCTION: Add new oracle adapter.\\n     *\\n     * @param _adapter         Address of new adapter\\n     */\\n    function addAdapter(address _adapter) external onlyOwner {\\n        require(\\n            !adapters.contains(_adapter),\\n            \\\"PriceOracle.addAdapter: Adapter already exists.\\\"\\n        );\\n        adapters.push(_adapter);\\n\\n        emit AdapterAdded(_adapter);\\n    }\\n\\n    /**\\n     * GOVERNANCE FUNCTION: Remove oracle adapter.\\n     *\\n     * @param _adapter         Address of adapter to remove\\n     */\\n    function removeAdapter(address _adapter) external onlyOwner {\\n        require(\\n            adapters.contains(_adapter),\\n            \\\"PriceOracle.removeAdapter: Adapter does not exist.\\\"\\n        );\\n        adapters = adapters.remove(_adapter);\\n\\n        emit AdapterRemoved(_adapter);\\n    }\\n\\n    /**\\n     * GOVERNANCE FUNCTION: Change the master quote asset.\\n     *\\n     * @param _newMasterQuoteAsset         New address of master quote asset\\n     */\\n    function editMasterQuoteAsset(address _newMasterQuoteAsset) external onlyOwner {\\n        masterQuoteAsset = _newMasterQuoteAsset;\\n\\n        emit MasterQuoteAssetEdited(_newMasterQuoteAsset);\\n    }\\n\\n    /* ============ External View Functions ============ */\\n\\n    /**\\n     * Returns an array of adapters\\n     */\\n    function getAdapters() external view returns (address[] memory) {\\n        return adapters;\\n    }\\n\\n    /* ============ Internal Functions ============ */\\n\\n    /**\\n     * Check if direct or inverse oracle exists. If so return that price along with boolean indicating\\n     * it exists. Otherwise return boolean indicating oracle doesn't exist.\\n     *\\n     * @param _assetOne         Address of first asset in pair\\n     * @param _assetTwo         Address of second asset in pair\\n     * @return bool             Boolean indicating if oracle exists\\n     * @return uint256          Price of asset pair to 18 decimal precision (if exists, otherwise 0)\\n     */\\n    function _getDirectOrInversePrice(\\n        address _assetOne,\\n        address _assetTwo\\n    )\\n        internal\\n        view\\n        returns (bool, uint256)\\n    {\\n        IOracle directOracle = oracles[_assetOne][_assetTwo];\\n        bool hasDirectOracle = address(directOracle) != address(0);\\n\\n        // Check asset1 -> asset 2. If exists, then return value\\n        if (hasDirectOracle) {\\n            return (true, directOracle.read());\\n        }\\n\\n        IOracle inverseOracle = oracles[_assetTwo][_assetOne];\\n        bool hasInverseOracle = address(inverseOracle) != address(0);\\n\\n        // If not, check asset 2 -> asset 1. If exists, then return 1 / asset1 -> asset2\\n        if (hasInverseOracle) {\\n            return (true, _calculateInversePrice(inverseOracle));\\n        }\\n\\n        return (false, 0);\\n    }\\n\\n    /**\\n     * Try to calculate asset pair price by getting each asset in the pair's price relative to master\\n     * quote asset. Both prices must exist otherwise function returns false and no price.\\n     *\\n     * @param _assetOne         Address of first asset in pair\\n     * @param _assetTwo         Address of second asset in pair\\n     * @return bool             Boolean indicating if oracle exists\\n     * @return uint256          Price of asset pair to 18 decimal precision (if exists, otherwise 0)\\n     */\\n    function _getPriceFromMasterQuote(\\n        address _assetOne,\\n        address _assetTwo\\n    )\\n        internal\\n        view\\n        returns (bool, uint256)\\n    {\\n        (\\n            bool priceFoundOne,\\n            uint256 assetOnePrice\\n        ) = _getDirectOrInversePrice(_assetOne, masterQuoteAsset);\\n\\n        (\\n            bool priceFoundTwo,\\n            uint256 assetTwoPrice\\n        ) = _getDirectOrInversePrice(_assetTwo, masterQuoteAsset);\\n\\n        if (priceFoundOne && priceFoundTwo) {\\n            return (true, assetOnePrice.preciseDiv(assetTwoPrice));\\n        }\\n\\n        return (false, 0);\\n    }\\n\\n    /**\\n     * Scan adapters to see if one or more of the assets needs external protocol data to be priced. If\\n     * does not exist return false and no price.\\n     *\\n     * @param _assetOne         Address of first asset in pair\\n     * @param _assetTwo         Address of second asset in pair\\n     * @return bool             Boolean indicating if oracle exists\\n     * @return uint256          Price of asset pair to 18 decimal precision (if exists, otherwise 0)\\n     */\\n    function _getPriceFromAdapters(\\n        address _assetOne,\\n        address _assetTwo\\n    )\\n        internal\\n        view\\n        returns (bool, uint256)\\n    {\\n        for (uint256 i = 0; i < adapters.length; i++) {\\n            (\\n                bool priceFound,\\n                uint256 price\\n            ) = IOracleAdapter(adapters[i]).getPrice(_assetOne, _assetTwo);\\n\\n            if (priceFound) {\\n                return (priceFound, price);\\n            }\\n        }\\n\\n        return (false, 0);\\n    }\\n\\n    /**\\n     * Calculate inverse price of passed oracle. The inverse price is 1 (or 1e18) / inverse price\\n     *\\n     * @param _inverseOracle        Address of oracle to invert\\n     * @return uint256              Inverted price of asset pair to 18 decimal precision\\n     */\\n    function _calculateInversePrice(IOracle _inverseOracle) internal view returns(uint256) {\\n        uint256 inverseValue = _inverseOracle.read();\\n\\n        return PreciseUnitMath.preciseUnit().preciseDiv(inverseValue);\\n    }\\n}\\n\",\"keccak256\":\"0xd8fce5b834bbdb7318ad7a47504f8ec106b08413dcedb2e06a98cb9d29cbad5a\",\"license\":\"Apache License\"}},\"version\":1}",
+  "bytecode": "0x60806040523480156200001157600080fd5b5060405162001bbc38038062001bbc83398101604081905262000034916200036a565b6000620000496001600160e01b03620001d016565b600080546001600160a01b0319166001600160a01b0383169081178255604051929350917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0908290a350600180546001600160a01b038089166001600160a01b03199283161790925560038054928816929091169190911790558351620000d8906004906020870190620001d5565b5081518351148015620000ec575080518251145b620001145760405162461bcd60e51b81526004016200010b9062000445565b60405180910390fd5b60005b8351811015620001c3578181815181106200012e57fe5b6020026020010151600260008684815181106200014757fe5b60200260200101516001600160a01b03166001600160a01b0316815260200190815260200160002060008584815181106200017e57fe5b6020908102919091018101516001600160a01b0390811683529082019290925260400160002080546001600160a01b0319169290911691909117905560010162000117565b50505050505050620004dc565b335b90565b8280548282559060005260206000209081019282156200022d579160200282015b828111156200022d57825182546001600160a01b0319166001600160a01b03909116178255602090920191600190910190620001f6565b506200023b9291506200023f565b5090565b620001d291905b808211156200023b5780546001600160a01b031916815560010162000246565b80516200027381620004c3565b92915050565b600082601f8301126200028a578081fd5b8151620002a16200029b82620004a3565b6200047c565b818152915060208083019084810181840286018201871015620002c357600080fd5b60005b84811015620002ef578151620002dc81620004c3565b84529282019290820190600101620002c6565b505050505092915050565b600082601f8301126200030b578081fd5b81516200031c6200029b82620004a3565b8181529150602080830190848101818402860182018710156200033e57600080fd5b60005b84811015620002ef5781516200035781620004c3565b8452928201929082019060010162000341565b60008060008060008060c0878903121562000383578182fd5b6200038f888862000266565b9550620003a0886020890162000266565b60408801519095506001600160401b0380821115620003bd578384fd5b620003cb8a838b0162000279565b95506060890151915080821115620003e1578384fd5b620003ef8a838b0162000279565b9450608089015191508082111562000405578384fd5b620004138a838b0162000279565b935060a089015191508082111562000429578283fd5b506200043889828a01620002fa565b9150509295509295509295565b6020808252601b908201527f4172726179206c656e6774687320646f206e6f74206d617463682e0000000000604082015260600190565b6040518181016001600160401b03811182821017156200049b57600080fd5b604052919050565b60006001600160401b03821115620004b9578081fd5b5060209081020190565b6001600160a01b0381168114620004d957600080fd5b50565b6116d080620004ec6000396000f3fe608060405234801561001057600080fd5b50600436106100f55760003560e01c806361d5b14411610097578063b82e16e311610066578063b82e16e3146101cf578063f1ec23cf146101e4578063f2fde38b146101f7578063f77c47911461020a576100f5565b806361d5b1441461018c578063715018a61461019f5780638da5cb5b146101a7578063ac41865a146101af576100f5565b806352a03c03116100d357806352a03c0314610140578063585cd34b146101535780635861b2271461016657806360d54d4114610179576100f5565b806304289853146100fa578063342833541461010f5780634ef501ac1461012d575b600080fd5b61010d6101083660046111c1565b610212565b005b610117610317565b604051610124919061128c565b60405180910390f35b61011761013b36600461125c565b610326565b61011761014e366004611189565b61034d565b61010d61016136600461116d565b610373565b61010d610174366004611189565b6104f7565b61010d61018736600461116d565b6105e8565b61010d61019a36600461116d565b61072a565b61010d6107b4565b61011761083d565b6101c26101bd366004611189565b61084d565b6040516101249190611679565b6101d761094d565b60405161012491906112ba565b61010d6101f23660046111c1565b6109af565b61010d61020536600461116d565b610a9f565b610117610b5f565b61021a610b6e565b6001600160a01b031661022b61083d565b6001600160a01b03161461025a5760405162461bcd60e51b8152600401610251906115b0565b60405180910390fd5b6001600160a01b03838116600090815260026020908152604080832086851684529091529020541661029e5760405162461bcd60e51b8152600401610251906115e5565b6001600160a01b03838116600081815260026020908152604080832087861680855292529182902080546001600160a01b03191694861694909417909355517f31639ce2bfc7c00ec8297cb6df66924b38918a7417c8e6b10eb7dc9f958389109061030a90859061128c565b60405180910390a3505050565b6003546001600160a01b031681565b6004818154811061033357fe5b6000918252602090912001546001600160a01b0316905081565b60026020908152600092835260408084209091529082529020546001600160a01b031681565b61037b610b6e565b6001600160a01b031661038c61083d565b6001600160a01b0316146103b25760405162461bcd60e51b8152600401610251906115b0565b61041f81600480548060200260200160405190810160405280929190818152602001828054801561040c57602002820191906000526020600020905b81546001600160a01b031681526001909101906020018083116103ee575b5050505050610b7290919063ffffffff16565b61043b5760405162461bcd60e51b8152600401610251906113b3565b6104a881600480548060200260200160405190810160405280929190818152602001828054801561049557602002820191906000526020600020905b81546001600160a01b03168152600190910190602001808311610477575b5050505050610b8890919063ffffffff16565b80516104bc916004916020909101906110e4565b507fdf980d21d8c7bb34800e668dbe003299093bac8e693614151d3c57f73f98a93d816040516104ec919061128c565b60405180910390a150565b6104ff610b6e565b6001600160a01b031661051061083d565b6001600160a01b0316146105365760405162461bcd60e51b8152600401610251906115b0565b6001600160a01b03828116600090815260026020908152604080832085851684529091529020541661057a5760405162461bcd60e51b81526004016102519061162e565b6001600160a01b03828116600081815260026020908152604080832086861680855292529182902080546001600160a01b031981169091559151919093169291907fd9001d4fd555e50f50619eeca8a260400b5e944989042d0652c5834aa2b968609061030a90859061128c565b6105f0610b6e565b6001600160a01b031661060161083d565b6001600160a01b0316146106275760405162461bcd60e51b8152600401610251906115b0565b61069281600480548060200260200160405190810160405280929190818152602001828054801561040c576020028201919060005260206000209081546001600160a01b031681526001909101906020018083116103ee575050505050610b7290919063ffffffff16565b156106af5760405162461bcd60e51b8152600401610251906114cb565b600480546001810182556000919091527f8a35acfbc15ff81a39ae7d344fd709f28e8600b4aa8c65c6b64bfe7fe36bd19b0180546001600160a01b0319166001600160a01b0383161790556040517fcf9c2c7f9adbb156bd76affb04df84595f8f5e69cab2e61221b05b05a902fa26906104ec90839061128c565b610732610b6e565b6001600160a01b031661074361083d565b6001600160a01b0316146107695760405162461bcd60e51b8152600401610251906115b0565b600380546001600160a01b0319166001600160a01b0383161790556040517f748818fcd84486bc2804c035b8dec2300489b070a39a4a290d8311cd9791d867906104ec90839061128c565b6107bc610b6e565b6001600160a01b03166107cd61083d565b6001600160a01b0316146107f35760405162461bcd60e51b8152600401610251906115b0565b600080546040516001600160a01b03909116907f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0908390a3600080546001600160a01b0319169055565b6000546001600160a01b03165b90565b6001546040516313bc6d4b60e01b81526000916001600160a01b0316906313bc6d4b9061087e90339060040161128c565b60206040518083038186803b15801561089657600080fd5b505afa1580156108aa573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906108ce919061120b565b6108ea5760405162461bcd60e51b81526004016102519061151a565b6000806108f78585610bd0565b9092509050816109115761090b8585610cdf565b90925090505b81610926576109208585610d45565b90925090505b816109435760405162461bcd60e51b815260040161025190611405565b9150505b92915050565b606060048054806020026020016040519081016040528092919081815260200182805480156109a557602002820191906000526020600020905b81546001600160a01b03168152600190910190602001808311610987575b5050505050905090565b6109b7610b6e565b6001600160a01b03166109c861083d565b6001600160a01b0316146109ee5760405162461bcd60e51b8152600401610251906115b0565b6001600160a01b03838116600090815260026020908152604080832086851684529091529020541615610a335760405162461bcd60e51b81526004016102519061144b565b6001600160a01b03838116600081815260026020908152604080832087861680855292529182902080546001600160a01b03191694861694909417909355517f7f46075c67ca5bbd3aaf82d8e324282141f27b7cba3376e5498a6b70c9931c2a9061030a90859061128c565b610aa7610b6e565b6001600160a01b0316610ab861083d565b6001600160a01b031614610ade5760405162461bcd60e51b8152600401610251906115b0565b6001600160a01b038116610b045760405162461bcd60e51b81526004016102519061136d565b600080546040516001600160a01b03808516939216917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e091a3600080546001600160a01b0319166001600160a01b0392909216919091179055565b6001546001600160a01b031681565b3390565b600080610b7f8484610e1b565b95945050505050565b6060600080610b978585610e1b565b9150915080610bb85760405162461bcd60e51b815260040161025190611307565b6060610bc48684610e7e565b50935061094792505050565b6001600160a01b038083166000908152600260209081526040808320858516845290915281205490918291168015801590610c83576001826001600160a01b03166357de26a46040518163ffffffff1660e01b815260040160206040518083038186803b158015610c4057600080fd5b505afa158015610c54573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610c789190611274565b935093505050610cd8565b6001600160a01b0380861660009081526002602090815260408083208a85168452909152902054168015801590610ccc576001610cbf83610fad565b9550955050505050610cd8565b50600094508493505050505b9250929050565b600354600090819081908190610cff9087906001600160a01b0316610bd0565b60035491935091506000908190610d209088906001600160a01b0316610bd0565b91509150838015610d2e5750815b15610ccc576001610cbf848363ffffffff61104216565b600080805b600454811015610e0e5760008060048381548110610d6457fe5b600091825260209091200154604051635620c32d60e11b81526001600160a01b039091169063ac41865a90610d9f908a908a906004016112a0565b604080518083038186803b158015610db657600080fd5b505afa158015610dca573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610dee919061122b565b915091508115610e04579093509150610cd89050565b5050600101610d4a565b5060009485945092505050565b81516000908190815b81811015610e6e57846001600160a01b0316868281518110610e4257fe5b60200260200101516001600160a01b03161415610e6657925060019150610cd89050565b600101610e24565b5060001995600095509350505050565b8151606090600090808410610ea55760405162461bcd60e51b815260040161025190611336565b60606001820367ffffffffffffffff81118015610ec157600080fd5b50604051908082528060200260200182016040528015610eeb578160200160208202803683370190505b50905060005b85811015610f3957868181518110610f0557fe5b6020026020010151828281518110610f1957fe5b6001600160a01b0390921660209283029190910190910152600101610ef1565b50600185015b82811015610f8a57868181518110610f5357fe5b6020026020010151826001830381518110610f6a57fe5b6001600160a01b0390921660209283029190910190910152600101610f3f565b5080868681518110610f9857fe5b60200260200101519350935050509250929050565b600080826001600160a01b03166357de26a46040518163ffffffff1660e01b815260040160206040518083038186803b158015610fe957600080fd5b505afa158015610ffd573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906110219190611274565b905061103b8161102f61106c565b9063ffffffff61104216565b9392505050565b600061103b8261106085670de0b6b3a764000063ffffffff61107816565b9063ffffffff6110b216565b670de0b6b3a764000090565b60008261108757506000610947565b8282028284828161109457fe5b041461103b5760405162461bcd60e51b81526004016102519061156f565b60008082116110d35760405162461bcd60e51b815260040161025190611494565b8183816110dc57fe5b049392505050565b828054828255906000526020600020908101928215611139579160200282015b8281111561113957825182546001600160a01b0319166001600160a01b03909116178255602090920191600190910190611104565b50611145929150611149565b5090565b61084a91905b808211156111455780546001600160a01b031916815560010161114f565b60006020828403121561117e578081fd5b813561103b81611682565b6000806040838503121561119b578081fd5b82356111a681611682565b915060208301356111b681611682565b809150509250929050565b6000806000606084860312156111d5578081fd5b83356111e081611682565b925060208401356111f081611682565b9150604084013561120081611682565b809150509250925092565b60006020828403121561121c578081fd5b8151801515811461103b578182fd5b6000806040838503121561123d578182fd5b8251801515811461124c578283fd5b6020939093015192949293505050565b60006020828403121561126d578081fd5b5035919050565b600060208284031215611285578081fd5b5051919050565b6001600160a01b0391909116815260200190565b6001600160a01b0392831681529116602082015260400190565b6020808252825182820181905260009190848201906040850190845b818110156112fb5783516001600160a01b0316835292840192918401916001016112d6565b50909695505050505050565b60208082526015908201527420b2323932b9b9903737ba1034b71030b93930bc9760591b604082015260600190565b60208082526018908201527f496e646578206d757374206265203c2041206c656e6774680000000000000000604082015260600190565b60208082526026908201527f4f776e61626c653a206e6577206f776e657220697320746865207a65726f206160408201526564647265737360d01b606082015260800190565b60208082526032908201527f50726963654f7261636c652e72656d6f7665416461707465723a20416461707460408201527132b9103237b2b9903737ba1032bc34b9ba1760711b606082015260800190565b60208082526026908201527f50726963654f7261636c652e67657450726963653a205072696365206e6f74206040820152653337bab7321760d11b606082015260800190565b60208082526029908201527f50726963654f7261636c652e616464506169723a205061697220616c726561646040820152683c9032bc34b9ba399760b91b606082015260800190565b6020808252601a908201527f536166654d6174683a206469766973696f6e206279207a65726f000000000000604082015260600190565b6020808252602f908201527f50726963654f7261636c652e616464416461707465723a20416461707465722060408201526e30b63932b0b23c9032bc34b9ba399760891b606082015260800190565b60208082526035908201527f50726963654f7261636c652e67657450726963653a2043616c6c6572206d75736040820152743a1031329039bcb9ba32b69031b7b73a3930b1ba1760591b606082015260800190565b60208082526021908201527f536166654d6174683a206d756c7469706c69636174696f6e206f766572666c6f6040820152607760f81b606082015260800190565b6020808252818101527f4f776e61626c653a2063616c6c6572206973206e6f7420746865206f776e6572604082015260600190565b60208082526029908201527f50726963654f7261636c652e65646974506169723a205061697220646f65736e60408201526813ba1032bc34b9ba1760b91b606082015260800190565b6020808252602b908201527f50726963654f7261636c652e72656d6f7665506169723a205061697220646f6560408201526a39b713ba1032bc34b9ba1760a91b606082015260800190565b90815260200190565b6001600160a01b038116811461169757600080fd5b5056fea26469706673582212204fec668bdf3e90219bfdbd4cef2a79a8757c46c353271cb9149dda9571c660f464736f6c634300060a0033",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b50600436106100f55760003560e01c806361d5b14411610097578063b82e16e311610066578063b82e16e3146101cf578063f1ec23cf146101e4578063f2fde38b146101f7578063f77c47911461020a576100f5565b806361d5b1441461018c578063715018a61461019f5780638da5cb5b146101a7578063ac41865a146101af576100f5565b806352a03c03116100d357806352a03c0314610140578063585cd34b146101535780635861b2271461016657806360d54d4114610179576100f5565b806304289853146100fa578063342833541461010f5780634ef501ac1461012d575b600080fd5b61010d6101083660046111c1565b610212565b005b610117610317565b604051610124919061128c565b60405180910390f35b61011761013b36600461125c565b610326565b61011761014e366004611189565b61034d565b61010d61016136600461116d565b610373565b61010d610174366004611189565b6104f7565b61010d61018736600461116d565b6105e8565b61010d61019a36600461116d565b61072a565b61010d6107b4565b61011761083d565b6101c26101bd366004611189565b61084d565b6040516101249190611679565b6101d761094d565b60405161012491906112ba565b61010d6101f23660046111c1565b6109af565b61010d61020536600461116d565b610a9f565b610117610b5f565b61021a610b6e565b6001600160a01b031661022b61083d565b6001600160a01b03161461025a5760405162461bcd60e51b8152600401610251906115b0565b60405180910390fd5b6001600160a01b03838116600090815260026020908152604080832086851684529091529020541661029e5760405162461bcd60e51b8152600401610251906115e5565b6001600160a01b03838116600081815260026020908152604080832087861680855292529182902080546001600160a01b03191694861694909417909355517f31639ce2bfc7c00ec8297cb6df66924b38918a7417c8e6b10eb7dc9f958389109061030a90859061128c565b60405180910390a3505050565b6003546001600160a01b031681565b6004818154811061033357fe5b6000918252602090912001546001600160a01b0316905081565b60026020908152600092835260408084209091529082529020546001600160a01b031681565b61037b610b6e565b6001600160a01b031661038c61083d565b6001600160a01b0316146103b25760405162461bcd60e51b8152600401610251906115b0565b61041f81600480548060200260200160405190810160405280929190818152602001828054801561040c57602002820191906000526020600020905b81546001600160a01b031681526001909101906020018083116103ee575b5050505050610b7290919063ffffffff16565b61043b5760405162461bcd60e51b8152600401610251906113b3565b6104a881600480548060200260200160405190810160405280929190818152602001828054801561049557602002820191906000526020600020905b81546001600160a01b03168152600190910190602001808311610477575b5050505050610b8890919063ffffffff16565b80516104bc916004916020909101906110e4565b507fdf980d21d8c7bb34800e668dbe003299093bac8e693614151d3c57f73f98a93d816040516104ec919061128c565b60405180910390a150565b6104ff610b6e565b6001600160a01b031661051061083d565b6001600160a01b0316146105365760405162461bcd60e51b8152600401610251906115b0565b6001600160a01b03828116600090815260026020908152604080832085851684529091529020541661057a5760405162461bcd60e51b81526004016102519061162e565b6001600160a01b03828116600081815260026020908152604080832086861680855292529182902080546001600160a01b031981169091559151919093169291907fd9001d4fd555e50f50619eeca8a260400b5e944989042d0652c5834aa2b968609061030a90859061128c565b6105f0610b6e565b6001600160a01b031661060161083d565b6001600160a01b0316146106275760405162461bcd60e51b8152600401610251906115b0565b61069281600480548060200260200160405190810160405280929190818152602001828054801561040c576020028201919060005260206000209081546001600160a01b031681526001909101906020018083116103ee575050505050610b7290919063ffffffff16565b156106af5760405162461bcd60e51b8152600401610251906114cb565b600480546001810182556000919091527f8a35acfbc15ff81a39ae7d344fd709f28e8600b4aa8c65c6b64bfe7fe36bd19b0180546001600160a01b0319166001600160a01b0383161790556040517fcf9c2c7f9adbb156bd76affb04df84595f8f5e69cab2e61221b05b05a902fa26906104ec90839061128c565b610732610b6e565b6001600160a01b031661074361083d565b6001600160a01b0316146107695760405162461bcd60e51b8152600401610251906115b0565b600380546001600160a01b0319166001600160a01b0383161790556040517f748818fcd84486bc2804c035b8dec2300489b070a39a4a290d8311cd9791d867906104ec90839061128c565b6107bc610b6e565b6001600160a01b03166107cd61083d565b6001600160a01b0316146107f35760405162461bcd60e51b8152600401610251906115b0565b600080546040516001600160a01b03909116907f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0908390a3600080546001600160a01b0319169055565b6000546001600160a01b03165b90565b6001546040516313bc6d4b60e01b81526000916001600160a01b0316906313bc6d4b9061087e90339060040161128c565b60206040518083038186803b15801561089657600080fd5b505afa1580156108aa573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906108ce919061120b565b6108ea5760405162461bcd60e51b81526004016102519061151a565b6000806108f78585610bd0565b9092509050816109115761090b8585610cdf565b90925090505b81610926576109208585610d45565b90925090505b816109435760405162461bcd60e51b815260040161025190611405565b9150505b92915050565b606060048054806020026020016040519081016040528092919081815260200182805480156109a557602002820191906000526020600020905b81546001600160a01b03168152600190910190602001808311610987575b5050505050905090565b6109b7610b6e565b6001600160a01b03166109c861083d565b6001600160a01b0316146109ee5760405162461bcd60e51b8152600401610251906115b0565b6001600160a01b03838116600090815260026020908152604080832086851684529091529020541615610a335760405162461bcd60e51b81526004016102519061144b565b6001600160a01b03838116600081815260026020908152604080832087861680855292529182902080546001600160a01b03191694861694909417909355517f7f46075c67ca5bbd3aaf82d8e324282141f27b7cba3376e5498a6b70c9931c2a9061030a90859061128c565b610aa7610b6e565b6001600160a01b0316610ab861083d565b6001600160a01b031614610ade5760405162461bcd60e51b8152600401610251906115b0565b6001600160a01b038116610b045760405162461bcd60e51b81526004016102519061136d565b600080546040516001600160a01b03808516939216917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e091a3600080546001600160a01b0319166001600160a01b0392909216919091179055565b6001546001600160a01b031681565b3390565b600080610b7f8484610e1b565b95945050505050565b6060600080610b978585610e1b565b9150915080610bb85760405162461bcd60e51b815260040161025190611307565b6060610bc48684610e7e565b50935061094792505050565b6001600160a01b038083166000908152600260209081526040808320858516845290915281205490918291168015801590610c83576001826001600160a01b03166357de26a46040518163ffffffff1660e01b815260040160206040518083038186803b158015610c4057600080fd5b505afa158015610c54573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610c789190611274565b935093505050610cd8565b6001600160a01b0380861660009081526002602090815260408083208a85168452909152902054168015801590610ccc576001610cbf83610fad565b9550955050505050610cd8565b50600094508493505050505b9250929050565b600354600090819081908190610cff9087906001600160a01b0316610bd0565b60035491935091506000908190610d209088906001600160a01b0316610bd0565b91509150838015610d2e5750815b15610ccc576001610cbf848363ffffffff61104216565b600080805b600454811015610e0e5760008060048381548110610d6457fe5b600091825260209091200154604051635620c32d60e11b81526001600160a01b039091169063ac41865a90610d9f908a908a906004016112a0565b604080518083038186803b158015610db657600080fd5b505afa158015610dca573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610dee919061122b565b915091508115610e04579093509150610cd89050565b5050600101610d4a565b5060009485945092505050565b81516000908190815b81811015610e6e57846001600160a01b0316868281518110610e4257fe5b60200260200101516001600160a01b03161415610e6657925060019150610cd89050565b600101610e24565b5060001995600095509350505050565b8151606090600090808410610ea55760405162461bcd60e51b815260040161025190611336565b60606001820367ffffffffffffffff81118015610ec157600080fd5b50604051908082528060200260200182016040528015610eeb578160200160208202803683370190505b50905060005b85811015610f3957868181518110610f0557fe5b6020026020010151828281518110610f1957fe5b6001600160a01b0390921660209283029190910190910152600101610ef1565b50600185015b82811015610f8a57868181518110610f5357fe5b6020026020010151826001830381518110610f6a57fe5b6001600160a01b0390921660209283029190910190910152600101610f3f565b5080868681518110610f9857fe5b60200260200101519350935050509250929050565b600080826001600160a01b03166357de26a46040518163ffffffff1660e01b815260040160206040518083038186803b158015610fe957600080fd5b505afa158015610ffd573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906110219190611274565b905061103b8161102f61106c565b9063ffffffff61104216565b9392505050565b600061103b8261106085670de0b6b3a764000063ffffffff61107816565b9063ffffffff6110b216565b670de0b6b3a764000090565b60008261108757506000610947565b8282028284828161109457fe5b041461103b5760405162461bcd60e51b81526004016102519061156f565b60008082116110d35760405162461bcd60e51b815260040161025190611494565b8183816110dc57fe5b049392505050565b828054828255906000526020600020908101928215611139579160200282015b8281111561113957825182546001600160a01b0319166001600160a01b03909116178255602090920191600190910190611104565b50611145929150611149565b5090565b61084a91905b808211156111455780546001600160a01b031916815560010161114f565b60006020828403121561117e578081fd5b813561103b81611682565b6000806040838503121561119b578081fd5b82356111a681611682565b915060208301356111b681611682565b809150509250929050565b6000806000606084860312156111d5578081fd5b83356111e081611682565b925060208401356111f081611682565b9150604084013561120081611682565b809150509250925092565b60006020828403121561121c578081fd5b8151801515811461103b578182fd5b6000806040838503121561123d578182fd5b8251801515811461124c578283fd5b6020939093015192949293505050565b60006020828403121561126d578081fd5b5035919050565b600060208284031215611285578081fd5b5051919050565b6001600160a01b0391909116815260200190565b6001600160a01b0392831681529116602082015260400190565b6020808252825182820181905260009190848201906040850190845b818110156112fb5783516001600160a01b0316835292840192918401916001016112d6565b50909695505050505050565b60208082526015908201527420b2323932b9b9903737ba1034b71030b93930bc9760591b604082015260600190565b60208082526018908201527f496e646578206d757374206265203c2041206c656e6774680000000000000000604082015260600190565b60208082526026908201527f4f776e61626c653a206e6577206f776e657220697320746865207a65726f206160408201526564647265737360d01b606082015260800190565b60208082526032908201527f50726963654f7261636c652e72656d6f7665416461707465723a20416461707460408201527132b9103237b2b9903737ba1032bc34b9ba1760711b606082015260800190565b60208082526026908201527f50726963654f7261636c652e67657450726963653a205072696365206e6f74206040820152653337bab7321760d11b606082015260800190565b60208082526029908201527f50726963654f7261636c652e616464506169723a205061697220616c726561646040820152683c9032bc34b9ba399760b91b606082015260800190565b6020808252601a908201527f536166654d6174683a206469766973696f6e206279207a65726f000000000000604082015260600190565b6020808252602f908201527f50726963654f7261636c652e616464416461707465723a20416461707465722060408201526e30b63932b0b23c9032bc34b9ba399760891b606082015260800190565b60208082526035908201527f50726963654f7261636c652e67657450726963653a2043616c6c6572206d75736040820152743a1031329039bcb9ba32b69031b7b73a3930b1ba1760591b606082015260800190565b60208082526021908201527f536166654d6174683a206d756c7469706c69636174696f6e206f766572666c6f6040820152607760f81b606082015260800190565b6020808252818101527f4f776e61626c653a2063616c6c6572206973206e6f7420746865206f776e6572604082015260600190565b60208082526029908201527f50726963654f7261636c652e65646974506169723a205061697220646f65736e60408201526813ba1032bc34b9ba1760b91b606082015260800190565b6020808252602b908201527f50726963654f7261636c652e72656d6f7665506169723a205061697220646f6560408201526a39b713ba1032bc34b9ba1760a91b606082015260800190565b90815260200190565b6001600160a01b038116811461169757600080fd5b5056fea26469706673582212204fec668bdf3e90219bfdbd4cef2a79a8757c46c353271cb9149dda9571c660f464736f6c634300060a0033",
+  "devdoc": {
+    "author": "Set Protocol Contract that returns the price for any given asset pair. Price is retrieved either directly from an oracle, calculated using common asset pairs, or uses external data to calculate price. Note: Prices are returned in preciseUnits (i.e. 18 decimals of precision)",
+    "methods": {
+      "addAdapter(address)": {
+        "params": {
+          "_adapter": "Address of new adapter"
+        }
+      },
+      "addPair(address,address,address)": {
+        "params": {
+          "_assetOne": "Address of first asset in pair",
+          "_assetTwo": "Address of second asset in pair",
+          "_oracle": "Address of asset pair's oracle"
+        }
+      },
+      "constructor": {
+        "params": {
+          "_adapters": "List of adapters used to price assets created by other protocols",
+          "_assetOnes": "List of first asset in pair, index i maps to same index in assetTwos and oracles",
+          "_assetTwos": "List of second asset in pair, index i maps to same index in assetOnes and oracles",
+          "_controller": "Address of controller contract",
+          "_masterQuoteAsset": "Address of asset that can be used to link unrelated asset pairs",
+          "_oracles": "List of oracles, index i maps to same index in assetOnes and assetTwos"
+        }
+      },
+      "editMasterQuoteAsset(address)": {
+        "params": {
+          "_newMasterQuoteAsset": "New address of master quote asset"
+        }
+      },
+      "editPair(address,address,address)": {
+        "params": {
+          "_assetOne": "Address of first asset in pair",
+          "_assetTwo": "Address of second asset in pair",
+          "_oracle": "Address of asset pair's new oracle"
+        }
+      },
+      "getPrice(address,address)": {
+        "params": {
+          "_assetOne": "Address of first asset in pair",
+          "_assetTwo": "Address of second asset in pair"
+        },
+        "returns": {
+          "_0": "Price of asset pair to 18 decimals of precision"
+        }
+      },
+      "owner()": {
+        "details": "Returns the address of the current owner."
+      },
+      "removeAdapter(address)": {
+        "params": {
+          "_adapter": "Address of adapter to remove"
+        }
+      },
+      "removePair(address,address)": {
+        "params": {
+          "_assetOne": "Address of first asset in pair",
+          "_assetTwo": "Address of second asset in pair"
+        }
+      },
+      "renounceOwnership()": {
+        "details": "Leaves the contract without owner. It will not be possible to call `onlyOwner` functions anymore. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby removing any functionality that is only available to the owner."
+      },
+      "transferOwnership(address)": {
+        "details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
+      }
+    },
+    "title": "PriceOracle"
+  },
+  "userdoc": {
+    "methods": {
+      "addAdapter(address)": {
+        "notice": "GOVERNANCE FUNCTION: Add new oracle adapter."
+      },
+      "addPair(address,address,address)": {
+        "notice": "GOVERNANCE FUNCTION: Add new asset pair oracle."
+      },
+      "constructor": "Set state variables and map asset pairs to their oracles",
+      "editMasterQuoteAsset(address)": {
+        "notice": "GOVERNANCE FUNCTION: Change the master quote asset."
+      },
+      "editPair(address,address,address)": {
+        "notice": "GOVERNANCE FUNCTION: Edit an existing asset pair's oracle."
+      },
+      "getAdapters()": {
+        "notice": "Returns an array of adapters"
+      },
+      "getPrice(address,address)": {
+        "notice": "SYSTEM-ONLY PRIVELEGE: Find price of passed asset pair, if possible. The steps it takes are:  1) Check to see if a direct or inverse oracle of the pair exists,  2) If not, use masterQuoteAsset to link pairs together (i.e. BTC/ETH and ETH/USDC     could be used to calculate BTC/USDC).  3) If not, check oracle adapters in case one or more of the assets needs external protocol data     to price.  4) If all steps fail, revert."
+      },
+      "removeAdapter(address)": {
+        "notice": "GOVERNANCE FUNCTION: Remove oracle adapter."
+      },
+      "removePair(address,address)": {
+        "notice": "GOVERNANCE FUNCTION: Remove asset pair's oracle."
+      }
+    }
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 7,
+        "contract": "contracts/protocol/PriceOracle.sol:PriceOracle",
+        "label": "_owner",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_address"
+      },
+      {
+        "astId": 9743,
+        "contract": "contracts/protocol/PriceOracle.sol:PriceOracle",
+        "label": "controller",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_contract(IController)2262"
+      },
+      {
+        "astId": 9749,
+        "contract": "contracts/protocol/PriceOracle.sol:PriceOracle",
+        "label": "oracles",
+        "offset": 0,
+        "slot": "2",
+        "type": "t_mapping(t_address,t_mapping(t_address,t_contract(IOracle)2346))"
+      },
+      {
+        "astId": 9751,
+        "contract": "contracts/protocol/PriceOracle.sol:PriceOracle",
+        "label": "masterQuoteAsset",
+        "offset": 0,
+        "slot": "3",
+        "type": "t_address"
+      },
+      {
+        "astId": 9754,
+        "contract": "contracts/protocol/PriceOracle.sol:PriceOracle",
+        "label": "adapters",
+        "offset": 0,
+        "slot": "4",
+        "type": "t_array(t_address)dyn_storage"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_array(t_address)dyn_storage": {
+        "base": "t_address",
+        "encoding": "dynamic_array",
+        "label": "address[]",
+        "numberOfBytes": "32"
+      },
+      "t_contract(IController)2262": {
+        "encoding": "inplace",
+        "label": "contract IController",
+        "numberOfBytes": "20"
+      },
+      "t_contract(IOracle)2346": {
+        "encoding": "inplace",
+        "label": "contract IOracle",
+        "numberOfBytes": "20"
+      },
+      "t_mapping(t_address,t_contract(IOracle)2346)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => contract IOracle)",
+        "numberOfBytes": "32",
+        "value": "t_contract(IOracle)2346"
+      },
+      "t_mapping(t_address,t_mapping(t_address,t_contract(IOracle)2346))": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => mapping(address => contract IOracle))",
+        "numberOfBytes": "32",
+        "value": "t_mapping(t_address,t_contract(IOracle)2346)"
+      }
+    }
+  }
+}

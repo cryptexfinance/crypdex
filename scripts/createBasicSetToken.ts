@@ -5,7 +5,8 @@ import {
     BasicIssuanceModule__factory,
     AuctionRebalanceModuleV1__factory,
     SetTokenCreator__factory,
-    StreamingFeeModule__factory
+    StreamingFeeModule__factory,
+    SetToken__factory
 } from "../typechain-types";
 
 async function main() {
@@ -13,11 +14,16 @@ async function main() {
   const { deploy } = deployments;
   const { deployer, manager } = await getNamedAccounts();
   const deployerSigner: SignerWithAddress = await ethers.getSigner(deployer);
-  const managerSigner: SignerWithAddress = await ethers.getSigner(manager);
 
-  const wETHDeployment = await deployments.get("WETH9");
-  const wBTCDeployment = await deployments.get("wBTC");
-  const DAIDeployment = await deployments.get("DAI");
+  const dogeAddress = "0x4206931337dc273a630d328dA6441786BfaD668f";
+  const shibAddress = "0x95aD61b0a150d79219dCF64E1E6Cc01f0B64C4cE";
+  const pepeAddress = "0x6982508145454Ce325dDbE47a25d4ec3d2311933";
+  const flokiAddress = "0xcf0C122c6b73ff809C693DB761e7BaeBe62b6a2E";
+  const wETHAddress = "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2";
+
+  const teamMultiSigAddress = "0xa70b638B70154EdfCbb8DbbBd04900F328F32c35"
+  const treasuryAddress = "0xa54074b2cc0e96a43048d4a68472F7F046aC0DA8";
+
   const setTokenCreatorDeployment = await deployments.get("SetTokenCreator");
   const basicIssuanceModuleDeployment = await deployments.get("BasicIssuanceModule");
   const streamingFeeModuleDeployment = await deployments.get("StreamingFeeModule");
@@ -26,56 +32,71 @@ async function main() {
   const priceOracleDeployment = await deployments.get("PriceOracle");
   const setValuerDeployment = await deployments.get("SetValuer");
 
-  const setTokenCreator = new SetTokenCreator__factory(managerSigner).attach(
+  const setTokenCreator = new SetTokenCreator__factory(deployerSigner).attach(
     setTokenCreatorDeployment.address
   );
 
-  const streamingFeeModule = new StreamingFeeModule__factory(managerSigner).attach(
+  const streamingFeeModule = new StreamingFeeModule__factory(deployerSigner).attach(
     streamingFeeModuleDeployment.address
   );
 
-  const basicIssuanceModule = new BasicIssuanceModule__factory(managerSigner).attach(
+  const basicIssuanceModule = new BasicIssuanceModule__factory(deployerSigner).attach(
     basicIssuanceModuleDeployment.address
   );
 
-  const auctionRebalanceModule = new AuctionRebalanceModuleV1__factory(managerSigner).attach(
+  const auctionRebalanceModule = new AuctionRebalanceModuleV1__factory(deployerSigner).attach(
     auctionRebalanceModuleDeployment.address
   );
 
   const feeSettings =  {
-        feeRecipient: manager,
-        maxStreamingFeePercentage: ethers.utils.parseEther("0.1"),
-        streamingFeePercentage: ethers.utils.parseEther("0.01"),
-        lastStreamingFeeTimestamp: 0
+        feeRecipient: treasuryAddress,
+        maxStreamingFeePercentage: ethers.utils.parseEther("0.2"),
+        streamingFeePercentage: ethers.utils.parseEther("0.0075"),
+        lastStreamingFeeTimestamp: (await ethers.provider.getBlock("latest")).timestamp
   }
 
+  const dogeQuantity = ethers.BigNumber.from("1870907391");               // math.ceil((2 * 10 ** 8)/0.1069)
+  const shibQuantity = ethers.BigNumber.from("122850122850122843815936"); // math.ceil((2 * 10 ** 18)/0.00001628)
+  const pepeQuantity = ethers.BigNumber.from("221827861579414378643456"); // math.ceil((2 * 10 ** 18)/0.000009016)
+  const flokiQuantity = ethers.BigNumber.from("13831258644537");          // math.ceil((2 * 10 ** 9)/0.0001446)
+  const wethQuantity = ethers.BigNumber.from("643616610457483");          // math.ceil((2 * 10 ** 18)/3107.44)
+
   let tx = await setTokenCreator.create(
-    [wETHDeployment.address, wBTCDeployment.address],
-    [ethers.utils.parseEther("1"), 10 ** 8],
+    [dogeAddress, shibAddress, pepeAddress, flokiAddress, wETHAddress],
+    [dogeQuantity, shibQuantity, pepeQuantity, flokiQuantity, wethQuantity],
     [basicIssuanceModuleDeployment.address, streamingFeeModuleDeployment.address, auctionRebalanceModuleDeployment.address],
-    manager,
-    "Top 2",
-    "T2"
+    deployer,
+    "Cryptex Meme Index",
+    "MEEM"
   )
   console.log(tx);
-  let lx = await tx.wait();
-  const setTokenAddress =  lx.events[1].args[0];
+  let receipt = await tx.wait(2);
+  const setTokenAddress =  receipt.events[1].args[0];
+
+  await deployments.save('MEEMIndexToken', {
+    address: setTokenAddress,
+    receipt
+  });
+
+  const memeIndex = new SetToken__factory(deployerSigner).attach(
+    setTokenAddress
+  )
 
   tx = await streamingFeeModule.initialize(setTokenAddress, feeSettings);
   console.log(tx);
-  await tx.wait();
+  await tx.wait(2);
 
   tx = await basicIssuanceModule.initialize(setTokenAddress, ethers.constants.AddressZero);
   console.log(tx);
-  await tx.wait();
+  await tx.wait(2);
 
   tx = await auctionRebalanceModule.initialize(setTokenAddress);
   console.log(tx);
-  await tx.wait();
+  await tx.wait(2);
 
-  tx = await auctionRebalanceModule.setAnyoneBid(setTokenAddress, true);
+  tx = await memeIndex.setManager(teamMultiSigAddress);
   console.log(tx);
-  await tx.wait();
+  await tx.wait(2);
 };
 
 
