@@ -4,6 +4,7 @@ import "@nomicfoundation/hardhat-verify";
 import "@typechain/hardhat";
 import "@nomiclabs/hardhat-ethers";
 import "hardhat-deploy";
+import 'hardhat-dependency-compiler';
 
 const DEPLOYER_PRIVATE_KEY = process.env.DEPLOYER_PRIVATE_KEY as string;
 const MANAGER_PRIVATE_KEY = process.env.MANAGER_PRIVATE_KEY as string;
@@ -30,6 +31,9 @@ const config: HardhatUserConfig = {
       },
     ],
   },
+  dependencyCompiler: {
+    paths: ["@chainlink/contracts-ccip/src/v0.8/shared/token/ERC677/BurnMintERC677.sol"],
+  },
   paths: {
     sources: "./contracts",
     cache: "./cache_hardhat",
@@ -39,6 +43,11 @@ const config: HardhatUserConfig = {
       chainId: 84532,
       url: process.env.BASE_SEPOLIA_URL,
       accounts: [DEPLOYER_PRIVATE_KEY, MANAGER_PRIVATE_KEY],
+    },
+    base: {
+      chainId: 8453,
+      url: process.env.BASE_URL,
+      accounts: [MAINNET_DEPLOYER_PRIVATE_KEY, MANAGER_PRIVATE_KEY],
     },
     sepolia: {
       chainId: 11155111,
@@ -54,6 +63,7 @@ const config: HardhatUserConfig = {
   etherscan: {
     apiKey: {
         baseSepolia: process.env.BASESCAN_API_KEY,
+        base: process.env.BASESCAN_API_KEY,
         sepolia: process.env.ETHERSCAN_API_KEY,
         mainnet: process.env.ETHERSCAN_API_KEY,
     }
