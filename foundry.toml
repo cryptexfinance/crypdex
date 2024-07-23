@@ -16,6 +16,7 @@ verbosity= 2
 gas_reports = ["*"]
 no_match_contract = "Bar"
 match_contract = "Fork"
+evm_version = 'shanghai'
 
 [profile.ci]
 fuzz_runs = 10000

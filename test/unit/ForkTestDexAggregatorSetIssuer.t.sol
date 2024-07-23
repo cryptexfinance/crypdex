@@ -1,0 +1,79 @@
+// SPDX-License-Identifier: Apache-2.0
+pragma solidity 0.6.10;
+pragma experimental ABIEncoderV2;
+
+import "forge-std/Test.sol";
+import "forge-std/console.sol";
+
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {DexAggregatorSetIssuer} from "contracts/extensions/DexAggregatorSetIssuer.sol";
+import {BasicIssuanceModule} from "contracts/modules/BasicIssuanceModule.sol";
+import { ISetToken } from "contracts/interfaces/ISetToken.sol";
+
+
+contract ForkTestDexAggregatorSetIssuer is Test {
+    DexAggregatorSetIssuer dexAggregatorSetIssuer;
+
+    address usdcAddress = 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48;
+    address dogeCoinAddress = 0x4206931337dc273a630d328dA6441786BfaD668f;
+    address shibAddress = 0x95aD61b0a150d79219dCF64E1E6Cc01f0B64C4cE;
+    address paraSwapV6Address = 0x6A000F20005980200259B80c5102003040001068;
+    address basicIssuanceModuleAddress = 0x9330d0F979af5c8a5f2380f7bc41234A7d8A15de;
+    address memeIndexTokenAddress = 0xA544b3F0c46c15F0B2b00ba3D67b56C250287905;
+
+    IERC20 usdc = IERC20(usdcAddress);
+    IERC20 doge = IERC20(dogeCoinAddress);
+    IERC20 shib = IERC20(shibAddress);
+    BasicIssuanceModule basicIssuanceModule = BasicIssuanceModule(basicIssuanceModuleAddress);
+    ISetToken memeIndexToken = ISetToken(memeIndexTokenAddress);
+
+    address user = 0x92717c31E2A6C74c6Ec366bF5157563e88705205;
+    address deployer = address(0x52);
+
+    function setUp() external {
+        vm.startPrank(deployer);
+        dexAggregatorSetIssuer = new DexAggregatorSetIssuer();
+        dexAggregatorSetIssuer.approveToken(usdc, paraSwapV6Address);
+        dexAggregatorSetIssuer.approveToken(doge, basicIssuanceModuleAddress);
+        dexAggregatorSetIssuer.approveToken(shib, basicIssuanceModuleAddress);
+        deal({token: usdcAddress, to: user, give: 10000e6});
+        vm.makePersistent(user);
+        vm.makePersistent(usdcAddress);
+        vm.makePersistent(dogeCoinAddress);
+        vm.makePersistent(shibAddress);
+        vm.makePersistent(paraSwapV6Address);
+        vm.makePersistent(address(dexAggregatorSetIssuer));
+        vm.stopPrank();
+    }
+
+    function test() external {
+        uint256 dogeQuoteAmount = uint256((3269206 * 101))/uint256(100);
+        // https://api.paraswap.io/swap?srcToken=0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48&destToken=0x4206931337dc273a630d328dA6441786BfaD668f&amount=2700000001&srcDecimals=6&destDecimals=8&side=BUY&network=1&excludeDEXS=ParaSwapPool,ParaSwapLimitOrders&version=6.2&slippage=100&userAddress=0x1473cCdC135f1D365511028bf0e103B959cbceB5
+        bytes memory dogePayLoad = hex"7f4576750000000000000000000000005006860a0906b0d8c9c050200947000030081006000000000000000000000000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb480000000000000000000000004206931337dc273a630d328da6441786bfad668f000000000000000000000000000000000000000000000000000000000032620a00000000000000000000000000000000000000000000000000000000a0eebb01000000000000000000000000000000000000000000000000000000000031e25660329ce73b97424b835f298b67bd23de0000000000000000000000000136d9c30000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000000000000000000000001600000000000000000000000000000000000000000000000000000000000000180000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001c0000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000001e000000160000000000000000000000120000000000000013700000000000027101b81d678ffb9c0263b24a97847620c99d213eb1401400000000000000000000000000000000000000000000000000000000000000000000000000000f28c0498000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000a00000000000000000000000006a000f20005980200259b80c51020030400010680000000000000000000000000000000000000000000000000000000066a95a4000000000000000000000000000000000000000000000000000000000a0eebb01000000000000000000000000000000000000000000000000000000000032620a000000000000000000000000000000000000000000000000000000000000002b4206931337dc273a630d328da6441786bfad668f0009c4a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48000000000000000000000000000000000000000000";
+        uint256 shibQuoteAmount = uint256((46498 * 101))/uint256(100);
+        // https://api.paraswap.io/swap?srcToken=0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48&destToken=0x95aD61b0a150d79219dCF64E1E6Cc01f0B64C4cE&amount=2700000000000000000001&srcDecimals=6&destDecimals=18&side=BUY&network=1&excludeDEXS=ParaSwapPool,ParaSwapLimitOrders&version=6.2&slippage=100&userAddress=0x1473cCdC135f1D365511028bf0e103B959cbceB5
+        bytes memory shibPayLoad = hex"5e94e28d0000000000000000000000000000000000000000000000000000000000000060000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000000000000000000000001e0000000000000000000000000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb4800000000000000000000000095ad61b0a150d79219dcf64e1e6cc01f0b64c4ce000000000000000000000000000000000000000000000000000000000000b7720000000000000000000000000000000000000000000000925e06eec972b00000000000000000000000000000000000000000000000000000000000000000b5a2afc5a46481c64db8b9cdea21c0625ea00000000000000000000000000136d9bd00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000006000000000000000000000000095ad61b0a150d79219dcf64e1e6cc01f0b64c4ce000000000000000000000000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb4800000000000000000000000000000000000000000000000000000000000027100000000000000000000000000000000000000000000000000000000000000000";
+        uint256 totalQuote = dogeQuoteAmount + shibQuoteAmount;
+
+        uint256 oldDogeBalance = doge.balanceOf(address(dexAggregatorSetIssuer));
+        uint256 oldShibBalance = shib.balanceOf(address(dexAggregatorSetIssuer));
+
+        vm.rollFork(20371901);
+        vm.startPrank(user);
+        usdc.approve(address(dexAggregatorSetIssuer), totalQuote);
+
+        uint256[] memory quoteAmounts = new uint256[](2);
+        bytes[] memory payLoads = new bytes[](2);
+        quoteAmounts[0] = 2700000000;
+        quoteAmounts[1] = 2700000000000000000000;
+        payLoads[0] = dogePayLoad;
+        payLoads[1] = shibPayLoad;
+        dexAggregatorSetIssuer.buyComponentsAndIssue(memeIndexToken, usdc, paraSwapV6Address, totalQuote, quoteAmounts, payLoads);
+
+        uint256 newDogeBalance = doge.balanceOf(address(dexAggregatorSetIssuer));
+        uint256 newShibBalance = shib.balanceOf(address(dexAggregatorSetIssuer));
+        assertGt(newDogeBalance, oldDogeBalance);
+        assertGt(newShibBalance, oldShibBalance);
+        assertEq(usdc.balanceOf(address(dexAggregatorSetIssuer)), 0);
+    }
+}
