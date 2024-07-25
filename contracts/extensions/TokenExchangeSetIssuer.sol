@@ -28,20 +28,20 @@ contract TokenExchangeSetIssuer is Ownable, ReentrancyGuard {
     ) external nonReentrant returns (uint256 extraQuoteBalance) {
         uint256 beforeQuoteAssetBalance = quoteAsset.balanceOf(address(this));
         SafeERC20.safeTransferFrom(quoteAsset, msg.sender, address(this), totalQuoteAmount);
-        _buyComponents(setToken, setTokenQuantity, issuanceModule, exchanges, aggregatorPayloads);
-
+        _buyComponents(setToken, setTokenQuantity, quoteAsset, issuanceModule, exchanges, aggregatorPayloads);
+        issuanceModule.issue(setToken, setTokenQuantity, msg.sender);
         uint256 afterQuoteAssetBalance = quoteAsset.balanceOf(address(this));
         extraQuoteBalance = afterQuoteAssetBalance.sub(beforeQuoteAssetBalance);
         // refund extra quoteAsset
         if (extraQuoteBalance > 0) {
             SafeERC20.safeTransfer(quoteAsset, msg.sender, extraQuoteBalance);
         }
-        issuanceModule.issue(setToken, setTokenQuantity, msg.sender);
     }
 
     function _buyComponents(
         ISetToken setToken,
         uint256 setTokenQuantity,
+        IERC20 quoteAsset,
         BasicIssuanceModule issuanceModule,
         address[] calldata exchanges,
         bytes[] calldata aggregatorPayloads
@@ -54,7 +54,9 @@ contract TokenExchangeSetIssuer is Ownable, ReentrancyGuard {
         require(aggregatorPayloads.length == componentQuantitiesLength, "array length mismatch");
 
         for (uint256 index = 0; index < componentQuantitiesLength; index++) {
-            IERC20 component = IERC20(components[index]);
+            address componentAddress = components[index];
+            if (componentAddress == address(quoteAsset)) continue;
+            IERC20 component = IERC20(componentAddress);
             uint256 beforeComponentBalance = component.balanceOf(address(this));
             // Wont use native asset, so no need to pass msg.value
             (success, ) = exchanges[index].call(aggregatorPayloads[index]);

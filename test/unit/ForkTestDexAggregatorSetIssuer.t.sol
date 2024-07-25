@@ -46,27 +46,47 @@ contract ForkTestDexAggregatorSetIssuer is Test {
     address user = 0x92717c31E2A6C74c6Ec366bF5157563e88705205;
     address deployer = address(0x52);
 
-    uint256 dogeQuoteAmount = uint256((3405643 * 101)) / uint256(100);
+    uint256 dogeUSDCAmount = uint256((3405643 * 101)) / uint256(100);
     // https://api.paraswap.io/swap?srcToken=0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48&destToken=0x4206931337dc273a630d328dA6441786BfaD668f&amount=2806361088&srcDecimals=6&destDecimals=8&side=BUY&network=1&excludeDEXS=ParaSwapPool,ParaSwapLimitOrders&version=6.2&slippage=100&userAddress=0x1473cCdC135f1D365511028bf0e103B959cbceB5
-    bytes dogePayLoad =
+    bytes dogeUSDCPayLoad =
         hex"7f4576750000000000000000000000005006860a0906b0d8c9c050200947000030081006000000000000000000000000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb480000000000000000000000004206931337dc273a630d328da6441786bfad668f0000000000000000000000000000000000000000000000000000000000347c5300000000000000000000000000000000000000000000000000000000a745ac00000000000000000000000000000000000000000000000000000000000033f74b1462c2ca2b824616a80dbd290f4e52d90000000000000000000000000137039d0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000000000000000000000001600000000000000000000000000000000000000000000000000000000000000180000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001c0000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000001e000000160000000000000000000000120000000000000013700000000000027101b81d678ffb9c0263b24a97847620c99d213eb1401400000000000000000000000000000000000000000000000000000000000000000000000000000f28c0498000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000a00000000000000000000000006a000f20005980200259b80c51020030400010680000000000000000000000000000000000000000000000000000000066ab530d00000000000000000000000000000000000000000000000000000000a745ac000000000000000000000000000000000000000000000000000000000000347c53000000000000000000000000000000000000000000000000000000000000002b4206931337dc273a630d328da6441786bfad668f0009c4a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48000000000000000000000000000000000000000000";
-    uint256 shibQuoteAmount = uint256((3004400 * 101)) / uint256(100);
+    uint256 shibUSDCAmount = uint256((3004400 * 101)) / uint256(100);
     // https://api.paraswap.io/swap?srcToken=0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48&destToken=0x95aD61b0a150d79219dCF64E1E6Cc01f0B64C4cE&amount=184275184275184265723905&srcDecimals=6&destDecimals=18&side=BUY&network=1&excludeDEXS=ParaSwapPool,ParaSwapLimitOrders&version=6.2&slippage=100&userAddress=0x1473cCdC135f1D365511028bf0e103B959cbceB5
-    bytes shibPayLoad =
+    bytes shibUSDCPayLoad =
         hex"5e94e28d0000000000000000000000000000000000000000000000000000000000000060000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000000000000000000000001e0000000000000000000000000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb4800000000000000000000000095ad61b0a150d79219dcf64e1e6cc01f0b64c4ce00000000000000000000000000000000000000000000000000000000002e4d4c00000000000000000000000000000000000000000000270593e7d6829680000100000000000000000000000000000000000000000000000000000000002dd7f093b4313a94e647929e52e39190600fa6000000000000000000000000013703a000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000006000000000000000000000000095ad61b0a150d79219dcf64e1e6cc01f0b64c4ce000000000000000000000000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb480000000000000000000000000000000000000000000000000000000000000bb80000000000000000000000000000000000000000000000000000000000000000";
 
-    uint256 pepeQuoteAmount = uint256((4022892 * 101)) / uint256(100);
+    uint256 pepeUSDCAmount = uint256((4022892 * 101)) / uint256(100);
     //https://api.paraswap.io/swap?srcToken=0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48&destToken=0x6982508145454Ce325dDbE47a25d4ec3d2311933&amount=332741792369121567965185&srcDecimals=6&destDecimals=18&side=BUY&network=1&excludeDEXS=ParaSwapPool,ParaSwapLimitOrders&version=6.2&slippage=100&userAddress=0x1473cCdC135f1D365511028bf0e103B959cbceB5
-    bytes pepePayLoad =
+    bytes pepeUSDCPayLoad =
         hex"5e94e28d0000000000000000000000000000000000000000000000000000000000000060000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000000000000000000000001e0000000000000000000000000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb480000000000000000000000006982508145454ce325ddbe47a25d4ec3d231193300000000000000000000000000000000000000000000000000000000003dff90000000000000000000000000000000000000000000004675f7fd4224d200000100000000000000000000000000000000000000000000000000000000003d626cf1e59326739f4535b31916018d27a67a000000000000000000000000013703a20000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000600000000000000000000000006982508145454ce325ddbe47a25d4ec3d2311933000000000000000000000000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb4800000000000000000000000000000000000000000000000000000000000027100000000000000000000000000000000000000000000000000000000000000000";
 
-    uint256 flokiQuoteAmount;
-    bytes flokiPayLoad;
+    uint256 flokiUSDCAmount;
+    bytes flokiUSDCPayLoad;
 
-    uint256 wethQuoteAmount = uint256((3067449 * 101)) / uint256(100);
+    uint256 wethUSDCAmount = uint256((3067449 * 101)) / uint256(100);
     // https://api.paraswap.io/swap?srcToken=0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48&destToken=0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2&amount=965424915686226&srcDecimals=6&destDecimals=18&side=BUY&network=1&excludeDEXS=ParaSwapPool,ParaSwapLimitOrders&version=6.2&slippage=100&userAddress=0x1473cCdC135f1D365511028bf0e103B959cbceB5
-    bytes wethPayLoad =
+    bytes wethUSDCPayLoad =
         hex"5e94e28d0000000000000000000000000000000000000000000000000000000000000060000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000000000000000000000001e0000000000000000000000000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48000000000000000000000000c02aaa39b223fe8d0a0e5c4f27ead9083c756cc200000000000000000000000000000000000000000000000000000000002f460b00000000000000000000000000000000000000000000000000036e0c8128235200000000000000000000000000000000000000000000000000000000002ece3964866d9c8bbb420fa194d74e03dfbee9000000000000000000000000013703a9000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000060800000000000000000000000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48000000000000000000000000c02aaa39b223fe8d0a0e5c4f27ead9083c756cc200000000000000000000000000000000000000000000000000000000000000640000000000000000000000000000000000000000000000000000000000000000";
+
+    uint256 dogeWETHAmount = uint256((1108411581623423 * 101)) / uint256(100);
+    // https://api.paraswap.io/swap?srcToken=0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2&destToken=0x4206931337dc273a630d328dA6441786BfaD668f&amount=2806361088&srcDecimals=18&destDecimals=8&side=BUY&network=1&excludeDEXS=ParaSwapPool,ParaSwapLimitOrders&version=6.2&slippage=100&userAddress=0x1473cCdC135f1D365511028bf0e103B959cbceB5
+    bytes dogeWETHPayLoad =
+        hex"a76f4eb60000000000000000000000000000000000000000000000000000000000000060000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000000000000000000000001c0000000000000000000000000c02aaa39b223fe8d0a0e5c4f27ead9083c756cc20000000000000000000000004206931337dc273a630d328da6441786bfad668f0000000000000000000000000000000000000000000000000003fa2ce75f9ba900000000000000000000000000000000000000000000000000000000a745ac000000000000000000000000000000000000000000000000000003f0182e966c7fd9bfc12a9ce34e04ae626746b384b66e00000000000000000000000001370cd90000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000404206931337dc273a630d328da6441786bfad668fc02aaa39b223fe8d0a0e5c4f27ead9083c756cc20000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
+    uint256 shibWETHAmount = uint256((951668730580914 * 101)) / uint256(100);
+    // https://api.paraswap.io/swap?srcToken=0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2&destToken=0x95aD61b0a150d79219dCF64E1E6Cc01f0B64C4cE&amount=184275184275184265723905&srcDecimals=18&destDecimals=18&side=BUY&network=1&excludeDEXS=ParaSwapPool,ParaSwapLimitOrders&version=6.2&slippage=100&userAddress=0x1473cCdC135f1D365511028bf0e103B959cbceB5
+    bytes shibWETHPayLoad =
+        hex"5e94e28d0000000000000000000000000000000000000000000000000000000000000060000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000000000000000000000001e0000000000000000000000000c02aaa39b223fe8d0a0e5c4f27ead9083c756cc200000000000000000000000095ad61b0a150d79219dcf64e1e6cc01f0b64c4ce00000000000000000000000000000000000000000000000000036a316b657c0300000000000000000000000000000000000000000000270593e7d6829680000100000000000000000000000000000000000000000000000000036189a4a14fb2129fa3a6e6894388a817d49979fa1e9300000000000000000000000001370ce100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000006000000000000000000000000095ad61b0a150d79219dcf64e1e6cc01f0b64c4ce000000000000000000000000c02aaa39b223fe8d0a0e5c4f27ead9083c756cc200000000000000000000000000000000000000000000000000000000000001f40000000000000000000000000000000000000000000000000000000000000000";
+
+    uint256 pepeWETHAmount = uint256((1237056916517651 * 101)) / uint256(100);
+    // https://api.paraswap.io/swap?srcToken=0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2&destToken=0x6982508145454Ce325dDbE47a25d4ec3d2311933&amount=332741792369121567965185&srcDecimals=18&destDecimals=18&side=BUY&network=1&excludeDEXS=ParaSwapPool,ParaSwapLimitOrders&version=6.2&slippage=100&userAddress=0x1473cCdC135f1D365511028bf0e103B959cbceB5
+    bytes pepeWETHPayLoad =
+        hex"5e94e28d0000000000000000000000000000000000000000000000000000000000000060000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000000000000000000000001e0000000000000000000000000c02aaa39b223fe8d0a0e5c4f27ead9083c756cc20000000000000000000000006982508145454ce325ddbe47a25d4ec3d2311933000000000000000000000000000000000000000000000000000470590174ec8b000000000000000000000000000000000000000000004675f7fd4224d200000100000000000000000000000000000000000000000000000000046518c2137313e78e9fef30374ff0b173832fb2e2e78100000000000000000000000001370ce70000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000600000000000000000000000006982508145454ce325ddbe47a25d4ec3d2311933000000000000000000000000c02aaa39b223fe8d0a0e5c4f27ead9083c756cc20000000000000000000000000000000000000000000000000000000000000bb80000000000000000000000000000000000000000000000000000000000000000";
+
+    uint256 flokiWETHAmount;
+    bytes flokiWETHPayLoad;
+
+    uint256 wethWETHAmount = 965424915686226;
+    bytes wethWETHPayLoad;
 
     function setUp() external {
         vm.startPrank(deployer);
@@ -78,12 +98,18 @@ contract ForkTestDexAggregatorSetIssuer is Test {
         );
         dexAggregatorSetIssuer.approveToken(usdc, paraSwapV6Address);
         dexAggregatorSetIssuer.approveToken(usdc, address(flokiUniswapV2BuyTokens));
+        dexAggregatorSetIssuer.approveToken(weth, paraSwapV6Address);
+        dexAggregatorSetIssuer.approveToken(weth, address(flokiUniswapV2BuyTokens));
+
         dexAggregatorSetIssuer.approveToken(doge, basicIssuanceModuleAddress);
         dexAggregatorSetIssuer.approveToken(shib, basicIssuanceModuleAddress);
         dexAggregatorSetIssuer.approveToken(pepe, basicIssuanceModuleAddress);
         dexAggregatorSetIssuer.approveToken(floki, basicIssuanceModuleAddress);
         dexAggregatorSetIssuer.approveToken(weth, basicIssuanceModuleAddress);
+
         deal({token: usdcAddress, to: user, give: 10000e6});
+        deal({token: wETHAddress, to: user, give: 10000e18});
+
         vm.makePersistent(user);
         vm.makePersistent(usdcAddress);
         vm.makePersistent(dogeCoinAddress);
@@ -97,9 +123,11 @@ contract ForkTestDexAggregatorSetIssuer is Test {
         vm.stopPrank();
     }
 
-    function testIssueTokens() external {
-        (flokiQuoteAmount, flokiPayLoad) = _computeFlokiTransferData(20746887966806);
-        uint256 totalQuote = dogeQuoteAmount + shibQuoteAmount + pepeQuoteAmount + flokiQuoteAmount + wethQuoteAmount;
+    function testIssueTokensWithUSDC() external {
+        vm.rollFork(20382626);
+        vm.startPrank(user);
+        (flokiUSDCAmount, flokiUSDCPayLoad) = _computeFlokiTransferData(20746887966806, usdcAddress);
+        uint256 totalQuote = dogeUSDCAmount + shibUSDCAmount + pepeUSDCAmount + flokiUSDCAmount + wethUSDCAmount;
 
         uint256 oldDogeBalance = doge.balanceOf(memeIndexTokenAddress);
         uint256 oldShibBalance = shib.balanceOf(memeIndexTokenAddress);
@@ -107,16 +135,14 @@ contract ForkTestDexAggregatorSetIssuer is Test {
         uint256 oldFlokiBalance = floki.balanceOf(memeIndexTokenAddress);
         uint256 oldWethiBalance = weth.balanceOf(memeIndexTokenAddress);
 
-        vm.rollFork(20382626);
-        vm.startPrank(user);
         usdc.approve(address(dexAggregatorSetIssuer), totalQuote);
         uint256 memeIndexQuantity = 1.5 ether;
         bytes[] memory payLoads = new bytes[](5);
-        payLoads[0] = dogePayLoad;
-        payLoads[1] = shibPayLoad;
-        payLoads[2] = pepePayLoad;
-        payLoads[3] = flokiPayLoad;
-        payLoads[4] = wethPayLoad;
+        payLoads[0] = dogeUSDCPayLoad;
+        payLoads[1] = shibUSDCPayLoad;
+        payLoads[2] = pepeUSDCPayLoad;
+        payLoads[3] = flokiUSDCPayLoad;
+        payLoads[4] = wethUSDCPayLoad;
         address[] memory exchanges = new address[](5);
         exchanges[0] = paraSwapV6Address;
         exchanges[1] = paraSwapV6Address;
@@ -147,13 +173,74 @@ contract ForkTestDexAggregatorSetIssuer is Test {
         assertEq(memeIndexToken.balanceOf(user), memeIndexQuantity);
     }
 
+    function testIssueTokensWithWETH() external {
+        vm.rollFork(20385003);
+        vm.startPrank(user);
+
+        (flokiWETHAmount, flokiWETHPayLoad) = _computeFlokiTransferData(20746887966806, wETHAddress);
+        uint256 totalQuote = dogeWETHAmount + shibWETHAmount + pepeWETHAmount + flokiWETHAmount + wethWETHAmount;
+
+        uint256 oldDogeBalance = doge.balanceOf(memeIndexTokenAddress);
+        uint256 oldShibBalance = shib.balanceOf(memeIndexTokenAddress);
+        uint256 oldPepeBalance = pepe.balanceOf(memeIndexTokenAddress);
+        uint256 oldFlokiBalance = floki.balanceOf(memeIndexTokenAddress);
+        uint256 oldWethiBalance = weth.balanceOf(memeIndexTokenAddress);
+
+        weth.approve(address(dexAggregatorSetIssuer), totalQuote);
+        uint256 memeIndexQuantity = 1.5 ether;
+        bytes[] memory payLoads = new bytes[](5);
+        payLoads[0] = dogeWETHPayLoad;
+        payLoads[1] = shibWETHPayLoad;
+        payLoads[2] = pepeWETHPayLoad;
+        payLoads[3] = flokiWETHPayLoad;
+        payLoads[4] = wethWETHPayLoad;
+        address[] memory exchanges = new address[](5);
+        exchanges[0] = paraSwapV6Address;
+        exchanges[1] = paraSwapV6Address;
+        exchanges[2] = paraSwapV6Address;
+        exchanges[3] = address(flokiUniswapV2BuyTokens);
+        exchanges[4] = paraSwapV6Address;
+        dexAggregatorSetIssuer.buyComponentsAndIssueSetToken(
+            memeIndexToken,
+            memeIndexQuantity,
+            issuanceModule,
+            weth,
+            totalQuote,
+            exchanges,
+            payLoads
+        );
+
+        uint256 newDogeBalance = doge.balanceOf(memeIndexTokenAddress);
+        uint256 newShibBalance = shib.balanceOf(memeIndexTokenAddress);
+        uint256 newPepeBalance = pepe.balanceOf(memeIndexTokenAddress);
+        uint256 newFlokiBalance = floki.balanceOf(memeIndexTokenAddress);
+        uint256 newWethiBalance = weth.balanceOf(memeIndexTokenAddress);
+        assertGt(newDogeBalance, oldDogeBalance);
+        assertGt(newShibBalance, oldShibBalance);
+        assertGt(newPepeBalance, oldPepeBalance);
+        assertGt(newFlokiBalance, oldFlokiBalance);
+        assertGt(newWethiBalance, oldWethiBalance);
+        assertEq(weth.balanceOf(address(dexAggregatorSetIssuer)), 0);
+        assertEq(memeIndexToken.balanceOf(user), memeIndexQuantity);
+    }
+
     function _computeFlokiTransferData(
-        uint256 amountOut
+        uint256 amountOut,
+        address quoteAsset
     ) internal view returns (uint256 amountIn, bytes memory payload) {
-        address[] memory paths = new address[](3);
-        paths[0] = usdcAddress;
-        paths[1] = wETHAddress;
-        paths[2] = flokiAddress;
+        address[] memory paths;
+        if (quoteAsset == usdcAddress) {
+            paths = new address[](3);
+            paths[0] = usdcAddress;
+            paths[1] = wETHAddress;
+            paths[2] = flokiAddress;
+        } else if (quoteAsset == wETHAddress) {
+            paths = new address[](2);
+            paths[0] = wETHAddress;
+            paths[1] = flokiAddress;
+        } else {
+            revert("QuoteAsset not supported");
+        }
         uint256 tax = flokiTaxHandler.getTax(flokiUinswapV2pairAddress, user, amountOut);
         uint256 adjustedAmountOut = (amountOut * amountOut) / (amountOut - tax);
         amountIn = uniswapRouter.getAmountsIn(adjustedAmountOut, paths)[0];
@@ -165,7 +252,7 @@ contract ForkTestDexAggregatorSetIssuer is Test {
         );
     }
 
-    function testFlokiUniswapV2BuyTokens() external {
+    function testFlokiUniswapV2BuyTokensWithUSDC() external {
         vm.startPrank(user);
         vm.rollFork(20382626);
         address[] memory paths = new address[](3);
@@ -178,6 +265,22 @@ contract ForkTestDexAggregatorSetIssuer is Test {
         uint[] memory amounts = uniswapRouter.getAmountsIn(adjustedAmountOut, paths);
         assertEq(floki.balanceOf(user), 0);
         usdc.approve(address(flokiUniswapV2BuyTokens), amounts[0]);
+        flokiUniswapV2BuyTokens.buyExactFlokiTokens(amountOut, flokiUinswapV2pairAddress, paths);
+        assertEq(floki.balanceOf(user), amountOut);
+    }
+
+    function testFlokiUniswapV2BuyTokensWithWETH() external {
+        vm.startPrank(user);
+        vm.rollFork(20382626);
+        address[] memory paths = new address[](2);
+        paths[0] = wETHAddress;
+        paths[1] = flokiAddress;
+        uint256 amountOut = 20746887966806;
+        uint256 tax = flokiTaxHandler.getTax(flokiUinswapV2pairAddress, user, amountOut);
+        uint256 adjustedAmountOut = (amountOut * amountOut) / (amountOut - tax);
+        uint[] memory amounts = uniswapRouter.getAmountsIn(adjustedAmountOut, paths);
+        assertEq(floki.balanceOf(user), 0);
+        weth.approve(address(flokiUniswapV2BuyTokens), amounts[0]);
         flokiUniswapV2BuyTokens.buyExactFlokiTokens(amountOut, flokiUinswapV2pairAddress, paths);
         assertEq(floki.balanceOf(user), amountOut);
     }
