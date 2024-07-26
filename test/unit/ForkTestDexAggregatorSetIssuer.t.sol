@@ -345,7 +345,7 @@ contract ForkTestDexAggregatorSetIssuer is Test {
     function _issueMeme(uint256 memeIndexQuantity) internal {
         (address[] memory components, uint256[] memory componentQuantities) = issuanceModule
             .getRequiredComponentUnitsForIssue(memeIndexToken, memeIndexQuantity);
-        for(uint i=0; i<components.length; i++){
+        for (uint i = 0; i < components.length; i++) {
             deal({token: components[i], to: user, give: componentQuantities[i]});
             IERC20(components[i]).approve(basicIssuanceModuleAddress, componentQuantities[i]);
         }
@@ -389,7 +389,6 @@ contract ForkTestDexAggregatorSetIssuer is Test {
             payLoads
         );
     }
-
 
     function testSellFlokiToken() external {
         vm.startPrank(user);

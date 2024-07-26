@@ -46,20 +46,13 @@ contract TokenExchangeSetIssuer is Ownable, ReentrancyGuard {
         IERC20 quoteAsset,
         address[] calldata exchanges,
         bytes[] calldata exchangePayloads
-    ) external nonReentrant returns (uint256){
+    ) external nonReentrant returns (uint256) {
         uint256 beforeQuoteAssetBalance = quoteAsset.balanceOf(address(this));
         SafeERC20.safeTransferFrom(IERC20(address(setToken)), msg.sender, address(this), setTokenQuantity);
 
         issuanceModule.redeem(setToken, setTokenQuantity, address(this));
 
-        _sellComponents(
-            setToken,
-            setTokenQuantity,
-            issuanceModule,
-            quoteAsset,
-            exchanges,
-            exchangePayloads
-        );
+        _sellComponents(setToken, setTokenQuantity, issuanceModule, quoteAsset, exchanges, exchangePayloads);
         uint256 quoteAssetBalanceAfterSell = quoteAsset.balanceOf(address(this)).sub(beforeQuoteAssetBalance);
         SafeERC20.safeTransfer(quoteAsset, msg.sender, quoteAssetBalanceAfterSell);
         return quoteAssetBalanceAfterSell;
@@ -72,18 +65,16 @@ contract TokenExchangeSetIssuer is Ownable, ReentrancyGuard {
         IERC20 quoteAsset,
         address[] calldata exchanges,
         bytes[] calldata exchangePayloads
-    ) internal{
-        (address[] memory components, ) = issuanceModule.getRequiredComponentUnitsForIssue(
-            setToken, setTokenQuantity
-        );
+    ) internal {
+        (address[] memory components, ) = issuanceModule.getRequiredComponentUnitsForIssue(setToken, setTokenQuantity);
         uint256 componentLength = components.length;
         require(exchanges.length == componentLength, "array length mismatch");
         require(exchangePayloads.length == componentLength, "array length mismatch");
         bool success;
         uint256 oldQuoteAssetBalance = quoteAsset.balanceOf(address(this));
         uint256 newQuoteAssetBalance;
-        for(uint256 i=0; i < componentLength; i++) {
-            if(components[i] == address(quoteAsset)) continue;
+        for (uint256 i = 0; i < componentLength; i++) {
+            if (components[i] == address(quoteAsset)) continue;
             (success, ) = exchanges[i].call(exchangePayloads[i]);
             require(success, "exchange transaction failed");
             newQuoteAssetBalance = quoteAsset.balanceOf(address(this));
