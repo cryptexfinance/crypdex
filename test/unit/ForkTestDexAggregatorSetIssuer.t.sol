@@ -404,4 +404,22 @@ contract ForkTestDexAggregatorSetIssuer is Test {
         uint256 afterBalance = usdc.balanceOf(user);
         assertGt(afterBalance, beforeBalance);
     }
+
+    function testTransferTokensOnTokenExchang() external {
+        vm.startPrank(deployer);
+        uint256 amount = 10e6;
+        deal({token: usdcAddress, to: address(dexAggregatorSetIssuer), give: amount});
+        assertEq(usdc.balanceOf(address(dexAggregatorSetIssuer)), amount);
+        dexAggregatorSetIssuer.transferTokens(usdc, user, amount);
+        assertEq(usdc.balanceOf(address(dexAggregatorSetIssuer)), 0);
+    }
+
+    function testTransferTokensOnFlokiBuy() external {
+        vm.startPrank(deployer);
+        uint256 amount = 10e6;
+        deal({token: usdcAddress, to: address(flokiUniswapV2BuyTokens), give: amount});
+        assertEq(usdc.balanceOf(address(flokiUniswapV2BuyTokens)), amount);
+        flokiUniswapV2BuyTokens.transferTokens(usdc, user, amount);
+        assertEq(usdc.balanceOf(address(flokiUniswapV2BuyTokens)), 0);
+    }
 }

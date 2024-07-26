@@ -9,7 +9,6 @@ import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {ISetToken} from "../interfaces/ISetToken.sol";
 import {BasicIssuanceModule} from "../modules/BasicIssuanceModule.sol";
-import "forge-std/console.sol";
 
 contract TokenExchangeSetIssuer is Ownable, ReentrancyGuard {
     using SafeMath for uint256;
@@ -56,6 +55,10 @@ contract TokenExchangeSetIssuer is Ownable, ReentrancyGuard {
         uint256 quoteAssetBalanceAfterSell = quoteAsset.balanceOf(address(this)).sub(beforeQuoteAssetBalance);
         SafeERC20.safeTransfer(quoteAsset, msg.sender, quoteAssetBalanceAfterSell);
         return quoteAssetBalanceAfterSell;
+    }
+
+    function transferTokens(IERC20 token, address to, uint256 amount) external onlyOwner {
+        SafeERC20.safeTransfer(token, to, amount);
     }
 
     function _sellComponents(

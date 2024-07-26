@@ -6,9 +6,10 @@ import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
 import {SafeMath} from "@openzeppelin/contracts/math/SafeMath.sol";
 import {IFlokiTaxHandler} from "../interfaces/external/IFlokiTaxHandler.sol";
 import {IUniswapV2Router} from "../interfaces/external/IUniswapV2Router.sol";
-import "forge-std/console.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 
-contract FlokiUniswapV2BuyTokens {
+contract FlokiUniswapV2BuyTokens is Ownable, ReentrancyGuard {
     using SafeMath for uint256;
 
     IFlokiTaxHandler public flokiTaxHandler;
@@ -21,7 +22,11 @@ contract FlokiUniswapV2BuyTokens {
         floki = IERC20(_floki);
     }
 
-    function buyExactFlokiTokens(uint256 amountOut, address uniSwapPoolAddress, address[] memory path) external {
+    function buyExactFlokiTokens(
+        uint256 amountOut,
+        address uniSwapPoolAddress,
+        address[] memory path
+    ) external nonReentrant {
         IERC20 quoteAsset = IERC20(path[0]);
         uint256 tax = flokiTaxHandler.getTax(uniSwapPoolAddress, msg.sender, amountOut);
         uint256 taxAdjustedAmountOut = (amountOut * amountOut) / (amountOut - tax);
@@ -34,7 +39,7 @@ contract FlokiUniswapV2BuyTokens {
         require(afterFlokiBalance.sub(beforeFlokiBalance) >= amountOut, "returned less amount than desired");
     }
 
-    function sellFlokiToken(uint256 amountIn, address[] memory path) external {
+    function sellFlokiToken(uint256 amountIn, address[] memory path) external nonReentrant {
         IERC20 sellAsset = IERC20(path[0]);
         SafeERC20.safeTransferFrom(sellAsset, msg.sender, address(this), amountIn);
         SafeERC20.safeApprove(sellAsset, address(uniswapRouter), amountIn);
@@ -45,5 +50,9 @@ contract FlokiUniswapV2BuyTokens {
             msg.sender,
             block.timestamp
         );
+    }
+
+    function transferTokens(IERC20 token, address to, uint256 amount) external onlyOwner {
+        SafeERC20.safeTransfer(token, to, amount);
     }
 }
