@@ -6,6 +6,7 @@ import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
 import {SafeMath} from "@openzeppelin/contracts/math/SafeMath.sol";
 import {IFlokiTaxHandler} from "../interfaces/external/IFlokiTaxHandler.sol";
 import {IUniswapV2Router} from "../interfaces/external/IUniswapV2Router.sol";
+import "forge-std/console.sol";
 
 contract FlokiUniswapV2BuyTokens {
     using SafeMath for uint256;
@@ -20,16 +21,29 @@ contract FlokiUniswapV2BuyTokens {
         floki = IERC20(_floki);
     }
 
-    function buyExactFlokiTokens(uint256 amountOut, address uniSwapPoolAddress, address[] memory paths) external {
-        IERC20 quoteAsset = IERC20(paths[0]);
+    function buyExactFlokiTokens(uint256 amountOut, address uniSwapPoolAddress, address[] memory path) external {
+        IERC20 quoteAsset = IERC20(path[0]);
         uint256 tax = flokiTaxHandler.getTax(uniSwapPoolAddress, msg.sender, amountOut);
         uint256 taxAdjustedAmountOut = (amountOut * amountOut) / (amountOut - tax);
-        uint256 amountIn = uniswapRouter.getAmountsIn(taxAdjustedAmountOut, paths)[0];
+        uint256 amountIn = uniswapRouter.getAmountsIn(taxAdjustedAmountOut, path)[0];
         SafeERC20.safeTransferFrom(quoteAsset, msg.sender, address(this), amountIn);
         SafeERC20.safeApprove(quoteAsset, address(uniswapRouter), amountIn);
         uint256 beforeFlokiBalance = floki.balanceOf(msg.sender);
-        uniswapRouter.swapTokensForExactTokens(taxAdjustedAmountOut, amountIn, paths, msg.sender, block.timestamp);
+        uniswapRouter.swapTokensForExactTokens(taxAdjustedAmountOut, amountIn, path, msg.sender, block.timestamp);
         uint256 afterFlokiBalance = floki.balanceOf(msg.sender);
         require(afterFlokiBalance.sub(beforeFlokiBalance) >= amountOut, "returned less amount than desired");
+    }
+
+    function sellFlokiToken(uint256 amountIn, address[] memory path) external {
+        IERC20 sellAsset = IERC20(path[0]);
+        SafeERC20.safeTransferFrom(sellAsset, msg.sender, address(this), amountIn);
+        SafeERC20.safeApprove(sellAsset, address(uniswapRouter), amountIn);
+        uniswapRouter.swapExactTokensForTokensSupportingFeeOnTransferTokens(
+            amountIn,
+            0,
+            path,
+            msg.sender,
+            block.timestamp
+        );
     }
 }

@@ -9,12 +9,13 @@ import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {ISetToken} from "../interfaces/ISetToken.sol";
 import {BasicIssuanceModule} from "../modules/BasicIssuanceModule.sol";
+import "forge-std/console.sol";
 
 contract TokenExchangeSetIssuer is Ownable, ReentrancyGuard {
     using SafeMath for uint256;
 
     function approveToken(IERC20 token, address spender) external onlyOwner {
-        SafeERC20.safeApprove(token, spender, uint256(-1));
+        token.approve(spender, uint256(-1));
     }
 
     function buyComponentsAndIssueSetToken(
@@ -24,11 +25,11 @@ contract TokenExchangeSetIssuer is Ownable, ReentrancyGuard {
         IERC20 quoteAsset,
         uint256 totalQuoteAmount,
         address[] calldata exchanges,
-        bytes[] calldata aggregatorPayloads
+        bytes[] calldata exchangePayloads
     ) external nonReentrant returns (uint256 extraQuoteBalance) {
         uint256 beforeQuoteAssetBalance = quoteAsset.balanceOf(address(this));
         SafeERC20.safeTransferFrom(quoteAsset, msg.sender, address(this), totalQuoteAmount);
-        _buyComponents(setToken, setTokenQuantity, quoteAsset, issuanceModule, exchanges, aggregatorPayloads);
+        _buyComponents(setToken, setTokenQuantity, quoteAsset, issuanceModule, exchanges, exchangePayloads);
         issuanceModule.issue(setToken, setTokenQuantity, msg.sender);
         uint256 afterQuoteAssetBalance = quoteAsset.balanceOf(address(this));
         extraQuoteBalance = afterQuoteAssetBalance.sub(beforeQuoteAssetBalance);
@@ -38,20 +39,73 @@ contract TokenExchangeSetIssuer is Ownable, ReentrancyGuard {
         }
     }
 
+    function redeemSetTokenAndExchangeTokens(
+        ISetToken setToken,
+        uint256 setTokenQuantity,
+        BasicIssuanceModule issuanceModule,
+        IERC20 quoteAsset,
+        address[] calldata exchanges,
+        bytes[] calldata exchangePayloads
+    ) external nonReentrant returns (uint256){
+        uint256 beforeQuoteAssetBalance = quoteAsset.balanceOf(address(this));
+        SafeERC20.safeTransferFrom(IERC20(address(setToken)), msg.sender, address(this), setTokenQuantity);
+
+        issuanceModule.redeem(setToken, setTokenQuantity, address(this));
+
+        _sellComponents(
+            setToken,
+            setTokenQuantity,
+            issuanceModule,
+            quoteAsset,
+            exchanges,
+            exchangePayloads
+        );
+        uint256 quoteAssetBalanceAfterSell = quoteAsset.balanceOf(address(this)).sub(beforeQuoteAssetBalance);
+        SafeERC20.safeTransfer(quoteAsset, msg.sender, quoteAssetBalanceAfterSell);
+        return quoteAssetBalanceAfterSell;
+    }
+
+    function _sellComponents(
+        ISetToken setToken,
+        uint256 setTokenQuantity,
+        BasicIssuanceModule issuanceModule,
+        IERC20 quoteAsset,
+        address[] calldata exchanges,
+        bytes[] calldata exchangePayloads
+    ) internal{
+        (address[] memory components, ) = issuanceModule.getRequiredComponentUnitsForIssue(
+            setToken, setTokenQuantity
+        );
+        uint256 componentLength = components.length;
+        require(exchanges.length == componentLength, "array length mismatch");
+        require(exchangePayloads.length == componentLength, "array length mismatch");
+        bool success;
+        uint256 oldQuoteAssetBalance = quoteAsset.balanceOf(address(this));
+        uint256 newQuoteAssetBalance;
+        for(uint256 i=0; i < componentLength; i++) {
+            if(components[i] == address(quoteAsset)) continue;
+            (success, ) = exchanges[i].call(exchangePayloads[i]);
+            require(success, "exchange transaction failed");
+            newQuoteAssetBalance = quoteAsset.balanceOf(address(this));
+            require(newQuoteAssetBalance > oldQuoteAssetBalance, "QuoteAsset balance didn't increase");
+            oldQuoteAssetBalance = newQuoteAssetBalance;
+        }
+    }
+
     function _buyComponents(
         ISetToken setToken,
         uint256 setTokenQuantity,
         IERC20 quoteAsset,
         BasicIssuanceModule issuanceModule,
         address[] calldata exchanges,
-        bytes[] calldata aggregatorPayloads
+        bytes[] calldata exchangePayloads
     ) internal {
         bool success;
         (address[] memory components, uint256[] memory componentQuantities) = issuanceModule
             .getRequiredComponentUnitsForIssue(setToken, setTokenQuantity);
         uint256 componentQuantitiesLength = componentQuantities.length;
         require(exchanges.length == componentQuantitiesLength, "array length mismatch");
-        require(aggregatorPayloads.length == componentQuantitiesLength, "array length mismatch");
+        require(exchangePayloads.length == componentQuantitiesLength, "array length mismatch");
 
         for (uint256 index = 0; index < componentQuantitiesLength; index++) {
             address componentAddress = components[index];
@@ -59,8 +113,8 @@ contract TokenExchangeSetIssuer is Ownable, ReentrancyGuard {
             IERC20 component = IERC20(componentAddress);
             uint256 beforeComponentBalance = component.balanceOf(address(this));
             // Wont use native asset, so no need to pass msg.value
-            (success, ) = exchanges[index].call(aggregatorPayloads[index]);
-            require(success, "AggregatorDex transaction failed");
+            (success, ) = exchanges[index].call(exchangePayloads[index]);
+            require(success, "exchange transaction failed");
             uint256 afterComponentBalance = component.balanceOf(address(this));
             require(
                 afterComponentBalance.sub(beforeComponentBalance) >= componentQuantities[index],
