@@ -9,13 +9,19 @@ import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {TokenExchangeSetIssuer} from "contracts/extensions/TokenExchangeSetIssuer.sol";
 import {BasicIssuanceModule} from "contracts/modules/BasicIssuanceModule.sol";
 import {ISetToken} from "contracts/interfaces/ISetToken.sol";
-import {FlokiUniswapV2BuyTokens} from "contracts/extensions/FlokiUniswapV2BuyTokens.sol";
 import {IFlokiTaxHandler} from "contracts/interfaces/external/IFlokiTaxHandler.sol";
 import {IUniswapV2Router} from "contracts/interfaces/external/IUniswapV2Router.sol";
 
-contract ForkTestDexAggregatorSetIssuer is Test {
-    TokenExchangeSetIssuer dexAggregatorSetIssuer;
-    FlokiUniswapV2BuyTokens flokiUniswapV2BuyTokens;
+contract MockFakeExchange {
+    function transferLesserQuantityThanAsked(IERC20 token, uint256 amount) external {
+        token.transfer(msg.sender, amount - 1);
+    }
+
+    function noop() external {}
+}
+
+contract ForkTestTokenExchangeSetIssuer is Test {
+    TokenExchangeSetIssuer tokenExchangeSetIssuer;
 
     address usdcAddress = 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48;
     address dogeCoinAddress = 0x4206931337dc273a630d328dA6441786BfaD668f;
@@ -107,30 +113,37 @@ contract ForkTestDexAggregatorSetIssuer is Test {
     bytes sellWethUSDCPayLoad =
         hex"876a02f6000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000000000000000000000000240000000000000000000000000c02aaa39b223fe8d0a0e5c4f27ead9083c756cc2000000000000000000000000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb480000000000000000000000000000000000000000000000000d65e0d884c9f27300000000000000000000000000000000000000000000000000000000b810b6f000000000000000000000000000000000000000000000000000000000b9ecae7190fbfb02b1c64338ac3105a319acf5d6000000000000000000000000013717a20000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000c0800000000000000000000000c02aaa39b223fe8d0a0e5c4f27ead9083c756cc2000000000000000000000000dac17f958d2ee523a2206206994597c13d831ec70000000000000000000000000000000000000000000000000000000000000064000000000000000000000000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48000000000000000000000000dac17f958d2ee523a2206206994597c13d831ec700000000000000000000000000000000000000000000000000000000000000640000000000000000000000000000000000000000000000000000000000000000";
 
+    // https://api.paraswap.io/swap?srcToken=0x4206931337dc273a630d328dA6441786BfaD668f&destToken=0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2&amount=3180542565&srcDecimals=8&destDecimals=18&side=SELL&network=1&excludeDEXS=ParaSwapPool,ParaSwapLimitOrders&version=6.2&slippage=100&userAddress=0x1473cCdC135f1D365511028bf0e103B959cbceB5
+    bytes sellDogeWETHPayLoad =
+        hex"e8bb3b6c0000000000000000000000000000000000000000000000000000000000000060000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000000000000000000000001c00000000000000000000000004206931337dc273a630d328da6441786bfad668f000000000000000000000000c02aaa39b223fe8d0a0e5c4f27ead9083c756cc200000000000000000000000000000000000000000000000000000000bd933a6400000000000000000000000000000000000000000000000000044b5fc1e1c44c0000000000000000000000000000000000000000000000000004567a954b7b4a7a8456f47cfb4c93a739d93e1759732200000000000000000000000001397d7d0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000404206931337dc273a630d328da6441786bfad668fc02aaa39b223fe8d0a0e5c4f27ead9083c756cc20000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000";
+    // https://api.paraswap.io/swap?srcToken=0x95aD61b0a150d79219dCF64E1E6Cc01f0B64C4cE&destToken=0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2&amount=208845208845208834487092&srcDecimals=18&destDecimals=18&side=SELL&network=1&excludeDEXS=ParaSwapPool,ParaSwapLimitOrders&version=6.2&slippage=100&userAddress=0x1473cCdC135f1D365511028bf0e103B959cbceB5
+    bytes sellShibWETHPayLoad =
+        hex"876a02f60000000000000000000000000000000000000000000000000000000000000060000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000000000000000000000001e000000000000000000000000095ad61b0a150d79219dcf64e1e6cc01f0b64c4ce000000000000000000000000c02aaa39b223fe8d0a0e5c4f27ead9083c756cc2000000000000000000000000000000000000000000002c39857e3760ccb333330000000000000000000000000000000000000000000000000003bdd088847c740000000000000000000000000000000000000000000000000003c77d4e6bf73e6ed7ae583cc344c2bd4e69be8cac832300000000000000000000000001397d7d00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000006080000000000000000000000095ad61b0a150d79219dcf64e1e6cc01f0b64c4ce000000000000000000000000c02aaa39b223fe8d0a0e5c4f27ead9083c756cc200000000000000000000000000000000000000000000000000000000000001f40000000000000000000000000000000000000000000000000000000000000000";
+    // https://api.paraswap.io/swap?srcToken=0x6982508145454Ce325dDbE47a25d4ec3d2311933&destToken=0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2&amount=377107364685004443693876&srcDecimals=18&destDecimals=18&side=SELL&network=1&excludeDEXS=ParaSwapPool,ParaSwapLimitOrders&version=6.2&slippage=100&userAddress=0x1473cCdC135f1D365511028bf0e103B959cbceB5
+    bytes sellPepeWETHPayLoad =
+        hex"876a02f60000000000000000000000000000000000000000000000000000000000000060000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000000000000000000000001e00000000000000000000000006982508145454ce325ddbe47a25d4ec3d2311933000000000000000000000000c02aaa39b223fe8d0a0e5c4f27ead9083c756cc2000000000000000000000000000000000000000000004fdb07fce490213333330000000000000000000000000000000000000000000000000003a603bec3e41a0000000000000000000000000000000000000000000000000003af72f994bd086505a7ffac2a4b97a561006986a55c0400000000000000000000000001397d7d0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000608000000000000000000000006982508145454ce325ddbe47a25d4ec3d2311933000000000000000000000000c02aaa39b223fe8d0a0e5c4f27ead9083c756cc20000000000000000000000000000000000000000000000000000000000000bb80000000000000000000000000000000000000000000000000000000000000000";
+
+    bytes sellFlokiWETHPayLoad;
+    bytes sellWethWETHPayLoad;
+
     function setUp() external {
         vm.startPrank(deployer);
-        dexAggregatorSetIssuer = new TokenExchangeSetIssuer();
-        flokiUniswapV2BuyTokens = new FlokiUniswapV2BuyTokens(
-            flokiTaxHandlerAddress,
-            uniswapRouterAddress,
-            flokiAddress
-        );
-        dexAggregatorSetIssuer.approveToken(usdc, paraSwapV6Address);
-        dexAggregatorSetIssuer.approveToken(usdc, address(flokiUniswapV2BuyTokens));
-        dexAggregatorSetIssuer.approveToken(weth, paraSwapV6Address);
-        dexAggregatorSetIssuer.approveToken(weth, address(flokiUniswapV2BuyTokens));
+        tokenExchangeSetIssuer = new TokenExchangeSetIssuer();
 
-        dexAggregatorSetIssuer.approveToken(doge, paraSwapV6Address);
-        dexAggregatorSetIssuer.approveToken(shib, paraSwapV6Address);
-        dexAggregatorSetIssuer.approveToken(pepe, paraSwapV6Address);
-        dexAggregatorSetIssuer.approveToken(floki, address(flokiUniswapV2BuyTokens));
-        dexAggregatorSetIssuer.approveToken(weth, paraSwapV6Address);
+        IERC20[] memory tokens = new IERC20[](6);
+        tokens[0] = usdc;
+        tokens[1] = weth;
+        tokens[2] = doge;
+        tokens[3] = shib;
+        tokens[4] = pepe;
+        tokens[5] = floki;
+        tokenExchangeSetIssuer.approveTokens(tokens, paraSwapV6Address, uint256(-1));
+        tokenExchangeSetIssuer.approveTokens(tokens, uniswapRouterAddress, uint256(-1));
+        tokenExchangeSetIssuer.approveTokens(tokens, basicIssuanceModuleAddress, uint256(-1));
 
-        dexAggregatorSetIssuer.approveToken(doge, basicIssuanceModuleAddress);
-        dexAggregatorSetIssuer.approveToken(shib, basicIssuanceModuleAddress);
-        dexAggregatorSetIssuer.approveToken(pepe, basicIssuanceModuleAddress);
-        dexAggregatorSetIssuer.approveToken(floki, basicIssuanceModuleAddress);
-        dexAggregatorSetIssuer.approveToken(weth, basicIssuanceModuleAddress);
+        tokenExchangeSetIssuer.addSetTokenIssuanceModules(memeIndexTokenAddress, basicIssuanceModuleAddress);
+        tokenExchangeSetIssuer.whiteListExchange(paraSwapV6Address);
+        tokenExchangeSetIssuer.whiteListExchange(uniswapRouterAddress);
 
         deal({token: usdcAddress, to: user, give: 10000e6});
         deal({token: wETHAddress, to: user, give: 10000e18});
@@ -144,8 +157,7 @@ contract ForkTestDexAggregatorSetIssuer is Test {
         vm.makePersistent(wETHAddress);
         vm.makePersistent(paraSwapV6Address);
         vm.makePersistent(memeIndexTokenAddress);
-        vm.makePersistent(address(dexAggregatorSetIssuer));
-        vm.makePersistent(address(flokiUniswapV2BuyTokens));
+        vm.makePersistent(address(tokenExchangeSetIssuer));
         vm.makePersistent(uniswapRouterAddress);
         vm.makePersistent(flokiUinswapV2pairAddress);
         vm.makePersistent(flokiTaxHandlerAddress);
@@ -156,7 +168,7 @@ contract ForkTestDexAggregatorSetIssuer is Test {
     function testIssueTokensWithUSDC() external {
         vm.rollFork(20382626);
         vm.startPrank(user);
-        (flokiUSDCAmount, flokiUSDCPayLoad) = _computeFlokiTransferData(20746887966806, usdcAddress);
+        (flokiUSDCAmount, flokiUSDCPayLoad) = _computeFlokiBuyData(20746887966806, usdcAddress);
         uint256 totalQuote = dogeUSDCAmount + shibUSDCAmount + pepeUSDCAmount + flokiUSDCAmount + wethUSDCAmount;
 
         uint256 oldDogeBalance = doge.balanceOf(memeIndexTokenAddress);
@@ -165,7 +177,7 @@ contract ForkTestDexAggregatorSetIssuer is Test {
         uint256 oldFlokiBalance = floki.balanceOf(memeIndexTokenAddress);
         uint256 oldWethiBalance = weth.balanceOf(memeIndexTokenAddress);
 
-        usdc.approve(address(dexAggregatorSetIssuer), totalQuote);
+        usdc.approve(address(tokenExchangeSetIssuer), totalQuote);
         uint256 memeIndexQuantity = 1.5 ether;
         bytes[] memory payLoads = new bytes[](5);
         payLoads[0] = dogeUSDCPayLoad;
@@ -177,12 +189,11 @@ contract ForkTestDexAggregatorSetIssuer is Test {
         exchanges[0] = paraSwapV6Address;
         exchanges[1] = paraSwapV6Address;
         exchanges[2] = paraSwapV6Address;
-        exchanges[3] = address(flokiUniswapV2BuyTokens);
+        exchanges[3] = uniswapRouterAddress;
         exchanges[4] = paraSwapV6Address;
-        dexAggregatorSetIssuer.buyComponentsAndIssueSetToken(
+        tokenExchangeSetIssuer.buyComponentsAndIssueSetToken(
             memeIndexToken,
             memeIndexQuantity,
-            issuanceModule,
             usdc,
             totalQuote,
             exchanges,
@@ -199,7 +210,7 @@ contract ForkTestDexAggregatorSetIssuer is Test {
         assertGt(newPepeBalance, oldPepeBalance);
         assertGt(newFlokiBalance, oldFlokiBalance);
         assertGt(newWethiBalance, oldWethiBalance);
-        assertEq(usdc.balanceOf(address(dexAggregatorSetIssuer)), 0);
+        assertEq(usdc.balanceOf(address(tokenExchangeSetIssuer)), 0);
         assertEq(memeIndexToken.balanceOf(user), memeIndexQuantity);
     }
 
@@ -207,7 +218,7 @@ contract ForkTestDexAggregatorSetIssuer is Test {
         vm.rollFork(20385003);
         vm.startPrank(user);
 
-        (flokiWETHAmount, flokiWETHPayLoad) = _computeFlokiTransferData(20746887966806, wETHAddress);
+        (flokiWETHAmount, flokiWETHPayLoad) = _computeFlokiBuyData(20746887966806, wETHAddress);
         uint256 totalQuote = dogeWETHAmount + shibWETHAmount + pepeWETHAmount + flokiWETHAmount + wethWETHAmount;
 
         uint256 oldDogeBalance = doge.balanceOf(memeIndexTokenAddress);
@@ -216,7 +227,7 @@ contract ForkTestDexAggregatorSetIssuer is Test {
         uint256 oldFlokiBalance = floki.balanceOf(memeIndexTokenAddress);
         uint256 oldWethiBalance = weth.balanceOf(memeIndexTokenAddress);
 
-        weth.approve(address(dexAggregatorSetIssuer), totalQuote);
+        weth.approve(address(tokenExchangeSetIssuer), totalQuote);
         uint256 memeIndexQuantity = 1.5 ether;
         bytes[] memory payLoads = new bytes[](5);
         payLoads[0] = dogeWETHPayLoad;
@@ -228,12 +239,11 @@ contract ForkTestDexAggregatorSetIssuer is Test {
         exchanges[0] = paraSwapV6Address;
         exchanges[1] = paraSwapV6Address;
         exchanges[2] = paraSwapV6Address;
-        exchanges[3] = address(flokiUniswapV2BuyTokens);
+        exchanges[3] = uniswapRouterAddress;
         exchanges[4] = paraSwapV6Address;
-        dexAggregatorSetIssuer.buyComponentsAndIssueSetToken(
+        tokenExchangeSetIssuer.buyComponentsAndIssueSetToken(
             memeIndexToken,
             memeIndexQuantity,
-            issuanceModule,
             weth,
             totalQuote,
             exchanges,
@@ -250,95 +260,65 @@ contract ForkTestDexAggregatorSetIssuer is Test {
         assertGt(newPepeBalance, oldPepeBalance);
         assertGt(newFlokiBalance, oldFlokiBalance);
         assertGt(newWethiBalance, oldWethiBalance);
-        assertEq(weth.balanceOf(address(dexAggregatorSetIssuer)), 0);
+        assertEq(weth.balanceOf(address(tokenExchangeSetIssuer)), 0);
         assertEq(memeIndexToken.balanceOf(user), memeIndexQuantity);
     }
 
-    function _computeFlokiTransferData(
+    function _computeFlokiBuyData(
         uint256 amountOut,
         address quoteAsset
-    ) internal view returns (uint256 amountIn, bytes memory payload) {
-        address[] memory paths;
+    ) private view returns (uint256 amountIn, bytes memory payload) {
+        address[] memory path;
         if (quoteAsset == usdcAddress) {
-            paths = new address[](3);
-            paths[0] = usdcAddress;
-            paths[1] = wETHAddress;
-            paths[2] = flokiAddress;
+            path = new address[](3);
+            path[0] = usdcAddress;
+            path[1] = wETHAddress;
+            path[2] = flokiAddress;
         } else if (quoteAsset == wETHAddress) {
-            paths = new address[](2);
-            paths[0] = wETHAddress;
-            paths[1] = flokiAddress;
+            path = new address[](2);
+            path[0] = wETHAddress;
+            path[1] = flokiAddress;
         } else {
             revert("QuoteAsset not supported");
         }
         uint256 tax = flokiTaxHandler.getTax(flokiUinswapV2pairAddress, user, amountOut);
         uint256 adjustedAmountOut = (amountOut * amountOut) / (amountOut - tax);
-        amountIn = uniswapRouter.getAmountsIn(adjustedAmountOut, paths)[0];
+        amountIn = (uniswapRouter.getAmountsIn(adjustedAmountOut, path)[0] * 11) / 10;
         payload = abi.encodeWithSelector(
-            flokiUniswapV2BuyTokens.buyExactFlokiTokens.selector,
-            amountOut,
-            flokiUinswapV2pairAddress,
-            paths
+            uniswapRouter.swapTokensForExactTokens.selector,
+            adjustedAmountOut,
+            amountIn,
+            path,
+            address(tokenExchangeSetIssuer),
+            block.timestamp + 3 * 60 * 60
         );
     }
 
-    function testFlokiUniswapV2BuyTokensWithUSDC() external {
-        vm.startPrank(user);
-        vm.rollFork(20382626);
-        address[] memory paths = new address[](3);
-        paths[0] = usdcAddress;
-        paths[1] = wETHAddress;
-        paths[2] = flokiAddress;
-        uint256 amountOut = 20746887966806;
-        uint256 tax = flokiTaxHandler.getTax(flokiUinswapV2pairAddress, user, amountOut);
-        uint256 adjustedAmountOut = (amountOut * amountOut) / (amountOut - tax);
-        uint[] memory amounts = uniswapRouter.getAmountsIn(adjustedAmountOut, paths);
-        assertEq(floki.balanceOf(user), 0);
-        usdc.approve(address(flokiUniswapV2BuyTokens), amounts[0]);
-        flokiUniswapV2BuyTokens.buyExactFlokiTokens(amountOut, flokiUinswapV2pairAddress, paths);
-        assertEq(floki.balanceOf(user), amountOut);
-    }
-
-    function testFlokiUniswapV2BuyTokensWithWETH() external {
-        vm.startPrank(user);
-        vm.rollFork(20382626);
-        address[] memory paths = new address[](2);
-        paths[0] = wETHAddress;
-        paths[1] = flokiAddress;
-        uint256 amountOut = 20746887966806;
-        uint256 tax = flokiTaxHandler.getTax(flokiUinswapV2pairAddress, user, amountOut);
-        uint256 adjustedAmountOut = (amountOut * amountOut) / (amountOut - tax);
-        uint[] memory amounts = uniswapRouter.getAmountsIn(adjustedAmountOut, paths);
-        assertEq(floki.balanceOf(user), 0);
-        weth.approve(address(flokiUniswapV2BuyTokens), amounts[0]);
-        flokiUniswapV2BuyTokens.buyExactFlokiTokens(amountOut, flokiUinswapV2pairAddress, paths);
-        assertEq(floki.balanceOf(user), amountOut);
-    }
-
-    function _issueMemeToken(uint256 memeIndexQuantity) internal {
-        (flokiUSDCAmount, flokiUSDCPayLoad) = _computeFlokiTransferData(20746887966806, usdcAddress);
-        uint256 totalQuote = dogeUSDCAmount + shibUSDCAmount + pepeUSDCAmount + flokiUSDCAmount + wethUSDCAmount;
-        usdc.approve(address(dexAggregatorSetIssuer), totalQuote);
-        bytes[] memory payLoads = new bytes[](5);
-        payLoads[0] = dogeUSDCPayLoad;
-        payLoads[1] = shibUSDCPayLoad;
-        payLoads[2] = pepeUSDCPayLoad;
-        payLoads[3] = flokiUSDCPayLoad;
-        payLoads[4] = wethUSDCPayLoad;
-        address[] memory exchanges = new address[](5);
-        exchanges[0] = paraSwapV6Address;
-        exchanges[1] = paraSwapV6Address;
-        exchanges[2] = paraSwapV6Address;
-        exchanges[3] = address(flokiUniswapV2BuyTokens);
-        exchanges[4] = paraSwapV6Address;
-        dexAggregatorSetIssuer.buyComponentsAndIssueSetToken(
-            memeIndexToken,
-            memeIndexQuantity,
-            issuanceModule,
-            usdc,
-            totalQuote,
-            exchanges,
-            payLoads
+    function _computeFlokiSellData(
+        uint256 amountIn,
+        uint256 amountOutMin,
+        address quoteAsset
+    ) private view returns (bytes memory payload) {
+        address[] memory path;
+        if (quoteAsset == usdcAddress) {
+            path = new address[](3);
+            path[0] = flokiAddress;
+            path[1] = wETHAddress;
+            path[2] = usdcAddress;
+        } else if (quoteAsset == wETHAddress) {
+            path = new address[](2);
+            path[0] = flokiAddress;
+            path[1] = wETHAddress;
+        } else {
+            revert("QuoteAsset not supported");
+        }
+        payload = abi.encodeWithSelector(
+            uniswapRouter.swapExactTokensForTokensSupportingFeeOnTransferTokens.selector,
+            amountIn,
+            amountOutMin,
+            path,
+            address(tokenExchangeSetIssuer),
+            block.timestamp + 3 * 60 * 60
         );
     }
 
@@ -357,69 +337,376 @@ contract ForkTestDexAggregatorSetIssuer is Test {
         vm.startPrank(user);
         uint256 memeIndexQuantity = 1500 ether;
         _issueMeme(memeIndexQuantity);
-        memeIndexToken.approve(address(dexAggregatorSetIssuer), memeIndexQuantity);
+        uint256 expectedUSDCAfterSelling = 17358121715;
+        uint256 expectedUSDCSellingFloki = 3673297867;
         uint256 flokiAmount = 20746887966805499;
-        address[] memory paths = new address[](3);
-        paths[0] = flokiAddress;
-        paths[1] = wETHAddress;
-        paths[2] = usdcAddress;
-        sellFlokiUSDCPayLoad = abi.encodeWithSelector(
-            flokiUniswapV2BuyTokens.sellFlokiToken.selector,
-            flokiAmount,
-            paths
-        );
+
         bytes[] memory payLoads = new bytes[](5);
         payLoads[0] = sellDogeUSDCPayLoad;
         payLoads[1] = sellShibUSDCPayLoad;
         payLoads[2] = sellPepeUSDCPayLoad;
-        payLoads[3] = sellFlokiUSDCPayLoad;
+        payLoads[3] = _computeFlokiSellData(flokiAmount, expectedUSDCSellingFloki, usdcAddress);
         payLoads[4] = sellWethUSDCPayLoad;
         address[] memory exchanges = new address[](5);
         exchanges[0] = paraSwapV6Address;
         exchanges[1] = paraSwapV6Address;
         exchanges[2] = paraSwapV6Address;
-        exchanges[3] = address(flokiUniswapV2BuyTokens);
+        exchanges[3] = uniswapRouterAddress;
         exchanges[4] = paraSwapV6Address;
-        dexAggregatorSetIssuer.redeemSetTokenAndExchangeTokens(
+
+        uint256 oldBalance = usdc.balanceOf(user);
+
+        memeIndexToken.approve(address(tokenExchangeSetIssuer), memeIndexQuantity);
+        tokenExchangeSetIssuer.redeemSetTokenAndExchangeTokens(
             memeIndexToken,
             memeIndexQuantity,
-            issuanceModule,
             usdc,
+            expectedUSDCAfterSelling,
+            exchanges,
+            payLoads
+        );
+        uint256 afterBalance = usdc.balanceOf(user);
+        assertEq(afterBalance - oldBalance, expectedUSDCAfterSelling);
+    }
+
+    function testRedeemForWETH() external {
+        vm.rollFork(20544893);
+        vm.startPrank(user);
+        uint256 memeIndexQuantity = 1.7 ether;
+        _issueMeme(memeIndexQuantity);
+        uint256 flokiAmount = 23513139695712;
+
+        bytes[] memory payLoads = new bytes[](5);
+        payLoads[0] = sellDogeWETHPayLoad;
+        payLoads[1] = sellShibWETHPayLoad;
+        payLoads[2] = sellPepeWETHPayLoad;
+        payLoads[3] = _computeFlokiSellData(flokiAmount, 0, wETHAddress);
+        payLoads[4] = sellWethWETHPayLoad;
+        address[] memory exchanges = new address[](5);
+        exchanges[0] = paraSwapV6Address;
+        exchanges[1] = paraSwapV6Address;
+        exchanges[2] = paraSwapV6Address;
+        exchanges[3] = uniswapRouterAddress;
+        exchanges[4] = paraSwapV6Address;
+        memeIndexToken.approve(address(tokenExchangeSetIssuer), memeIndexQuantity);
+        tokenExchangeSetIssuer.redeemSetTokenAndExchangeTokens(
+            memeIndexToken,
+            memeIndexQuantity,
+            weth,
+            0,
             exchanges,
             payLoads
         );
     }
 
-    function testSellFlokiToken() external {
+    function testErrorForBuySetQuantityZero() external {
+        bytes[] memory payLoads = new bytes[](5);
+        address[] memory exchanges = new address[](5);
+        vm.expectRevert("setTokenQuantity must be > 0");
+        tokenExchangeSetIssuer.buyComponentsAndIssueSetToken(memeIndexToken, 0, weth, 1, exchanges, payLoads);
+    }
+
+    function testErrorForBuyQuoteAmountZero() external {
+        bytes[] memory payLoads = new bytes[](5);
+        address[] memory exchanges = new address[](5);
+        vm.expectRevert("totalQuoteAmount must be > 0");
+        tokenExchangeSetIssuer.buyComponentsAndIssueSetToken(memeIndexToken, 1, weth, 0, exchanges, payLoads);
+    }
+
+    function testErrorForRedeemSetQuantityZero() external {
+        bytes[] memory payLoads = new bytes[](5);
+        address[] memory exchanges = new address[](5);
+        vm.expectRevert("setTokenQuantity must be > 0");
+        tokenExchangeSetIssuer.redeemSetTokenAndExchangeTokens(memeIndexToken, 0, weth, 1, exchanges, payLoads);
+    }
+
+    function testErrorForBuyWhenInvalidSetToken() external {
+        bytes[] memory payLoads = new bytes[](5);
+        address[] memory exchanges = new address[](5);
         vm.startPrank(user);
-        address[] memory paths = new address[](3);
-        paths[0] = flokiAddress;
-        paths[1] = wETHAddress;
-        paths[2] = usdcAddress;
-        uint256 amountIn = 20746887966805;
-        uint256 beforeBalance = usdc.balanceOf(user);
-        deal({token: flokiAddress, to: user, give: amountIn});
-        floki.approve(address(flokiUniswapV2BuyTokens), amountIn);
-        flokiUniswapV2BuyTokens.sellFlokiToken(amountIn, paths);
-        uint256 afterBalance = usdc.balanceOf(user);
-        assertGt(afterBalance, beforeBalance);
+        weth.approve(address(tokenExchangeSetIssuer), 1);
+        vm.expectRevert("setToken doesn't have issuanceModule");
+        tokenExchangeSetIssuer.buyComponentsAndIssueSetToken(ISetToken(address(0x01)), 1, weth, 1, exchanges, payLoads);
     }
 
-    function testTransferTokensOnTokenExchang() external {
-        vm.startPrank(deployer);
-        uint256 amount = 10e6;
-        deal({token: usdcAddress, to: address(dexAggregatorSetIssuer), give: amount});
-        assertEq(usdc.balanceOf(address(dexAggregatorSetIssuer)), amount);
-        dexAggregatorSetIssuer.transferTokens(usdc, user, amount);
-        assertEq(usdc.balanceOf(address(dexAggregatorSetIssuer)), 0);
+    function testErrorForRedeemWhenInvalidSetToken() external {
+        bytes[] memory payLoads = new bytes[](5);
+        address[] memory exchanges = new address[](5);
+        vm.prank(deployer);
+        tokenExchangeSetIssuer.removeSetTokenIssuanceModules(address(memeIndexToken));
+        vm.startPrank(user);
+        _issueMeme(1);
+        memeIndexToken.approve(address(tokenExchangeSetIssuer), 1);
+        vm.expectRevert("setToken doesn't have issuanceModule");
+        tokenExchangeSetIssuer.redeemSetTokenAndExchangeTokens(memeIndexToken, 1, weth, 1, exchanges, payLoads);
     }
 
-    function testTransferTokensOnFlokiBuy() external {
+    function testErrorForBuyWhenInvalidExchange() external {
+        bytes[] memory payLoads = new bytes[](5);
+        address[] memory exchanges = new address[](5);
+        vm.startPrank(user);
+        weth.approve(address(tokenExchangeSetIssuer), 1);
+        vm.expectRevert("invalid exchange");
+        tokenExchangeSetIssuer.buyComponentsAndIssueSetToken(memeIndexToken, 1, weth, 1, exchanges, payLoads);
+    }
+
+    function testErrorForRedeemWhenInvalidExchange() external {
+        bytes[] memory payLoads = new bytes[](5);
+        address[] memory exchanges = new address[](5);
+        vm.startPrank(user);
+        _issueMeme(1);
+        memeIndexToken.approve(address(tokenExchangeSetIssuer), 1);
+        vm.expectRevert("invalid exchange");
+        tokenExchangeSetIssuer.redeemSetTokenAndExchangeTokens(memeIndexToken, 1, weth, 1, exchanges, payLoads);
+    }
+
+    function testErrorForBuyWhenExchangeCallFail() external {
+        bytes[] memory payLoads = new bytes[](5);
+        address[] memory exchanges = new address[](5);
+        exchanges[0] = paraSwapV6Address;
+        payLoads[0] = hex"000010";
+        vm.startPrank(user);
+        weth.approve(address(tokenExchangeSetIssuer), 1);
+        vm.expectRevert("exchange transaction failed");
+        tokenExchangeSetIssuer.buyComponentsAndIssueSetToken(memeIndexToken, 1, weth, 1, exchanges, payLoads);
+    }
+
+    function testErrorForRedeemWhenExchangeCallFail() external {
+        bytes[] memory payLoads = new bytes[](5);
+        address[] memory exchanges = new address[](5);
+        exchanges[0] = paraSwapV6Address;
+        payLoads[0] = hex"000010";
+        vm.startPrank(user);
+        _issueMeme(1);
+        memeIndexToken.approve(address(tokenExchangeSetIssuer), 1);
+        vm.expectRevert("exchange transaction failed");
+        tokenExchangeSetIssuer.redeemSetTokenAndExchangeTokens(memeIndexToken, 1, weth, 1, exchanges, payLoads);
+    }
+
+    function testErrorForBuyWhenComponentBoughtIsLess() external {
+        MockFakeExchange fakeExchange = new MockFakeExchange();
+        deal({token: dogeCoinAddress, to: address(fakeExchange), give: 1000e8});
+        vm.prank(deployer);
+        tokenExchangeSetIssuer.whiteListExchange(address(fakeExchange));
+        bytes[] memory payLoads = new bytes[](5);
+        address[] memory exchanges = new address[](5);
+        exchanges[0] = address(fakeExchange);
+        payLoads[0] = abi.encodeWithSelector(fakeExchange.transferLesserQuantityThanAsked.selector, doge, 2);
+        vm.startPrank(user);
+        weth.approve(address(tokenExchangeSetIssuer), 1 ether);
+        vm.expectRevert("Quantity bought less than required quantity");
+        tokenExchangeSetIssuer.buyComponentsAndIssueSetToken(
+            memeIndexToken,
+            1.5 ether,
+            weth,
+            1 ether,
+            exchanges,
+            payLoads
+        );
+    }
+
+    function testErrorForRedeemWhenMinAmountOutIsLess() external {
+        MockFakeExchange fakeExchange = new MockFakeExchange();
+        vm.prank(deployer);
+        tokenExchangeSetIssuer.whiteListExchange(address(fakeExchange));
+        bytes[] memory payLoads = new bytes[](5);
+        address[] memory exchanges = new address[](5);
+        bytes memory payload = abi.encodeWithSelector(fakeExchange.noop.selector);
+        exchanges[0] = address(fakeExchange);
+        payLoads[0] = payload;
+        exchanges[1] = address(fakeExchange);
+        payLoads[1] = payload;
+        exchanges[2] = address(fakeExchange);
+        payLoads[2] = payload;
+        exchanges[3] = address(fakeExchange);
+        payLoads[3] = payload;
+        exchanges[4] = address(fakeExchange);
+        payLoads[4] = payload;
+        vm.startPrank(user);
+        weth.approve(address(tokenExchangeSetIssuer), 1 ether);
+        _issueMeme(1.5 ether);
+        memeIndexToken.approve(address(tokenExchangeSetIssuer), 1.5 ether);
+        vm.expectRevert("Received amount less than minQuoteAmount");
+        tokenExchangeSetIssuer.redeemSetTokenAndExchangeTokens(
+            memeIndexToken,
+            1.5 ether,
+            weth,
+            1 ether,
+            exchanges,
+            payLoads
+        );
+    }
+
+    function testErrorForBuyWhenExchangesLessThanComponents() external {
+        bytes[] memory payLoads = new bytes[](5);
+        address[] memory exchanges = new address[](2);
+        vm.startPrank(user);
+        weth.approve(address(tokenExchangeSetIssuer), 1 ether);
+        vm.expectRevert("exchanges length mismatch");
+        tokenExchangeSetIssuer.buyComponentsAndIssueSetToken(
+            memeIndexToken,
+            1.5 ether,
+            weth,
+            1 ether,
+            exchanges,
+            payLoads
+        );
+    }
+
+    function testErrorForBuyWhenPayloadLessThanComponents() external {
+        bytes[] memory payLoads = new bytes[](2);
+        address[] memory exchanges = new address[](5);
+        vm.startPrank(user);
+        weth.approve(address(tokenExchangeSetIssuer), 1 ether);
+        vm.expectRevert("payloads length mismatch");
+        tokenExchangeSetIssuer.buyComponentsAndIssueSetToken(
+            memeIndexToken,
+            1.5 ether,
+            weth,
+            1 ether,
+            exchanges,
+            payLoads
+        );
+    }
+
+    function testErrorForRedeemWhenExchangesLessThanComponents() external {
+        bytes[] memory payLoads = new bytes[](5);
+        address[] memory exchanges = new address[](2);
+        vm.startPrank(user);
+        _issueMeme(1.5 ether);
+        memeIndexToken.approve(address(tokenExchangeSetIssuer), 1.5 ether);
+        vm.expectRevert("exchanges length mismatch");
+        tokenExchangeSetIssuer.redeemSetTokenAndExchangeTokens(
+            memeIndexToken,
+            1.5 ether,
+            weth,
+            1 ether,
+            exchanges,
+            payLoads
+        );
+    }
+
+    function testErrorForRedeemWhenPayloadLessThanComponents() external {
+        bytes[] memory payLoads = new bytes[](2);
+        address[] memory exchanges = new address[](5);
+        vm.startPrank(user);
+        _issueMeme(1.5 ether);
+        memeIndexToken.approve(address(tokenExchangeSetIssuer), 1.5 ether);
+        vm.expectRevert("payloads length mismatch");
+        tokenExchangeSetIssuer.redeemSetTokenAndExchangeTokens(
+            memeIndexToken,
+            1.5 ether,
+            weth,
+            1 ether,
+            exchanges,
+            payLoads
+        );
+    }
+
+    function testErrorAddZeroSetToken() external {
         vm.startPrank(deployer);
-        uint256 amount = 10e6;
-        deal({token: usdcAddress, to: address(flokiUniswapV2BuyTokens), give: amount});
-        assertEq(usdc.balanceOf(address(flokiUniswapV2BuyTokens)), amount);
-        flokiUniswapV2BuyTokens.transferTokens(usdc, user, amount);
-        assertEq(usdc.balanceOf(address(flokiUniswapV2BuyTokens)), 0);
+        vm.expectRevert("setToken can't be address(0)");
+        tokenExchangeSetIssuer.addSetTokenIssuanceModules(address(0), address(0x1));
+    }
+
+    function testErrorAddSetTokenZeroIssuance() external {
+        vm.startPrank(deployer);
+        vm.expectRevert("issuanceModule can't be address(0)");
+        tokenExchangeSetIssuer.addSetTokenIssuanceModules(address(0x1), address(0));
+    }
+
+    function testErrorAddSetTokenWhenNotAdmin() external {
+        vm.expectRevert("Ownable: caller is not the owner");
+        tokenExchangeSetIssuer.addSetTokenIssuanceModules(address(0x1), address(0x02));
+    }
+
+    function testErrorApproveTokensWhenNotAdmin() external {
+        IERC20[] memory tokens;
+        vm.expectRevert("Ownable: caller is not the owner");
+        tokenExchangeSetIssuer.approveTokens(tokens, address(0x02), uint256(-1));
+    }
+
+    function testErrorRemoveSetTokenWhenNotAdmin() external {
+        vm.expectRevert("Ownable: caller is not the owner");
+        tokenExchangeSetIssuer.removeSetTokenIssuanceModules(address(0x1));
+    }
+
+    function testErrorWhiteListExchangeWhenNotAdmin() external {
+        vm.expectRevert("Ownable: caller is not the owner");
+        tokenExchangeSetIssuer.whiteListExchange(address(0x1));
+    }
+
+    function testErrorRemoveExchangeWhenNotAdmin() external {
+        vm.expectRevert("Ownable: caller is not the owner");
+        tokenExchangeSetIssuer.removeExchange(address(0x1));
+    }
+
+    function testErrorRecoverTokensWhenNotAdmin() external {
+        vm.expectRevert("Ownable: caller is not the owner");
+        tokenExchangeSetIssuer.recoverTokens(weth, address(0x1), 1);
+    }
+
+    function testErrorWhenSendETH() external {
+        vm.expectRevert("ETH not accepted");
+        payable(address(tokenExchangeSetIssuer)).transfer(1 ether);
+    }
+
+    function testApproveToken() external {
+        IERC20[] memory tokens = new IERC20[](1);
+        tokens[0] = pepe;
+        address testUser = address(0x71);
+        vm.prank(deployer);
+        tokenExchangeSetIssuer.approveTokens(tokens, testUser, uint256(-1));
+        assertEq(pepe.allowance(address(tokenExchangeSetIssuer), testUser), uint256(-1));
+    }
+
+    function testApproveTokenSetZero() external {
+        IERC20[] memory tokens = new IERC20[](1);
+        tokens[0] = pepe;
+        address testUser = address(0x71);
+        vm.startPrank(deployer);
+        tokenExchangeSetIssuer.approveTokens(tokens, testUser, uint256(-1));
+        assertEq(pepe.allowance(address(tokenExchangeSetIssuer), testUser), uint256(-1));
+        tokenExchangeSetIssuer.approveTokens(tokens, testUser, 0);
+        assertEq(pepe.allowance(address(tokenExchangeSetIssuer), testUser), 0);
+    }
+
+    function testAddSetTokenIssuanceModules() external {
+        vm.startPrank(deployer);
+        tokenExchangeSetIssuer.addSetTokenIssuanceModules(address(0x1), address(0x2));
+        assertEq(tokenExchangeSetIssuer.setTokenIssuanceModules(address(0x1)), address(0x02));
+    }
+
+    function testRemoveTokenIssuanceModules() external {
+        vm.startPrank(deployer);
+        tokenExchangeSetIssuer.addSetTokenIssuanceModules(address(0x1), address(0x2));
+        assertEq(tokenExchangeSetIssuer.setTokenIssuanceModules(address(0x1)), address(0x02));
+        tokenExchangeSetIssuer.removeSetTokenIssuanceModules(address(0x1));
+        assertEq(tokenExchangeSetIssuer.setTokenIssuanceModules(address(0x1)), address(0x0));
+    }
+
+    function testWhiteListExchange() external {
+        vm.startPrank(deployer);
+        assertEq(tokenExchangeSetIssuer.validExchanges(address(0x5)), false);
+        tokenExchangeSetIssuer.whiteListExchange(address(0x5));
+        assertEq(tokenExchangeSetIssuer.validExchanges(address(0x5)), true);
+    }
+
+    function testRemoveExchange() external {
+        vm.startPrank(deployer);
+        tokenExchangeSetIssuer.whiteListExchange(address(0x5));
+        assertEq(tokenExchangeSetIssuer.validExchanges(address(0x5)), true);
+        tokenExchangeSetIssuer.removeExchange(address(0x5));
+        assertEq(tokenExchangeSetIssuer.validExchanges(address(0x5)), false);
+    }
+
+    function testRecoverTokens() external {
+        vm.prank(user);
+        weth.transfer(address(tokenExchangeSetIssuer), 1 ether);
+        assertEq(weth.balanceOf(address(tokenExchangeSetIssuer)), 1 ether);
+        vm.startPrank(deployer);
+        tokenExchangeSetIssuer.recoverTokens(weth, address(deployer), 1 ether);
+        assertEq(weth.balanceOf(deployer), 1 ether);
+        assertEq(weth.balanceOf(address(tokenExchangeSetIssuer)), 0);
     }
 }
