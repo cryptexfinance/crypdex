@@ -4,6 +4,9 @@
 
 This document provides detailed information on the usage and expected behavior of two key functions in our system: `buyComponentsAndIssueSetToken` and `redeemSetTokenAndExchangeTokens`. It also specifies the scope of the audit, including the exchanges that are whitelisted.
 
+## Contract to Audit
+There's only one contract to audit: `contracts/extensions/TokenExchangeSetIssuer.sol` 
+
 ## Function Descriptions
 
 ### `buyComponentsAndIssueSetToken`
@@ -14,14 +17,16 @@ This function is used to purchase components and issue a Set Token. It interacts
 
 #### Parameters
 
-- `componentAddresses`: An array of addresses for the tokens to be purchased.
-- `amounts`: An array of amounts corresponding to each token address.
-- `recipient`: The address where the issued Set Token will be sent.
-- `exchange`: The address of the exchange to be used for purchasing components (currently only Paraswap v6 and Uniswap Router are supported).
+- `setToken`: The instance of the SetToken contract.
+- `setTokenQuantity`: The quantity of the SetToken to issue.
+- `quoteAsset`: The instance of the IERC20 token used for buying the underlying components.
+- `totalQuoteAmount`: The maximum amount the user pays for buying the underlying components.
+- `exchanges`: An array of addresses used to buy each component.
+- `exchangePayloads`: Payloads targeted towards each exchange for buying the corresponding component.
 
 #### Example Usage
 
-Please refer to this [test]().
+Please refer to this [test](https://github.com/cryptexfinance/crypdex/blob/d0de0f9a85bc632fd88fd42c2028705b089836fe/test/unit/ForkTestTokenExchangeSetIssuer.t.sol#L168-L215).
 
 ### `redeemSetTokenAndExchangeTokens`
 
@@ -31,12 +36,15 @@ This function allows for the redemption of a Set Token and the exchange of its c
 
 #### Parameters
 
-- `setTokenAddress`: The address of the Set Token to be redeemed.
-- `amount`: The amount of Set Token to be redeemed.
-- `exchange`: The address of the exchange to be used for exchanging the components (currently only Paraswap v6 and Uniswap Router are supported).
+- `setToken`: Instance of the SetToken contract.
+- `setTokenQuantity`: Quantity of the SetToken to redeem. 
+- `quoteAsset`: Instance of the IERC20 token received after selling the underlying components. 
+- `minQuoteAmount`: The minimum `quoteAsset` amount the user expects to receive after selling the underlying components. 
+- `exchanges`: An array of addresses used to sell each component. 
+- `exchangePayloads`: Payloads targeted towards each exchange for selling the corresponding component.
 
 #### Example Usage
-Please refer to this [test]().
+Please refer to this [test](https://github.com/cryptexfinance/crypdex/blob/d0de0f9a85bc632fd88fd42c2028705b089836fe/test/unit/ForkTestTokenExchangeSetIssuer.t.sol#L335-L370).
 
 ### Audit Scope
 
