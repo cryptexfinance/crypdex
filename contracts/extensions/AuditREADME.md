@@ -25,7 +25,7 @@ This function is used to purchase components and issue a Set Token. It interacts
 
 #### Example Usage
 
-Please refer to this [test](https://github.com/cryptexfinance/crypdex/blob/d0de0f9a85bc632fd88fd42c2028705b089836fe/test/unit/ForkTestTokenExchangeSetIssuer.t.sol#L168-L215).
+Please refer to this [test](https://github.com/cryptexfinance/crypdex/blob/3c830a57cdfe729576fa8c5b06e2bac32d2fec02/test/unit/ForkTestTokenExchangeSetIssuer.t.sol#L173-L222).
 
 ### `redeemSetTokenAndExchangeTokens`
 
@@ -43,4 +43,4 @@ This function allows for the redemption of a Set Token and the exchange of its c
 
 
 #### Example Usage
-Please refer to this [test](https://github.com/cryptexfinance/crypdex/blob/d0de0f9a85bc632fd88fd42c2028705b089836fe/test/unit/ForkTestTokenExchangeSetIssuer.t.sol#L335-L370).
+Please refer to this [test](https://github.com/cryptexfinance/crypdex/blob/3c830a57cdfe729576fa8c5b06e2bac32d2fec02/test/unit/ForkTestTokenExchangeSetIssuer.t.sol#L342-L376).
