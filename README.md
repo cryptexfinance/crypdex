@@ -15,6 +15,7 @@ git submodule update --init
 ```
 To run the tests run:  
 ```
+forge build -o out/
 forge test -vvv
 ```
 To run fork tests
