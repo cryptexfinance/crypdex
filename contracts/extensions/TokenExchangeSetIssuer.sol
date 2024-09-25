@@ -1,34 +1,83 @@
 // SPDX-License-Identifier: Apache-2.0
-pragma solidity 0.6.10;
-pragma experimental ABIEncoderV2;
+pragma solidity 0.8.26;
 
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
-import {SafeMath} from "@openzeppelin/contracts/math/SafeMath.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
-import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ISetToken} from "../interfaces/ISetToken.sol";
-import {BasicIssuanceModule} from "../modules/BasicIssuanceModule.sol";
+import {IERC20} from "@openzeppelin-contracts-5/contracts/token/ERC20/IERC20.sol";
+import {SafeERC20} from "@openzeppelin-contracts-5/contracts/token/ERC20/utils/SafeERC20.sol";
+import {ReentrancyGuard} from "@openzeppelin-contracts-5/contracts/utils/ReentrancyGuard.sol";
+import {Ownable} from "@openzeppelin-contracts-5/contracts/access/Ownable.sol";
+import {ISetToken} from "../interfaces/v0.8/ISetToken.sol";
+import {IIssuanceModule} from "../interfaces/v0.8/IIssuanceModule.sol";
 
 /// @title TokenExchangeSetIssuer
 /// @author Cryptex Finance
 /// @dev Note:
-/// - This is a periphery contract that helps users buy the underlying components
+/// - This is a peripheral contract that helps users buy the underlying components
 ///   of the SetTokens and then issues the SetToken to the user.
 ///   It also allows users to redeem their SetTokens for a single asset.
 /// - For buying and selling, exchanges like Paraswap or Uniswap will be used,
 ///   and the payload should be constructed by an interface, such as a UI.
 /// @notice WARNING: Do not send funds directly to this contract. This contract does not handle
-///   receiving ETH or ERC20 tokens directly. Sending funds here may result in a loss.
+///         receiving ETH or ERC20 tokens directly. Sending funds here may result in a loss.
 /// @notice WARNING: Any dust (small amounts) left over from the swap of components during
-///   buy or sell operations will not be refunded. Users are advised to use swap functions
-///   that avoid or minimize dust accumulation.
+///         buy or sell operations will not be refunded. Users are advised to use swap functions
+///         that avoid or minimize dust accumulation.
 contract TokenExchangeSetIssuer is Ownable, ReentrancyGuard {
-    using SafeMath for uint256;
-    /// @dev Mapping of setToken to its authorized BasicIssuanceModule.
+    /// @dev Maps each SetToken to its associated authorized IIssuanceModule.
+    ///      This mapping serves two purposes:
+    ///      1. To verify whether a SetToken is authorized.
+    ///      2. To retrieve the corresponding IIssuanceModule for a given SetToken.
     mapping(address => address) public setTokenIssuanceModules;
     /// @dev Mapping of whitelisted function for a target contract.
     mapping(bytes24 => bool) public whitelistedFunctions;
+
+    /// @notice Thrown when the quantity of the Set token for buying or selling is zero.
+    error SetQuantityCannotBeZero();
+    /// @notice Thrown when the quote asset amount for buying or selling is zero.
+    error QuoteAmountCannotBeZero();
+    /// @notice Thrown when the target address provided is the zero address.
+    error TargetAddressCannotBeZero();
+    /// @notice Thrown when the Set token address provided is the zero address.
+    error SetAddressCannotBeZero();
+    /// @notice Thrown when the issuance module address provided is the zero address.
+    error IssuanceAddressCannotBeZero();
+    /// @notice Thrown when the amount received from selling the Set token is less than expected.
+    error ReceivedAmountLessThanExpected();
+    /// @notice Thrown when attempting to call or revoke a non-whitelisted function.
+    error FunctionNotWhitelisted();
+    /// @notice Thrown when ETH is sent to the contract.
+    error ETHNotAccepted();
+    /// @notice Thrown when attempting to buy or sell a Set token that is not whitelisted.
+    error SetTokenNotWhitelisted();
+    /// @notice Thrown when the number of exchanges does not match the number of Set token components.
+    error ExchangeLengthMismatch();
+    /// @notice Thrown when the length of the exchange payload does not match the number of Set token components.
+    error PayloadLengthMismatch();
+    /// @notice Thrown when a call to an exchange fails.
+    error ExchangeCallFailed();
+    /// @notice Thrown when the amount of Set token components bought is insufficient for issuing the desired
+    ///         quantity of the Set token.
+    error QuantityBoughtLessThanMinimum();
+    /// @notice Thrown when the length of the payload for buying or selling tokens is less than 4 bytes.
+    error InvalidPayload();
+
+    /// @notice Emitted when a function is whitelisted for a specific target contract.
+    /// @param target The address of the target contract.
+    /// @param selector The 4 byte function selector that has been whitelisted.
+    event FunctionWhitelisted(address target, bytes4 selector);
+    /// @notice Emitted when a previously whitelisted function is revoked for a specific target contract.
+    /// @param target The address of the target contract.
+    /// @param selector The 4 byte function selector that has been revoked.
+    event FunctionRevoked(address target, bytes4 selector);
+    /// @notice Emitted when an IssuanceModule is added to a SetToken.
+    /// @param setToken The address of the SetToken.
+    /// @param issuanceModule The address of the IssuanceModule that was added.
+    event IssuanceModuleAdded(address setToken, address issuanceModule);
+    /// @notice Emitted when an IssuanceModule is removed from a SetToken.
+    /// @param setToken The address of the SetToken.
+    /// @param issuanceModule The address of the IssuanceModule that was removed.
+    event IssuanceModuleRemoved(address setToken, address issuanceModule);
+
+    constructor(address owner) Ownable(owner) {}
 
     /// @notice Buys the underlying components of the SetToken and issues the SetToken.
     /// @dev To buy the underlying components, the payload needs to be constructed for the whitelisted exchanges.
@@ -40,7 +89,7 @@ contract TokenExchangeSetIssuer is Ownable, ReentrancyGuard {
     /// @param exchangePayloads: Payloads targeted towards each exchange for buying the corresponding component.
     /// @return extraQuoteBalance The remaining quote balance after the purchase and issuance.
     /// @notice WARNING: Dust (small amounts) of the `quoteAsset` may remain after the operation
-    ///   and will not be refunded to the user. Users should use swap functions that do not leave dust.
+    ///         and will not be refunded to the user. Users should use swap functions that do not leave dust.
     function buyComponentsAndIssueSetToken(
         ISetToken setToken,
         uint256 setTokenQuantity,
@@ -49,15 +98,15 @@ contract TokenExchangeSetIssuer is Ownable, ReentrancyGuard {
         address[] calldata exchanges,
         bytes[] calldata exchangePayloads
     ) external nonReentrant returns (uint256 extraQuoteBalance) {
-        require(setTokenQuantity > 0, "setTokenQuantity must be > 0");
-        require(totalQuoteAmount > 0, "totalQuoteAmount must be > 0");
+        if (setTokenQuantity == 0) revert SetQuantityCannotBeZero();
+        if (totalQuoteAmount == 0) revert QuoteAmountCannotBeZero();
         uint256 beforeQuoteAssetBalance = quoteAsset.balanceOf(address(this));
         SafeERC20.safeTransferFrom(quoteAsset, msg.sender, address(this), totalQuoteAmount);
-        BasicIssuanceModule issuanceModule = _getIssuanceModule(setToken);
+        IIssuanceModule issuanceModule = _getIssuanceModule(setToken);
         _buyComponents(setToken, setTokenQuantity, quoteAsset, issuanceModule, exchanges, exchangePayloads);
         issuanceModule.issue(setToken, setTokenQuantity, msg.sender);
         uint256 afterQuoteAssetBalance = quoteAsset.balanceOf(address(this));
-        extraQuoteBalance = afterQuoteAssetBalance.sub(beforeQuoteAssetBalance);
+        extraQuoteBalance = afterQuoteAssetBalance - beforeQuoteAssetBalance;
         // refund extra quoteAsset
         if (extraQuoteBalance > 0) {
             SafeERC20.safeTransfer(quoteAsset, msg.sender, extraQuoteBalance);
@@ -74,7 +123,7 @@ contract TokenExchangeSetIssuer is Ownable, ReentrancyGuard {
     /// @param exchangePayloads: Payloads targeted towards each exchange for selling the corresponding component.
     /// @return quoteAssetBalanceAfterSell The `quoteAsset` balance obtained after selling the components.
     /// @notice WARNING: Any dust accumulated during the selling of components will not be refunded.
-    ///   Users should ensure they use swap functions that do not leave dust.
+    ///         Users should ensure they use swap functions that do not leave dust.
     function redeemSetTokenAndExchangeTokens(
         ISetToken setToken,
         uint256 setTokenQuantity,
@@ -83,16 +132,18 @@ contract TokenExchangeSetIssuer is Ownable, ReentrancyGuard {
         address[] calldata exchanges,
         bytes[] calldata exchangePayloads
     ) external nonReentrant returns (uint256 quoteAssetBalanceAfterSell) {
-        require(setTokenQuantity > 0, "setTokenQuantity must be > 0");
+        if (setTokenQuantity == 0) revert SetQuantityCannotBeZero();
         uint256 beforeQuoteAssetBalance = quoteAsset.balanceOf(address(this));
         SafeERC20.safeTransferFrom(IERC20(address(setToken)), msg.sender, address(this), setTokenQuantity);
 
-        BasicIssuanceModule issuanceModule = _getIssuanceModule(setToken);
+        IIssuanceModule issuanceModule = _getIssuanceModule(setToken);
         issuanceModule.redeem(setToken, setTokenQuantity, address(this));
 
         _sellComponents(setToken, setTokenQuantity, issuanceModule, quoteAsset, exchanges, exchangePayloads);
-        quoteAssetBalanceAfterSell = quoteAsset.balanceOf(address(this)).sub(beforeQuoteAssetBalance);
-        require(quoteAssetBalanceAfterSell >= minQuoteAmount, "Received amount less than minQuoteAmount");
+        quoteAssetBalanceAfterSell = quoteAsset.balanceOf(address(this)) - beforeQuoteAssetBalance;
+
+        if (quoteAssetBalanceAfterSell < minQuoteAmount) revert ReceivedAmountLessThanExpected();
+
         SafeERC20.safeTransfer(quoteAsset, msg.sender, quoteAssetBalanceAfterSell);
         return quoteAssetBalanceAfterSell;
     }
@@ -108,39 +159,40 @@ contract TokenExchangeSetIssuer is Ownable, ReentrancyGuard {
         }
     }
 
-
-     /// @notice Whitelists multiple functions for the specified target contract.
-     /// @dev This function allows the contract owner to whitelist multiple functions identified
-     ///      by their target address and function selectors. Only whitelisted functions can
-     ///      be called through the `call` function, ensuring that only approved
-     ///      functions are executed.
-     /// @param target The address of the contract that contains the functions to be whitelisted.
-     ///               Must be a valid contract address (non-zero).
-     /// @param selectors An array of function selectors (4-byte signatures) belonging to the target address.
-     ///                  Each selector represents a specific function within the target contract that is
-     ///                  being whitelisted.
+    /// @notice Whitelists multiple functions for the specified target contract.
+    /// @dev This function allows the contract owner to whitelist multiple functions identified
+    ///      by their target address and function selectors. Only whitelisted functions can
+    ///      be called through the `call` function, ensuring that only approved
+    ///      functions are executed.
+    /// @param target The address of the contract that contains the functions to be whitelisted.
+    ///               Must be a valid contract address (non-zero).
+    /// @param selectors An array of function selectors (4-byte signatures) belonging to the target address.
+    ///                  Each selector represents a specific function within the target contract that is
+    ///                  being whitelisted.
     function whitelistFunctions(address target, bytes4[] calldata selectors) external onlyOwner {
-        require(target != address(0), "Invalid target address");
-        bytes24 signature;
-        for(uint256 i=0; i < selectors.length; i++) {
-            signature = _calculateFunctionSignature(target, selectors[i]);
-            whitelistedFunctions[signature] = true;
+        if (target == address(0)) revert TargetAddressCannotBeZero();
+        bytes24 identifier;
+        for (uint256 i = 0; i < selectors.length; i++) {
+            identifier = _calculateFunctionIdentifier(target, selectors[i]);
+            whitelistedFunctions[identifier] = true;
+            emit FunctionWhitelisted(target, selectors[i]);
         }
     }
 
-     /// @notice Removes multiple functions from the whitelist for the specified target contract.
-     /// @dev This function allows the contract owner to remove multiple functions, identified
-     ///      by their target address and function selectors, from the whitelist. Once a function
-     ///      is removed from the whitelist, it can no longer be called via the `call` function.
-     /// @param target The address of the contract that contains the functions to be removed from the whitelist.
-     /// @param selectors An array of function selectors (4-byte signatures) belonging to the target address,
-     ///                  representing the functions to be removed from the whitelist.
+    /// @notice Removes multiple functions from the whitelist for the specified target contract.
+    /// @dev This function allows the contract owner to remove multiple functions, identified
+    ///      by their target address and function selectors, from the whitelist. Once a function
+    ///      is removed from the whitelist, it can no longer be called via the `call` function.
+    /// @param target The address of the contract that contains the functions to be removed from the whitelist.
+    /// @param selectors An array of function selectors (4-byte signatures) belonging to the target address,
+    ///                  representing the functions to be removed from the whitelist.
     function revokeWhitelistedFunctions(address target, bytes4[] calldata selectors) external onlyOwner {
-        bytes24 signature;
-        for(uint256 i=0; i < selectors.length; i++) {
-            signature = _calculateFunctionSignature(target, selectors[i]);
-            require(whitelistedFunctions[signature], "function not whitelisted");
-            delete whitelistedFunctions[signature];
+        bytes24 identifier;
+        for (uint256 i = 0; i < selectors.length; i++) {
+            identifier = _calculateFunctionIdentifier(target, selectors[i]);
+            if (!whitelistedFunctions[identifier]) revert FunctionNotWhitelisted();
+            delete whitelistedFunctions[identifier];
+            emit FunctionRevoked(target, selectors[i]);
         }
     }
 
@@ -149,16 +201,20 @@ contract TokenExchangeSetIssuer is Ownable, ReentrancyGuard {
     /// @param setToken: The address of the SetToken for which the issuance module is being set.
     /// @param issuanceModule: The address of the issuance module to be associated with the SetToken.
     function addSetTokenIssuanceModules(address setToken, address issuanceModule) external onlyOwner {
-        require(setToken != address(0), "setToken can't be address(0)");
-        require(issuanceModule != address(0), "issuanceModule can't be address(0)");
+        if (setToken == address(0)) revert SetAddressCannotBeZero();
+        if (issuanceModule == address(0)) revert IssuanceAddressCannotBeZero();
         setTokenIssuanceModules[setToken] = issuanceModule;
+        emit IssuanceModuleAdded(setToken, issuanceModule);
     }
 
     /// @notice Removes the issuance module associated with a specified SetToken.
     /// @dev This function deletes the mapping between a SetToken and its issuance module.
     /// @param setToken: The address of the SetToken for which the issuance module is being removed.
     function removeSetTokenIssuanceModules(address setToken) external onlyOwner {
+        // _getIssuanceModule will revert if setToken is not whitelisted
+        address issuanceModule = address(_getIssuanceModule(ISetToken(setToken)));
         delete setTokenIssuanceModules[setToken];
+        emit IssuanceModuleRemoved(setToken, issuanceModule);
     }
 
     /// @notice Allows the contract owner to recover any ERC20 tokens held by the contract.
@@ -172,40 +228,41 @@ contract TokenExchangeSetIssuer is Ownable, ReentrancyGuard {
 
     /// @notice Fallback function to revert any ETH sent to the contract.
     receive() external payable {
-        revert("ETH not accepted");
+        revert ETHNotAccepted();
     }
 
     /*XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX*/
     /*                                 private functions                                  */
     /*XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX*/
 
-    function _getIssuanceModule(ISetToken setToken) private view returns (BasicIssuanceModule) {
+    function _getIssuanceModule(ISetToken setToken) private view returns (IIssuanceModule) {
         address issuanceModule = setTokenIssuanceModules[address(setToken)];
-        require(address(issuanceModule) != address(0), "setToken doesn't have issuanceModule");
-        return BasicIssuanceModule(issuanceModule);
+        if (address(issuanceModule) == address(0)) revert SetTokenNotWhitelisted();
+        return IIssuanceModule(issuanceModule);
     }
 
     function _sellComponents(
         ISetToken setToken,
         uint256 setTokenQuantity,
-        BasicIssuanceModule issuanceModule,
+        IIssuanceModule issuanceModule,
         IERC20 quoteAsset,
         address[] calldata exchanges,
         bytes[] calldata exchangePayloads
     ) private {
         (address[] memory components, ) = issuanceModule.getRequiredComponentUnitsForIssue(setToken, setTokenQuantity);
         uint256 componentsLength = components.length;
-        require(exchanges.length == componentsLength, "exchanges length mismatch");
-        require(exchangePayloads.length == componentsLength, "payloads length mismatch");
+        if (exchanges.length != componentsLength) revert ExchangeLengthMismatch();
+        if (exchangePayloads.length != componentsLength) revert PayloadLengthMismatch();
         bool success;
 
         for (uint256 index = 0; index < componentsLength; index++) {
             if (components[index] == address(quoteAsset)) continue;
             address exchange = exchanges[index];
-            bytes memory exchangePayload = exchangePayloads[index];
+            bytes calldata exchangePayload = exchangePayloads[index];
             _requireWhitelistedFunction(exchange, exchangePayload);
+            // Wont use native asset, so no need to pass msg.value
             (success, ) = exchange.call(exchangePayload);
-            require(success, "exchange transaction failed");
+            if (!success) revert ExchangeCallFailed();
         }
     }
 
@@ -213,7 +270,7 @@ contract TokenExchangeSetIssuer is Ownable, ReentrancyGuard {
         ISetToken setToken,
         uint256 setTokenQuantity,
         IERC20 quoteAsset,
-        BasicIssuanceModule issuanceModule,
+        IIssuanceModule issuanceModule,
         address[] calldata exchanges,
         bytes[] calldata exchangePayloads
     ) private {
@@ -221,8 +278,8 @@ contract TokenExchangeSetIssuer is Ownable, ReentrancyGuard {
         (address[] memory components, uint256[] memory componentQuantities) = issuanceModule
             .getRequiredComponentUnitsForIssue(setToken, setTokenQuantity);
         uint256 componentsLength = components.length;
-        require(exchanges.length == componentsLength, "exchanges length mismatch");
-        require(exchangePayloads.length == componentsLength, "payloads length mismatch");
+        if (exchanges.length != componentsLength) revert ExchangeLengthMismatch();
+        if (exchangePayloads.length != componentsLength) revert PayloadLengthMismatch();
 
         for (uint256 index = 0; index < componentsLength; index++) {
             address componentAddress = components[index];
@@ -231,34 +288,27 @@ contract TokenExchangeSetIssuer is Ownable, ReentrancyGuard {
             uint256 beforeComponentBalance = component.balanceOf(address(this));
 
             address exchange = exchanges[index];
-            bytes memory exchangePayload = exchangePayloads[index];
+            bytes calldata exchangePayload = exchangePayloads[index];
             _requireWhitelistedFunction(exchange, exchangePayload);
             // Wont use native asset, so no need to pass msg.value
             (success, ) = exchange.call(exchangePayload);
-            require(success, "exchange transaction failed");
+            if (!success) revert ExchangeCallFailed();
 
             uint256 afterComponentBalance = component.balanceOf(address(this));
-            require(
-                afterComponentBalance.sub(beforeComponentBalance) >= componentQuantities[index],
-                "Quantity bought less than required quantity"
-            );
+            if (afterComponentBalance - beforeComponentBalance < componentQuantities[index])
+                revert QuantityBoughtLessThanMinimum();
         }
     }
 
-    function _requireWhitelistedFunction(address target, bytes memory payload) private view {
-        require(payload.length >= 4, "Invalid payload");
-        bytes4 selector;
-        assembly {
-            selector := mload(add(payload, 32))
-        }
-        bytes24 signature = _calculateFunctionSignature(target, selector);
-        require(whitelistedFunctions[signature], "function not whitelisted");
+    function _requireWhitelistedFunction(address target, bytes calldata payload) private view {
+        if (payload.length < 4) revert InvalidPayload();
+        bytes4 selector = bytes4(payload[0:4]);
+        bytes24 identifier = _calculateFunctionIdentifier(target, selector);
+        if (!whitelistedFunctions[identifier]) revert FunctionNotWhitelisted();
     }
 
-    function _calculateFunctionSignature(address target, bytes4 selector) private pure returns(bytes24 signature) {
+    function _calculateFunctionIdentifier(address target, bytes4 selector) private pure returns (bytes24 identifier) {
         bytes memory encodedData = abi.encodePacked(target, selector);
-        assembly {
-            signature := mload(add(encodedData, 32))
-        }
+        identifier = bytes24(encodedData);
     }
 }
