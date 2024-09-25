@@ -7,6 +7,7 @@ gas_reports = ["*"]
 libs = ['lib']
 cache_path  = 'forge-cache'
 no_match_contract = "Fork"
+auto_detect_remappings = false
 
 [profile.fork]
 optimizer = true
@@ -17,6 +18,7 @@ gas_reports = ["*"]
 no_match_contract = "Bar"
 match_contract = "Fork"
 evm_version = 'shanghai'
+auto_detect_remappings = false
 
 [profile.ci]
 fuzz_runs = 10000
