@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
-pragma solidity 0.6.10;
-pragma experimental ABIEncoderV2;
+pragma solidity 0.8.26;
+
 
 struct GenericData {
     address srcToken;

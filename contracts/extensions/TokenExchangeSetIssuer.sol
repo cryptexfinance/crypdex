@@ -1,38 +1,12 @@
 // SPDX-License-Identifier: Apache-2.0
-pragma solidity 0.6.10;
-pragma experimental ABIEncoderV2;
+pragma solidity 0.8.26;
 
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
-import {SafeMath} from "@openzeppelin/contracts/math/SafeMath.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
-import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ISetToken} from "../interfaces/ISetToken.sol";
-import {BasicIssuanceModule} from "../modules/BasicIssuanceModule.sol";
-import "../interfaces/external/IParaswapV6.sol";
-import {IUniswapV2Router02} from "../interfaces/external/IUniswapV2Router02.sol";
-
-enum ExchangeFunction {
-    NO_OP, //0
-    PARASWAP_SWAP_EXACT_AMOUNT_IN, // 1
-    PARASWAP_SWAP_EXACT_AMOUNT_OUT, // 2
-    PARASWAP_SWAP_EXACT_AMOUNT_IN_ON_BALANCER_V2, // 3
-    PARASWAP_SWAP_EXACT_AMOUNT_OUT_ON_BALANCER_V2, // 4
-    PARASWAP_SWAP_EXACT_AMOUNT_IN_ON_CURVE_V1, // 5
-    PARASWAP_SWAP_EXACT_AMOUNT_IN_ON_CURVE_V2, // 6
-    PARASWAP_SWAP_EXACT_AMOUNT_IN_ON_UNISWAP_V2, // 7
-    PARASWAP_SWAP_EXACT_AMOUNT_OUT_ON_UNISWAP_V2, // 8
-    PARASWAP_SWAP_EXACT_AMOUNT_IN_ON_UNISWAP_V3, // 9
-    PARASWAP_SWAP_EXACT_AMOUNT_OUT_ON_UNISWAP_V3, // 10
-    UNISWAP_SWAP_EXACT_TOKENS_FOR_TOKENS, // 11
-    UNISWAP_SWAP_TOKENS_FOR_EXACT_TOKENS, // 12
-    UNISWAP_SWAP_EXACT_TOKENS_FOR_TOKENS_SUPPORTING_FEE_ON_TRANSFER_TOKENS // 13
-}
-
-struct ExchangeParams {
-    ExchangeFunction exchangeFunction;
-    bytes exchangeData;
-}
+import {IERC20} from "@openzeppelin-contracts-5/contracts/token/ERC20/IERC20.sol";
+import {SafeERC20} from "@openzeppelin-contracts-5/contracts/token/ERC20/utils/SafeERC20.sol";
+import {ReentrancyGuard} from "@openzeppelin-contracts-5/contracts/utils/ReentrancyGuard.sol";
+import {Ownable} from "@openzeppelin-contracts-5/contracts/access/Ownable.sol";
+import {ISetToken} from "../interfaces/v0.8/ISetToken.sol";
+import {IIssuanceModule} from "../interfaces/v0.8/IIssuanceModule.sol";
 
 /// @title TokenExchangeSetIssuer
 /// @author Cryptex Finance
@@ -42,18 +16,68 @@ struct ExchangeParams {
 ///   It also allows users to redeem their SetTokens for a single asset.
 /// - For buying and selling, exchanges like Paraswap or Uniswap will be used,
 ///   and the payload should be constructed by an interface, such as a UI.
+/// @notice WARNING: Do not send funds directly to this contract. This contract does not handle
+///         receiving ETH or ERC20 tokens directly. Sending funds here may result in a loss.
+/// @notice WARNING: Any dust (small amounts) left over from the swap of components during
+///         buy or sell operations will not be refunded. Users are advised to use swap functions
+///         that avoid or minimize dust accumulation.
 contract TokenExchangeSetIssuer is Ownable, ReentrancyGuard {
-    using SafeMath for uint256;
-    /// @dev Mapping of setToken to its authorized BasicIssuanceModule.
+    /// @dev Maps each SetToken to its associated authorized IIssuanceModule.
+    ///      This mapping serves two purposes:
+    ///      1. To verify whether a SetToken is authorized.
+    ///      2. To retrieve the corresponding IIssuanceModule for a given SetToken.
     mapping(address => address) public setTokenIssuanceModules;
+    /// @dev Mapping of whitelisted function for a target contract.
+    mapping(bytes24 => bool) public whitelistedFunctions;
 
-    IUniswapV2Router02 immutable uniswapRouterV2;
-    IParaswapV6 immutable paraswapV6;
+    /// @notice Thrown when the quantity of the Set token for buying or selling is zero.
+    error SetQuantityCannotBeZero();
+    /// @notice Thrown when the quote asset amount for buying or selling is zero.
+    error QuoteAmountCannotBeZero();
+    /// @notice Thrown when the target address provided is the zero address.
+    error TargetAddressCannotBeZero();
+    /// @notice Thrown when the Set token address provided is the zero address.
+    error SetAddressCannotBeZero();
+    /// @notice Thrown when the issuance module address provided is the zero address.
+    error IssuanceAddressCannotBeZero();
+    /// @notice Thrown when the amount received from selling the Set token is less than expected.
+    error ReceivedAmountLessThanExpected();
+    /// @notice Thrown when attempting to call or revoke a non-whitelisted function.
+    error FunctionNotWhitelisted();
+    /// @notice Thrown when ETH is sent to the contract.
+    error ETHNotAccepted();
+    /// @notice Thrown when attempting to buy or sell a Set token that is not whitelisted.
+    error SetTokenNotWhitelisted();
+    /// @notice Thrown when the number of exchanges does not match the number of Set token components.
+    error ExchangeLengthMismatch();
+    /// @notice Thrown when the length of the exchange payload does not match the number of Set token components.
+    error PayloadLengthMismatch();
+    /// @notice Thrown when a call to an exchange fails.
+    error ExchangeCallFailed();
+    /// @notice Thrown when the amount of Set token components bought is insufficient for issuing the desired
+    ///         quantity of the Set token.
+    error QuantityBoughtLessThanMinimum();
+    /// @notice Thrown when the length of the payload for buying or selling tokens is less than 4 bytes.
+    error InvalidPayload();
 
-    constructor(address _paraswapV6, address _uniswapRouterV2) public {
-        paraswapV6 = IParaswapV6(_paraswapV6);
-        uniswapRouterV2 = IUniswapV2Router02(_uniswapRouterV2);
-    }
+    /// @notice Emitted when a function is whitelisted for a specific target contract.
+    /// @param target The address of the target contract.
+    /// @param selector The 4 byte function selector that has been whitelisted.
+    event FunctionWhitelisted(address target, bytes4 selector);
+    /// @notice Emitted when a previously whitelisted function is revoked for a specific target contract.
+    /// @param target The address of the target contract.
+    /// @param selector The 4 byte function selector that has been revoked.
+    event FunctionRevoked(address target, bytes4 selector);
+    /// @notice Emitted when an IssuanceModule is added to a SetToken.
+    /// @param setToken The address of the SetToken.
+    /// @param issuanceModule The address of the IssuanceModule that was added.
+    event IssuanceModuleAdded(address setToken, address issuanceModule);
+    /// @notice Emitted when an IssuanceModule is removed from a SetToken.
+    /// @param setToken The address of the SetToken.
+    /// @param issuanceModule The address of the IssuanceModule that was removed.
+    event IssuanceModuleRemoved(address setToken, address issuanceModule);
+
+    constructor(address owner) Ownable(owner) {}
 
     /// @notice Buys the underlying components of the SetToken and issues the SetToken.
     /// @dev To buy the underlying components, the payload needs to be constructed for the whitelisted exchanges.
@@ -61,24 +85,28 @@ contract TokenExchangeSetIssuer is Ownable, ReentrancyGuard {
     /// @param setTokenQuantity: The quantity of the SetToken to issue.
     /// @param quoteAsset: The instance of the IERC20 token used for buying the underlying components.
     /// @param totalQuoteAmount: The maximum amount the user pays for buying the underlying components.
-    /// @param exchangeParams: An array of `ExchangeParams` containing data to buy each component.
+    /// @param exchanges: An array of addresses used to buy each component.
+    /// @param exchangePayloads: Payloads targeted towards each exchange for buying the corresponding component.
     /// @return extraQuoteBalance The remaining quote balance after the purchase and issuance.
+    /// @notice WARNING: Dust (small amounts) of the `quoteAsset` may remain after the operation
+    ///         and will not be refunded to the user. Users should use swap functions that do not leave dust.
     function buyComponentsAndIssueSetToken(
         ISetToken setToken,
         uint256 setTokenQuantity,
         IERC20 quoteAsset,
         uint256 totalQuoteAmount,
-        ExchangeParams[] calldata exchangeParams
+        address[] calldata exchanges,
+        bytes[] calldata exchangePayloads
     ) external nonReentrant returns (uint256 extraQuoteBalance) {
-        require(setTokenQuantity > 0, "setTokenQuantity must be > 0");
-        require(totalQuoteAmount > 0, "totalQuoteAmount must be > 0");
+        if (setTokenQuantity == 0) revert SetQuantityCannotBeZero();
+        if (totalQuoteAmount == 0) revert QuoteAmountCannotBeZero();
         uint256 beforeQuoteAssetBalance = quoteAsset.balanceOf(address(this));
         SafeERC20.safeTransferFrom(quoteAsset, msg.sender, address(this), totalQuoteAmount);
-        BasicIssuanceModule issuanceModule = _getIssuanceModule(setToken);
-        _buyComponents(setToken, setTokenQuantity, quoteAsset, issuanceModule, exchangeParams);
+        IIssuanceModule issuanceModule = _getIssuanceModule(setToken);
+        _buyComponents(setToken, setTokenQuantity, quoteAsset, issuanceModule, exchanges, exchangePayloads);
         issuanceModule.issue(setToken, setTokenQuantity, msg.sender);
         uint256 afterQuoteAssetBalance = quoteAsset.balanceOf(address(this));
-        extraQuoteBalance = afterQuoteAssetBalance.sub(beforeQuoteAssetBalance);
+        extraQuoteBalance = afterQuoteAssetBalance - beforeQuoteAssetBalance;
         // refund extra quoteAsset
         if (extraQuoteBalance > 0) {
             SafeERC20.safeTransfer(quoteAsset, msg.sender, extraQuoteBalance);
@@ -91,25 +119,31 @@ contract TokenExchangeSetIssuer is Ownable, ReentrancyGuard {
     /// @param setTokenQuantity: Quantity of the SetToken to redeem.
     /// @param quoteAsset: Instance of the IERC20 token received after selling the underlying components.
     /// @param minQuoteAmount: The minimum `quoteAsset` amount the user expects to receive after selling the underlying components.
-    /// @param exchangeParams: An array of `ExchangeParams` containing data to sell each component.
+    /// @param exchanges: An array of addresses used to sell each component.
+    /// @param exchangePayloads: Payloads targeted towards each exchange for selling the corresponding component.
     /// @return quoteAssetBalanceAfterSell The `quoteAsset` balance obtained after selling the components.
+    /// @notice WARNING: Any dust accumulated during the selling of components will not be refunded.
+    ///         Users should ensure they use swap functions that do not leave dust.
     function redeemSetTokenAndExchangeTokens(
         ISetToken setToken,
         uint256 setTokenQuantity,
         IERC20 quoteAsset,
         uint256 minQuoteAmount,
-        ExchangeParams[] calldata exchangeParams
+        address[] calldata exchanges,
+        bytes[] calldata exchangePayloads
     ) external nonReentrant returns (uint256 quoteAssetBalanceAfterSell) {
-        require(setTokenQuantity > 0, "setTokenQuantity must be > 0");
+        if (setTokenQuantity == 0) revert SetQuantityCannotBeZero();
         uint256 beforeQuoteAssetBalance = quoteAsset.balanceOf(address(this));
         SafeERC20.safeTransferFrom(IERC20(address(setToken)), msg.sender, address(this), setTokenQuantity);
 
-        BasicIssuanceModule issuanceModule = _getIssuanceModule(setToken);
+        IIssuanceModule issuanceModule = _getIssuanceModule(setToken);
         issuanceModule.redeem(setToken, setTokenQuantity, address(this));
 
-        _sellComponents(setToken, setTokenQuantity, issuanceModule, quoteAsset, exchangeParams);
-        quoteAssetBalanceAfterSell = quoteAsset.balanceOf(address(this)).sub(beforeQuoteAssetBalance);
-        require(quoteAssetBalanceAfterSell >= minQuoteAmount, "Received amount less than minQuoteAmount");
+        _sellComponents(setToken, setTokenQuantity, issuanceModule, quoteAsset, exchanges, exchangePayloads);
+        quoteAssetBalanceAfterSell = quoteAsset.balanceOf(address(this)) - beforeQuoteAssetBalance;
+
+        if (quoteAssetBalanceAfterSell < minQuoteAmount) revert ReceivedAmountLessThanExpected();
+
         SafeERC20.safeTransfer(quoteAsset, msg.sender, quoteAssetBalanceAfterSell);
         return quoteAssetBalanceAfterSell;
     }
@@ -125,21 +159,62 @@ contract TokenExchangeSetIssuer is Ownable, ReentrancyGuard {
         }
     }
 
+    /// @notice Whitelists multiple functions for the specified target contract.
+    /// @dev This function allows the contract owner to whitelist multiple functions identified
+    ///      by their target address and function selectors. Only whitelisted functions can
+    ///      be called through the `call` function, ensuring that only approved
+    ///      functions are executed.
+    /// @param target The address of the contract that contains the functions to be whitelisted.
+    ///               Must be a valid contract address (non-zero).
+    /// @param selectors An array of function selectors (4-byte signatures) belonging to the target address.
+    ///                  Each selector represents a specific function within the target contract that is
+    ///                  being whitelisted.
+    function whitelistFunctions(address target, bytes4[] calldata selectors) external onlyOwner {
+        if (target == address(0)) revert TargetAddressCannotBeZero();
+        bytes24 identifier;
+        for (uint256 i = 0; i < selectors.length; i++) {
+            identifier = _calculateFunctionIdentifier(target, selectors[i]);
+            whitelistedFunctions[identifier] = true;
+            emit FunctionWhitelisted(target, selectors[i]);
+        }
+    }
+
+    /// @notice Removes multiple functions from the whitelist for the specified target contract.
+    /// @dev This function allows the contract owner to remove multiple functions, identified
+    ///      by their target address and function selectors, from the whitelist. Once a function
+    ///      is removed from the whitelist, it can no longer be called via the `call` function.
+    /// @param target The address of the contract that contains the functions to be removed from the whitelist.
+    /// @param selectors An array of function selectors (4-byte signatures) belonging to the target address,
+    ///                  representing the functions to be removed from the whitelist.
+    function revokeWhitelistedFunctions(address target, bytes4[] calldata selectors) external onlyOwner {
+        bytes24 identifier;
+        for (uint256 i = 0; i < selectors.length; i++) {
+            identifier = _calculateFunctionIdentifier(target, selectors[i]);
+            if (!whitelistedFunctions[identifier]) revert FunctionNotWhitelisted();
+            delete whitelistedFunctions[identifier];
+            emit FunctionRevoked(target, selectors[i]);
+        }
+    }
+
     /// @notice Adds or updates the issuance module for a specified SetToken.
     /// @dev This function maps a SetToken address to its corresponding issuance module. Both addresses must be non-zero.
     /// @param setToken: The address of the SetToken for which the issuance module is being set.
     /// @param issuanceModule: The address of the issuance module to be associated with the SetToken.
     function addSetTokenIssuanceModules(address setToken, address issuanceModule) external onlyOwner {
-        require(setToken != address(0), "setToken can't be address(0)");
-        require(issuanceModule != address(0), "issuanceModule can't be address(0)");
+        if (setToken == address(0)) revert SetAddressCannotBeZero();
+        if (issuanceModule == address(0)) revert IssuanceAddressCannotBeZero();
         setTokenIssuanceModules[setToken] = issuanceModule;
+        emit IssuanceModuleAdded(setToken, issuanceModule);
     }
 
     /// @notice Removes the issuance module associated with a specified SetToken.
     /// @dev This function deletes the mapping between a SetToken and its issuance module.
     /// @param setToken: The address of the SetToken for which the issuance module is being removed.
     function removeSetTokenIssuanceModules(address setToken) external onlyOwner {
+        // _getIssuanceModule will revert if setToken is not whitelisted
+        address issuanceModule = address(_getIssuanceModule(ISetToken(setToken)));
         delete setTokenIssuanceModules[setToken];
+        emit IssuanceModuleRemoved(setToken, issuanceModule);
     }
 
     /// @notice Allows the contract owner to recover any ERC20 tokens held by the contract.
@@ -153,128 +228,41 @@ contract TokenExchangeSetIssuer is Ownable, ReentrancyGuard {
 
     /// @notice Fallback function to revert any ETH sent to the contract.
     receive() external payable {
-        revert("ETH not accepted");
+        revert ETHNotAccepted();
     }
 
     /*XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX*/
     /*                                 private functions                                  */
     /*XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX*/
 
-    function _exchangeTokens(ExchangeParams calldata _exchangeParams) private {
-        if (_exchangeParams.exchangeFunction == ExchangeFunction.PARASWAP_SWAP_EXACT_AMOUNT_IN) {
-            (
-                address executor,
-                GenericData memory swapData,
-                uint256 partnerAndFee,
-                bytes memory permit,
-                bytes memory executorData
-            ) = abi.decode(_exchangeParams.exchangeData, (address, GenericData, uint256, bytes, bytes));
-            paraswapV6.swapExactAmountIn(executor, swapData, partnerAndFee, permit, executorData);
-        } else if (_exchangeParams.exchangeFunction == ExchangeFunction.PARASWAP_SWAP_EXACT_AMOUNT_OUT) {
-            (
-                address executor,
-                GenericData memory swapData,
-                uint256 partnerAndFee,
-                bytes memory permit,
-                bytes memory executorData
-            ) = abi.decode(_exchangeParams.exchangeData, (address, GenericData, uint256, bytes, bytes));
-            paraswapV6.swapExactAmountOut(executor, swapData, partnerAndFee, permit, executorData);
-        } else if (_exchangeParams.exchangeFunction == ExchangeFunction.PARASWAP_SWAP_EXACT_AMOUNT_IN_ON_BALANCER_V2) {
-            (BalancerV2Data memory balancerData, uint256 partnerAndFee, bytes memory permit, bytes memory data) = abi
-                .decode(_exchangeParams.exchangeData, (BalancerV2Data, uint256, bytes, bytes));
-            paraswapV6.swapExactAmountInOnBalancerV2(balancerData, partnerAndFee, permit, data);
-        } else if (_exchangeParams.exchangeFunction == ExchangeFunction.PARASWAP_SWAP_EXACT_AMOUNT_OUT_ON_BALANCER_V2) {
-            (BalancerV2Data memory balancerData, uint256 partnerAndFee, bytes memory permit, bytes memory data) = abi
-                .decode(_exchangeParams.exchangeData, (BalancerV2Data, uint256, bytes, bytes));
-            paraswapV6.swapExactAmountOutOnBalancerV2(balancerData, partnerAndFee, permit, data);
-        } else if (_exchangeParams.exchangeFunction == ExchangeFunction.PARASWAP_SWAP_EXACT_AMOUNT_IN_ON_CURVE_V1) {
-            (CurveV1Data memory curveV1Data, uint256 partnerAndFee, bytes memory permit) = abi.decode(
-                _exchangeParams.exchangeData,
-                (CurveV1Data, uint256, bytes)
-            );
-            paraswapV6.swapExactAmountInOnCurveV1(curveV1Data, partnerAndFee, permit);
-        } else if (_exchangeParams.exchangeFunction == ExchangeFunction.PARASWAP_SWAP_EXACT_AMOUNT_IN_ON_CURVE_V2) {
-            (CurveV2Data memory curveV2Data, uint256 partnerAndFee, bytes memory permit) = abi.decode(
-                _exchangeParams.exchangeData,
-                (CurveV2Data, uint256, bytes)
-            );
-            paraswapV6.swapExactAmountInOnCurveV2(curveV2Data, partnerAndFee, permit);
-        } else if (_exchangeParams.exchangeFunction == ExchangeFunction.PARASWAP_SWAP_EXACT_AMOUNT_IN_ON_UNISWAP_V2) {
-            (UniswapV2Data memory uniData, uint256 partnerAndFee, bytes memory permit) = abi.decode(
-                _exchangeParams.exchangeData,
-                (UniswapV2Data, uint256, bytes)
-            );
-            paraswapV6.swapExactAmountInOnUniswapV2(uniData, partnerAndFee, permit);
-        } else if (_exchangeParams.exchangeFunction == ExchangeFunction.PARASWAP_SWAP_EXACT_AMOUNT_OUT_ON_UNISWAP_V2) {
-            (UniswapV2Data memory uniData, uint256 partnerAndFee, bytes memory permit) = abi.decode(
-                _exchangeParams.exchangeData,
-                (UniswapV2Data, uint256, bytes)
-            );
-            paraswapV6.swapExactAmountOutOnUniswapV2(uniData, partnerAndFee, permit);
-        } else if (_exchangeParams.exchangeFunction == ExchangeFunction.PARASWAP_SWAP_EXACT_AMOUNT_IN_ON_UNISWAP_V3) {
-            (UniswapV3Data memory uniData, uint256 partnerAndFee, bytes memory permit) = abi.decode(
-                _exchangeParams.exchangeData,
-                (UniswapV3Data, uint256, bytes)
-            );
-            paraswapV6.swapExactAmountInOnUniswapV3(uniData, partnerAndFee, permit);
-        } else if (_exchangeParams.exchangeFunction == ExchangeFunction.PARASWAP_SWAP_EXACT_AMOUNT_OUT_ON_UNISWAP_V3) {
-            (UniswapV3Data memory uniData, uint256 partnerAndFee, bytes memory permit) = abi.decode(
-                _exchangeParams.exchangeData,
-                (UniswapV3Data, uint256, bytes)
-            );
-            paraswapV6.swapExactAmountOutOnUniswapV3(uniData, partnerAndFee, permit);
-        } else if (_exchangeParams.exchangeFunction == ExchangeFunction.UNISWAP_SWAP_EXACT_TOKENS_FOR_TOKENS) {
-            (uint amountIn, uint amountOutMin, address[] memory path, address to, uint deadline) = abi.decode(
-                _exchangeParams.exchangeData,
-                (uint, uint, address[], address, uint)
-            );
-            uniswapRouterV2.swapExactTokensForTokens(amountIn, amountOutMin, path, to, deadline);
-        } else if (_exchangeParams.exchangeFunction == ExchangeFunction.UNISWAP_SWAP_TOKENS_FOR_EXACT_TOKENS) {
-            (uint amountOut, uint amountInMax, address[] memory path, address to, uint deadline) = abi.decode(
-                _exchangeParams.exchangeData,
-                (uint, uint, address[], address, uint)
-            );
-            uniswapRouterV2.swapTokensForExactTokens(amountOut, amountInMax, path, to, deadline);
-        } else if (
-            _exchangeParams.exchangeFunction ==
-            ExchangeFunction.UNISWAP_SWAP_EXACT_TOKENS_FOR_TOKENS_SUPPORTING_FEE_ON_TRANSFER_TOKENS
-        ) {
-            (uint amountIn, uint amountOutMin, address[] memory path, address to, uint deadline) = abi.decode(
-                _exchangeParams.exchangeData,
-                (uint, uint, address[], address, uint)
-            );
-            uniswapRouterV2.swapExactTokensForTokensSupportingFeeOnTransferTokens(
-                amountIn,
-                amountOutMin,
-                path,
-                to,
-                deadline
-            );
-        } else {
-            revert("Unknown exchange function");
-        }
-    }
-
-    function _getIssuanceModule(ISetToken setToken) private view returns (BasicIssuanceModule) {
+    function _getIssuanceModule(ISetToken setToken) private view returns (IIssuanceModule) {
         address issuanceModule = setTokenIssuanceModules[address(setToken)];
-        require(address(issuanceModule) != address(0), "setToken doesn't have issuanceModule");
-        return BasicIssuanceModule(issuanceModule);
+        if (address(issuanceModule) == address(0)) revert SetTokenNotWhitelisted();
+        return IIssuanceModule(issuanceModule);
     }
 
     function _sellComponents(
         ISetToken setToken,
         uint256 setTokenQuantity,
-        BasicIssuanceModule issuanceModule,
+        IIssuanceModule issuanceModule,
         IERC20 quoteAsset,
-        ExchangeParams[] calldata exchangeParams
+        address[] calldata exchanges,
+        bytes[] calldata exchangePayloads
     ) private {
         (address[] memory components, ) = issuanceModule.getRequiredComponentUnitsForIssue(setToken, setTokenQuantity);
         uint256 componentsLength = components.length;
-        require(exchangeParams.length == componentsLength, "exchangeParams length mismatch");
+        if (exchanges.length != componentsLength) revert ExchangeLengthMismatch();
+        if (exchangePayloads.length != componentsLength) revert PayloadLengthMismatch();
+        bool success;
 
         for (uint256 index = 0; index < componentsLength; index++) {
             if (components[index] == address(quoteAsset)) continue;
-            _exchangeTokens(exchangeParams[index]);
+            address exchange = exchanges[index];
+            bytes calldata exchangePayload = exchangePayloads[index];
+            _requireWhitelistedFunction(exchange, exchangePayload);
+            // Wont use native asset, so no need to pass msg.value
+            (success, ) = exchange.call(exchangePayload);
+            if (!success) revert ExchangeCallFailed();
         }
     }
 
@@ -282,26 +270,45 @@ contract TokenExchangeSetIssuer is Ownable, ReentrancyGuard {
         ISetToken setToken,
         uint256 setTokenQuantity,
         IERC20 quoteAsset,
-        BasicIssuanceModule issuanceModule,
-        ExchangeParams[] calldata exchangeParams
+        IIssuanceModule issuanceModule,
+        address[] calldata exchanges,
+        bytes[] calldata exchangePayloads
     ) private {
+        bool success;
         (address[] memory components, uint256[] memory componentQuantities) = issuanceModule
             .getRequiredComponentUnitsForIssue(setToken, setTokenQuantity);
         uint256 componentsLength = components.length;
-        require(exchangeParams.length == componentsLength, "exchangeParams length mismatch");
+        if (exchanges.length != componentsLength) revert ExchangeLengthMismatch();
+        if (exchangePayloads.length != componentsLength) revert PayloadLengthMismatch();
 
         for (uint256 index = 0; index < componentsLength; index++) {
             address componentAddress = components[index];
             if (componentAddress == address(quoteAsset)) continue;
             IERC20 component = IERC20(componentAddress);
             uint256 beforeComponentBalance = component.balanceOf(address(this));
-            _exchangeTokens(exchangeParams[index]);
+
+            address exchange = exchanges[index];
+            bytes calldata exchangePayload = exchangePayloads[index];
+            _requireWhitelistedFunction(exchange, exchangePayload);
+            // Wont use native asset, so no need to pass msg.value
+            (success, ) = exchange.call(exchangePayload);
+            if (!success) revert ExchangeCallFailed();
 
             uint256 afterComponentBalance = component.balanceOf(address(this));
-            require(
-                afterComponentBalance.sub(beforeComponentBalance) >= componentQuantities[index],
-                "Quantity bought less than required quantity"
-            );
+            if (afterComponentBalance - beforeComponentBalance < componentQuantities[index])
+                revert QuantityBoughtLessThanMinimum();
         }
+    }
+
+    function _requireWhitelistedFunction(address target, bytes calldata payload) private view {
+        if (payload.length < 4) revert InvalidPayload();
+        bytes4 selector = bytes4(payload[0:4]);
+        bytes24 identifier = _calculateFunctionIdentifier(target, selector);
+        if (!whitelistedFunctions[identifier]) revert FunctionNotWhitelisted();
+    }
+
+    function _calculateFunctionIdentifier(address target, bytes4 selector) private pure returns (bytes24 identifier) {
+        bytes memory encodedData = abi.encodePacked(target, selector);
+        identifier = bytes24(encodedData);
     }
 }

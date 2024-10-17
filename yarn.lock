@@ -640,6 +640,9 @@
     "@openzeppelin/contracts" "4.7.3"
     "@openzeppelin/contracts-upgradeable" "4.7.3"
 
+"@openzeppelin-contracts-5@./lib/openzeppelin-contracts-v5.0.2/":
+  version "5.0.2"
+
 "@openzeppelin/contracts-upgradeable@4.5.2":
   version "4.5.2"
   resolved "https://registry.yarnpkg.com/@openzeppelin/contracts-upgradeable/-/contracts-upgradeable-4.5.2.tgz#90d9e47bacfd8693bfad0ac8a394645575528d05"

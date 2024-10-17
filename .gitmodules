@@ -10,3 +10,6 @@
 [submodule "lib/ccip"]
 	path = lib/ccip
 	url = https://github.com/smartcontractkit/ccip
+[submodule "lib/openzeppelin-contracts-v5.0.2"]
+	path = lib/openzeppelin-contracts-v5.0.2
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts

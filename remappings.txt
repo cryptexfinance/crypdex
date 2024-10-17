@@ -1,2 +1,5 @@
 @openzeppelin/=lib/openzeppelin-contracts/
+@openzeppelin-contracts-5/=lib/openzeppelin-contracts-v5.0.2/
 @pythnetwork/pyth-sdk-solidity/=node_modules/@pythnetwork/pyth-sdk-solidity
+forge-std/=lib/forge-std/src/
+solady/=lib/solady/
