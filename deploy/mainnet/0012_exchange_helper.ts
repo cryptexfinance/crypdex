@@ -1,7 +1,11 @@
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
 import { hardhatArguments } from "hardhat";
-import { TokenExchangeSetIssuer__factory, IParaswapV6__factory, IUniswapV2Router__factory } from "../../typechain-types";
+import {
+  TokenExchangeSetIssuer__factory,
+  IParaswapV6__factory,
+  IUniswapV2Router__factory,
+} from "../../typechain-types";
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   if (hardhatArguments.network !== "mainnet") {
@@ -14,8 +18,12 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const deployerSigner: SignerWithAddress = await ethers.getSigner(deployer);
   console.log(deployer);
 
-  let paraswapV6Interface = new ethers.utils.Interface(IParaswapV6__factory.abi);
-  let uniswapRouterInterface = new ethers.utils.Interface(IUniswapV2Router__factory.abi);
+  let paraswapV6Interface = new ethers.utils.Interface(
+    IParaswapV6__factory.abi,
+  );
+  let uniswapRouterInterface = new ethers.utils.Interface(
+    IUniswapV2Router__factory.abi,
+  );
 
   let flokiTaxHandlerAddress = "0x834F96fD4fE9147a2a647D957FBbE67FEc62B67b";
   let uniswapRouterAddress = "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D";
@@ -52,50 +60,65 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   ).attach(exchangeDeployer.address);
 
   let toApprove = [
-	[[usdc, weth, doge, shib, pepe], paraSwapV6Address],
-	[[weth, doge, shib, pepe, floki], basicIssuanceModuleAddress],
-	[[usdc, weth, floki], flokiUniswapDeployer.address]
-];
+    [[usdc, weth, doge, shib, pepe], paraSwapV6Address],
+    [[weth, doge, shib, pepe, floki], basicIssuanceModuleAddress],
+    [[usdc, weth, floki], flokiUniswapDeployer.address],
+    [[usdc, weth, floki], uniswapRouterAddress],
+  ];
   let tx;
   for (var params of toApprove) {
     console.log("approving tokens for", params[1]);
-    tx = await tokenExchangeIssuer.approveTokens(params[0], params[1], ethers.constants.MaxUint256);
+    tx = await tokenExchangeIssuer.approveTokens(
+      params[0],
+      params[1],
+      ethers.constants.MaxUint256,
+    );
     console.log(tx);
     await tx.wait(2);
     console.log("approved tokens for", params[1]);
   }
   console.log("adding basicIssuanceModuleAddress for meem");
-  tx = await tokenExchangeIssuer.addSetTokenIssuanceModules(meem.address, basicIssuanceModuleAddress);
+  tx = await tokenExchangeIssuer.addSetTokenIssuanceModules(
+    meem.address,
+    basicIssuanceModuleAddress,
+  );
   console.log(tx);
   await tx.wait(2);
   console.log("added basicIssuanceModuleAddress for meem");
 
   let paraswapFunctions = [
-        paraswapV6Interface.getSighash('swapExactAmountOut'),
-        paraswapV6Interface.getSighash('swapExactAmountOutOnUniswapV3'),
-        paraswapV6Interface.getSighash('swapExactAmountOutOnUniswapV2'),
-        paraswapV6Interface.getSighash('swapExactAmountIn'),
-        paraswapV6Interface.getSighash('swapExactAmountInOnUniswapV3'),
-        paraswapV6Interface.getSighash('swapExactAmountInOnUniswapV2'),
+    paraswapV6Interface.getSighash("swapExactAmountOut"),
+    paraswapV6Interface.getSighash("swapExactAmountOutOnUniswapV3"),
+    paraswapV6Interface.getSighash("swapExactAmountOutOnUniswapV2"),
+    paraswapV6Interface.getSighash("swapExactAmountIn"),
+    paraswapV6Interface.getSighash("swapExactAmountInOnUniswapV3"),
+    paraswapV6Interface.getSighash("swapExactAmountInOnUniswapV2"),
   ];
 
   console.log("whitelisting paraswap functions");
-  tx = await tokenExchangeIssuer.whitelistFunctions(paraSwapV6Address, paraswapFunctions);
+  tx = await tokenExchangeIssuer.whitelistFunctions(
+    paraSwapV6Address,
+    paraswapFunctions,
+  );
   console.log(tx);
   await tx.wait(2);
   console.log("whitelisted paraswap functions");
 
   let uniswapFunctions = [
-    uniswapRouterInterface.getSighash('swapTokensForExactTokens'),
-    uniswapRouterInterface.getSighash('swapExactTokensForTokensSupportingFeeOnTransferTokens'),
+    uniswapRouterInterface.getSighash("swapTokensForExactTokens"),
+    uniswapRouterInterface.getSighash(
+      "swapExactTokensForTokensSupportingFeeOnTransferTokens",
+    ),
   ];
 
   console.log("whitelisting uniswap functions");
-  tx = await tokenExchangeIssuer.whitelistFunctions(uniswapRouterAddress, uniswapFunctions);
+  tx = await tokenExchangeIssuer.whitelistFunctions(
+    uniswapRouterAddress,
+    uniswapFunctions,
+  );
   console.log(tx);
   await tx.wait(2);
   console.log("whitelisted uniswap functions");
-
 };
 
 export default func;
