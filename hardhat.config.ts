@@ -4,11 +4,12 @@ import "@nomicfoundation/hardhat-verify";
 import "@typechain/hardhat";
 import "@nomiclabs/hardhat-ethers";
 import "hardhat-deploy";
-import 'hardhat-dependency-compiler';
+import "hardhat-dependency-compiler";
 
 const DEPLOYER_PRIVATE_KEY = process.env.DEPLOYER_PRIVATE_KEY as string;
 const MANAGER_PRIVATE_KEY = process.env.MANAGER_PRIVATE_KEY as string;
-const MAINNET_DEPLOYER_PRIVATE_KEY = process.env.MAINNET_DEPLOYER_PRIVATE_KEY as string;
+const MAINNET_DEPLOYER_PRIVATE_KEY = process.env
+  .MAINNET_DEPLOYER_PRIVATE_KEY as string;
 
 const config: HardhatUserConfig = {
   namedAccounts: {
@@ -17,7 +18,7 @@ const config: HardhatUserConfig = {
     },
     manager: {
       default: 1,
-    }
+    },
   },
   solidity: {
     compilers: [
@@ -36,7 +37,9 @@ const config: HardhatUserConfig = {
     ],
   },
   dependencyCompiler: {
-    paths: ["@chainlink/contracts-ccip/src/v0.8/shared/token/ERC677/BurnMintERC677.sol"],
+    paths: [
+      "@chainlink/contracts-ccip/src/v0.8/shared/token/ERC677/BurnMintERC677.sol",
+    ],
   },
   paths: {
     sources: "./contracts",
@@ -62,16 +65,22 @@ const config: HardhatUserConfig = {
       chainId: 1,
       url: process.env.MAINNET_URL,
       accounts: [MAINNET_DEPLOYER_PRIVATE_KEY, MANAGER_PRIVATE_KEY],
-    }
+    },
+    arbitrum: {
+      chainId: 42161,
+      url: process.env.ARBITRUM_URL,
+      accounts: [MAINNET_DEPLOYER_PRIVATE_KEY],
+    },
   },
   etherscan: {
     apiKey: {
-        baseSepolia: process.env.BASESCAN_API_KEY,
-        base: process.env.BASESCAN_API_KEY,
-        sepolia: process.env.ETHERSCAN_API_KEY,
-        mainnet: process.env.ETHERSCAN_API_KEY,
-    }
-  }
+      baseSepolia: process.env.BASESCAN_API_KEY,
+      base: process.env.BASESCAN_API_KEY,
+      sepolia: process.env.ETHERSCAN_API_KEY,
+      mainnet: process.env.ETHERSCAN_API_KEY,
+      arbitrumOne: process.env.ARBISCAN_API_KEY,
+    },
+  },
 };
 
 export default config;
