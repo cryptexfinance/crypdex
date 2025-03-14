@@ -18,8 +18,6 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     "0xb962539d0fcb272a494d65ea56f94851c2bcf8823935da05bd628916e2e9edbf";
   const uniPriceId =
     "0x78d185a741d07edb3412b09008b7c5cfb9bbbd7d568bf00ba737b456ba171501";
-  const grailPriceId =
-    "0x48f3736d94693aa73c11214c4176ba7f997a8329f4dbc3854c4b2686861132ce";
   const pendlePriceId =
     "0x9a4df90b25497f66b1afb012467e316e801ca3d839456db028892fe8c70c8016";
   const stgPriceId =
@@ -51,15 +49,6 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     from: deployer,
     contract: "PythOracle",
     args: [pythContract, uniPriceId],
-    skipIfAlreadyDeployed: true,
-    log: true,
-    autoMine: true,
-  });
-
-  await deploy("GrailPythOracle", {
-    from: deployer,
-    contract: "PythOracle",
-    args: [pythContract, grailPriceId],
     skipIfAlreadyDeployed: true,
     log: true,
     autoMine: true,

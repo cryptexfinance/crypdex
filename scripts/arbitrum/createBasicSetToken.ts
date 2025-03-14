@@ -20,7 +20,6 @@ async function main() {
   const aave = "0xba5DdD1f9d7F570dc94a51479a000E3BCE967196";
   const gmx = "0xfc5A1A6EB076a2C7aD06eD22C90d7E710E35ad0a";
   const uni = "0xFa7F8980b0f1E64A2062791cc3b0871572f1F7f0";
-  const grail = "0x3d9907F9a368ad0a51Be60f7Da3b97cf940982D8";
   const pendle = "0x0c880f6761F1af8d9Aa9C466984b80DAb9a8c9e8";
   const stg = "0x6694340fc020c5E6B96567843da2df01b2CE1eb6";
   const crv = "0x11cDb42B0EB46D95f990BeDD4695A6e3fA034978";
@@ -67,21 +66,19 @@ async function main() {
       .timestamp,
   };
 
-  const aaveQuantity = ethers.BigNumber.from("3643199603619883"); // math.ceil((5 * 10 ** 18)/(7 * 196.06))
-  const gmxQuantity = ethers.BigNumber.from("40196157247367152"); // math.ceil((5 * 10 ** 18)/(7 * 17.77))
-  const uniQuantity = ethers.BigNumber.from("94858660595712384"); // math.ceil((5 * 10 ** 18)/(7 * 7.53))
-  const grailQuantity = ethers.BigNumber.from("1421973471662913"); // math.ceil((5 * 10 ** 18)/(7 * 502.32))
-  const pendleQuantity = ethers.BigNumber.from("252397778899545664"); // math.ceil((5 * 10 ** 18)/(7 * 2.83))
-  const stgQuantity = ethers.BigNumber.from("2840102243680772608"); // math.ceil((5 * 10 ** 18)/(7 * 0.2515))
-  const crvQuantity = ethers.BigNumber.from("1651527663088356864"); // math.ceil((5 * 10 ** 18)/(7 * 0.4325))
+  const aaveQuantity = ethers.BigNumber.from("4806121075802142");     // math.ceil((5 * 10 ** 18)/(6 * 173.39))
+  const gmxQuantity = ethers.BigNumber.from("54573237284435712");     // math.ceil((5 * 10 ** 18)/(6 * 15.27))
+  const uniQuantity = ethers.BigNumber.from("137513751375137520");    // math.ceil((5 * 10 ** 18)/(6 * 6.06))
+  const pendleQuantity = ethers.BigNumber.from("382262996941896000"); // math.ceil((5 * 10 ** 18)/(6 * 2.18))
+  const stgQuantity = ethers.BigNumber.from("4097017371353654784");   // math.ceil((5 * 10 ** 18)/(6 * 0.2034))
+  const crvQuantity = ethers.BigNumber.from("2044488060189728256");   // math.ceil((5 * 10 ** 18)/(6 * 0.4076))
 
   let tx = await setTokenCreator.create(
-    [aave, gmx, uni, grail, pendle, stg, crv],
+    [aave, gmx, uni, pendle, stg, crv],
     [
       aaveQuantity,
       gmxQuantity,
       uniQuantity,
-      grailQuantity,
       pendleQuantity,
       stgQuantity,
       crvQuantity,
@@ -92,14 +89,14 @@ async function main() {
       auctionRebalanceModuleDeployment.address,
     ],
     deployer,
-    "Cryptex ArbFI Index",
-    "ARBFI",
+    "Cryptex ARFI Index",
+    "ARFI",
   );
   console.log(tx);
   let receipt = await tx.wait(2);
   const setTokenAddress = receipt.events[1].args[0];
 
-  await deployments.save("ArbFIIndexToken", {
+  await deployments.save("ArFIIndexToken", {
     address: setTokenAddress,
     receipt,
   });

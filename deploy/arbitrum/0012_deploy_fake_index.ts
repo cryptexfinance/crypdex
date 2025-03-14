@@ -1,3 +1,5 @@
+// use this script to get the set token verified
+
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
 import { hardhatArguments } from "hardhat";

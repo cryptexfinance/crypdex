@@ -26,7 +26,6 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const aaveOracleDeployment = await deployments.get("AavePythOracle");
   const gmxOracleDeployment = await deployments.get("GmxPythOracle");
   const uniOracleDeployment = await deployments.get("UniPythOracle");
-  const grailOracleDeployment = await deployments.get("GrailPythOracle");
   const PendleOracleDeployment = await deployments.get("PendlePythOracle");
   const stgOracleDeployment = await deployments.get("StgPythOracle");
   const CrvOracleDeployment = await deployments.get("CrvPythOracle");
@@ -41,7 +40,6 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
         aaveAddress,
         gmxAddress,
         uniAddress,
-        grailAddress,
         pendleAddress,
         StgAddress,
         CrvAddress,
@@ -53,13 +51,11 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
         usdcAddress,
         usdcAddress,
         usdcAddress,
-        usdcAddress,
       ],
       [
         aaveOracleDeployment.address,
         gmxOracleDeployment.address,
         uniOracleDeployment.address,
-        grailOracleDeployment.address,
         PendleOracleDeployment.address,
         stgOracleDeployment.address,
         CrvOracleDeployment.address,
