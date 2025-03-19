@@ -7,7 +7,7 @@ import {
     SetTokenCreator__factory,
     StreamingFeeModule__factory,
     SetToken__factory
-} from "../typechain-types";
+} from "../../typechain-types";
 
 async function main() {
   const { deployments, getNamedAccounts } = hre;

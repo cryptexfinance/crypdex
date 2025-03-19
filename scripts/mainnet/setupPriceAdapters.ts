@@ -1,7 +1,7 @@
 import { DeployFunction } from "hardhat-deploy/types";
 import hre, { hardhatArguments, ethers } from "hardhat";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import {IntegrationRegistry__factory,} from "../typechain-types";
+import {IntegrationRegistry__factory,} from "../../typechain-types";
 
 async function main() {
   const { deployments, getNamedAccounts } = hre;
